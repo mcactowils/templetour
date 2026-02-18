@@ -1,5 +1,8 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Staging Environment
+The staging branch deploys to a dedicated staging environment for testing.
+
 ## Getting Started
 
 First, run the development server:
