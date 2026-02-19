@@ -3,12 +3,26 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+function getDatabaseUrl() {
+  // Check Vercel environment
+  const vercelEnv = process.env.VERCEL_ENV;
+
+  if (vercelEnv === 'production') {
+    return process.env["DATABASE_URL_MAIN"];
+  } else if (vercelEnv === 'preview') {
+    return process.env["DATABASE_URL_STAGING"];
+  } else {
+    // Development - use staging or local
+    return process.env["DATABASE_URL_DEV"] || process.env["DATABASE_URL"];
+  }
+}
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: getDatabaseUrl(),
   },
 });
