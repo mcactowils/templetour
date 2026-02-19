@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '../../../generated/prisma'
-
-const prisma = new PrismaClient()
+import { prisma } from '../../../lib/prisma'
 
 // GET /api/temples/[slug] - Get a specific temple by slug
 export async function GET(
