@@ -1,5 +1,5 @@
 import { prisma } from '../src/lib/prisma'
-import { TempleStatus } from '../src/generated/prisma'
+import { TempleStatus } from '@prisma/client'
 
 // Sample temple data based on research
 const templeSeedData = [
