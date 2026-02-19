@@ -6,11 +6,12 @@ const prisma = new PrismaClient()
 // GET /api/temples/[slug] - Get a specific temple by slug
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params
     const temple = await prisma.temple.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       include: {
         tours: {
           orderBy: { visitDate: 'desc' },
@@ -42,9 +43,10 @@ export async function GET(
 // PUT /api/temples/[slug] - Update a temple
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params
     const data = await request.json()
 
     // Convert date strings to Date objects if provided
@@ -59,7 +61,7 @@ export async function PUT(
     }
 
     const temple = await prisma.temple.update({
-      where: { slug: params.slug },
+      where: { slug },
       data
     })
 
@@ -76,11 +78,12 @@ export async function PUT(
 // DELETE /api/temples/[slug] - Delete a temple
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params
     await prisma.temple.delete({
-      where: { slug: params.slug }
+      where: { slug }
     })
 
     return NextResponse.json({ message: 'Temple deleted successfully' })
