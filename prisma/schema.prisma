@@ -13,3 +13,79 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Temple {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Basic Information
+  name              String   @unique
+  slug              String   @unique
+  country           String
+  state             String?
+  city              String
+  address           String?
+  telephone         String?
+
+  // Important Dates
+  announcementDate  DateTime?
+  groundbreakingDate DateTime?
+  dedicationDate    DateTime?
+
+  // Physical Details
+  siteSize          String?
+  exteriorFinish    String?
+  totalFloorArea    String?
+  elevation         String?
+
+  // Features
+  instructionRooms  Int?
+  sealingRooms      Int?
+  baptistry         Boolean  @default(false)
+  spires            Int?
+  angelMoroni       Boolean  @default(false)
+
+  // Services
+  visitorsCenter    Boolean  @default(false)
+  arrivalCenter     Boolean  @default(false)
+  patronHousing     Boolean  @default(false)
+  distributionCenter Boolean @default(false)
+
+  // Location
+  latitude          Float?
+  longitude         Float?
+
+  // Status
+  status            TempleStatus @default(ANNOUNCED)
+
+  // Relations
+  tours             TempleTour[]
+
+  @@map("temples")
+}
+
+enum TempleStatus {
+  ANNOUNCED
+  UNDER_CONSTRUCTION
+  DEDICATED
+  RENOVATING
+  CLOSED
+}
+
+// Future model for temple tours/visits
+model TempleTour {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  templeId  String
+  temple    Temple   @relation(fields: [templeId], references: [id])
+
+  userId    String?  // For future user system
+  visitDate DateTime
+  notes     String?
+  rating    Int?     // 1-5 rating
+
+  @@map("temple_tours")
+}
