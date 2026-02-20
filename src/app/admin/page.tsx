@@ -52,7 +52,9 @@ export default function AdminDashboard() {
         throw new Error('Failed to fetch temples')
       }
       const data = await response.json()
-      setTemples(Array.isArray(data) ? data : [])
+      // The API returns { temples: [], pagination: {} }, so we need data.temples
+      const templesList = data.temples || data
+      setTemples(Array.isArray(templesList) ? templesList : [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
       setTemples([]) // Ensure temples is always an array even on error
