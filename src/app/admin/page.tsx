@@ -52,15 +52,16 @@ export default function AdminDashboard() {
         throw new Error('Failed to fetch temples')
       }
       const data = await response.json()
-      setTemples(data)
+      setTemples(Array.isArray(data) ? data : [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
+      setTemples([]) // Ensure temples is always an array even on error
     } finally {
       setLoading(false)
     }
   }
 
-  const filteredTemples = temples?.filter(temple => {
+  const filteredTemples = Array.isArray(temples) ? temples.filter(temple => {
     const matchesSearch = temple.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          temple.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (temple.state && temple.state.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -68,14 +69,14 @@ export default function AdminDashboard() {
     const matchesStatus = statusFilter === 'ALL' || temple.status === statusFilter
 
     return matchesSearch && matchesStatus
-  }) || []
+  }) : []
 
   const stats = {
-    total: temples?.length || 0,
-    dedicated: temples?.filter(t => t.status === TempleStatus.DEDICATED).length || 0,
-    underConstruction: temples?.filter(t => t.status === TempleStatus.UNDER_CONSTRUCTION).length || 0,
-    announced: temples?.filter(t => t.status === TempleStatus.ANNOUNCED).length || 0,
-    renovating: temples?.filter(t => t.status === TempleStatus.RENOVATING).length || 0,
+    total: Array.isArray(temples) ? temples.length : 0,
+    dedicated: Array.isArray(temples) ? temples.filter(t => t.status === TempleStatus.DEDICATED).length : 0,
+    underConstruction: Array.isArray(temples) ? temples.filter(t => t.status === TempleStatus.UNDER_CONSTRUCTION).length : 0,
+    announced: Array.isArray(temples) ? temples.filter(t => t.status === TempleStatus.ANNOUNCED).length : 0,
+    renovating: Array.isArray(temples) ? temples.filter(t => t.status === TempleStatus.RENOVATING).length : 0,
   }
 
   if (loading) {
