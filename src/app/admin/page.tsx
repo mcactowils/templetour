@@ -60,7 +60,7 @@ export default function AdminDashboard() {
     }
   }
 
-  const filteredTemples = temples.filter(temple => {
+  const filteredTemples = temples?.filter(temple => {
     const matchesSearch = temple.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          temple.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (temple.state && temple.state.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -68,14 +68,14 @@ export default function AdminDashboard() {
     const matchesStatus = statusFilter === 'ALL' || temple.status === statusFilter
 
     return matchesSearch && matchesStatus
-  })
+  }) || []
 
   const stats = {
-    total: temples.length,
-    dedicated: temples.filter(t => t.status === TempleStatus.DEDICATED).length,
-    underConstruction: temples.filter(t => t.status === TempleStatus.UNDER_CONSTRUCTION).length,
-    announced: temples.filter(t => t.status === TempleStatus.ANNOUNCED).length,
-    renovating: temples.filter(t => t.status === TempleStatus.RENOVATING).length,
+    total: temples?.length || 0,
+    dedicated: temples?.filter(t => t.status === TempleStatus.DEDICATED).length || 0,
+    underConstruction: temples?.filter(t => t.status === TempleStatus.UNDER_CONSTRUCTION).length || 0,
+    announced: temples?.filter(t => t.status === TempleStatus.ANNOUNCED).length || 0,
+    renovating: temples?.filter(t => t.status === TempleStatus.RENOVATING).length || 0,
   }
 
   if (loading) {
