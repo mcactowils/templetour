@@ -3,6 +3,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from './prisma'
 import EmailProvider from 'next-auth/providers/email'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import bcrypt from 'bcryptjs'
 
 export const authOptions: NextAuthOptions = {
   // Use adapter only when email provider is available
@@ -27,34 +28,55 @@ export const authOptions: NextAuthOptions = {
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
         name: { label: 'Name', type: 'text' }
       },
       async authorize(credentials) {
         try {
           console.log('Authorize attempt:', { email: credentials?.email })
 
-          if (!credentials?.email) {
-            console.log('No email provided')
+          if (!credentials?.email || !credentials?.password) {
+            console.log('Email and password required')
             return null
           }
 
           try {
-            // Try to find or create user in database
+            // Check if user exists
             let user = await prisma.user.findUnique({
               where: { email: credentials.email }
             })
 
-            console.log('Found user:', user ? 'yes' : 'no')
-
             if (!user) {
-              console.log('Creating new user')
+              // Create new user with hashed password
+              console.log('Creating new user with password')
+              const hashedPassword = await bcrypt.hash(credentials.password, 12)
+
               user = await prisma.user.create({
                 data: {
                   email: credentials.email,
+                  password: hashedPassword,
                   name: credentials.name || credentials.email.split('@')[0]
                 }
               })
               console.log('Created user:', user.id)
+            } else {
+              // Verify password for existing user
+              if (!user.password) {
+                // User exists but has no password, set one
+                console.log('Setting password for existing user')
+                const hashedPassword = await bcrypt.hash(credentials.password, 12)
+                user = await prisma.user.update({
+                  where: { id: user.id },
+                  data: { password: hashedPassword }
+                })
+              } else {
+                // Verify existing password
+                const isValidPassword = await bcrypt.compare(credentials.password, user.password)
+                if (!isValidPassword) {
+                  console.log('Invalid password')
+                  return null
+                }
+              }
             }
 
             return {
@@ -63,14 +85,8 @@ export const authOptions: NextAuthOptions = {
               name: user.name,
             }
           } catch (dbError) {
-            // If database is not set up, create a temporary user for JWT-only auth
-            console.log('Database error, using temporary auth:', dbError)
-
-            return {
-              id: `temp_${credentials.email}`,
-              email: credentials.email,
-              name: credentials.name || credentials.email.split('@')[0],
-            }
+            console.log('Database error:', dbError)
+            return null
           }
         } catch (error) {
           console.error('Authorization error:', error)

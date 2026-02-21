@@ -7,6 +7,7 @@ import Link from 'next/link'
 
 export default function SignIn() {
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -31,6 +32,7 @@ export default function SignIn() {
       if (useCredentials) {
         const result = await signIn('credentials', {
           email,
+          password,
           name: name || email.split('@')[0],
           redirect: false,
         })
@@ -68,7 +70,7 @@ export default function SignIn() {
             Sign in to Temple Tours
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            {useCredentials ? 'Enter your email and optional name to sign in' : 'Enter your email to get a magic link sent to your inbox'}
+            {useCredentials ? 'Enter your email and password to sign in or create an account' : 'Enter your email to get a magic link sent to your inbox'}
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -87,6 +89,23 @@ export default function SignIn() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Email address"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Password"
               />
             </div>
 

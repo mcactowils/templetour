@@ -19,28 +19,28 @@ export default function Header() {
             </Link>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              Tours
-            </Link>
-            <Link
-              href="/temples"
-              className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              Temples
-            </Link>
-            {session?.user && (
+          {session?.user && (
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link
+                href="/"
+                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Tours
+              </Link>
+              <Link
+                href="/temples"
+                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Temples
+              </Link>
               <Link
                 href="/admin"
                 className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 Admin
               </Link>
-            )}
-          </nav>
+            </nav>
+          )}
 
           <div className="flex items-center space-x-4">
             {status === 'loading' ? (
@@ -92,7 +92,7 @@ export default function Header() {
         </div>
 
         {/* Mobile menu */}
-        {isMenuOpen && (
+        {isMenuOpen && session?.user && (
           <div className="md:hidden border-t border-gray-200 py-2">
             <Link
               href="/"
@@ -108,15 +108,13 @@ export default function Header() {
             >
               Temples
             </Link>
-            {session?.user && (
-              <Link
-                href="/admin"
-                className="block px-3 py-2 text-gray-700 hover:bg-gray-50 text-sm font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Admin
-              </Link>
-            )}
+            <Link
+              href="/admin"
+              className="block px-3 py-2 text-gray-700 hover:bg-gray-50 text-sm font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Admin
+            </Link>
           </div>
         )}
       </div>

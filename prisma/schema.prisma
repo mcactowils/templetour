@@ -136,6 +136,7 @@ model User {
 
   name          String?
   email         String    @unique
+  password      String?
   emailVerified DateTime? @map("email_verified")
   image         String?
 

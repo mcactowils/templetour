@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import {
   DndContext,
   DragEndEvent,
@@ -212,6 +214,8 @@ function SortableTempleCard({ temple }: { temple: Temple }) {
 }
 
 export default function HomePage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [temples, setTemples] = useState<Temple[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -232,8 +236,13 @@ export default function HomePage() {
   )
 
   useEffect(() => {
+    if (status === 'loading') return
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+      return
+    }
     fetchUtahTemples()
-  }, [])
+  }, [status, router])
 
   const fetchUtahTemples = async () => {
     try {
@@ -272,17 +281,21 @@ export default function HomePage() {
 
   const activeTemple = temples.find((temple) => temple.id === activeId)
 
-  if (loading) {
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading Utah temples...</p>
+            <p className="mt-4 text-gray-600">{status === 'loading' ? 'Authenticating...' : 'Loading Utah temples...'}</p>
           </div>
         </div>
       </div>
     )
+  }
+
+  if (status === 'unauthenticated') {
+    return null // Will redirect
   }
 
   if (error) {
