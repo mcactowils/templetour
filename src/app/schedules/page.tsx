@@ -1,41 +1,78 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-interface Tour {
+interface Appointment {
   id: string
-  name: string
+  title: string
   description: string | null
+  scheduledDate: string
   createdAt: string
+  temple: {
+    id: string
+    name: string
+    slug: string
+    city: string
+    state: string | null
+    country: string
+  }
   createdBy: {
     id: string
     name: string
   }
+  attendees: Array<{
+    id: string
+    user: {
+      id: string
+      name: string
+    }
+  }>
+  comments: Array<{
+    id: string
+    content: string
+    createdAt: string
+    user: {
+      id: string
+      name: string
+    }
+  }>
   _count: {
-    members: number
-    trips: number
+    attendees: number
     comments: number
   }
-  nextTripDate: string | null
 }
 
-export default function ToursPage() {
-  const [tours, setTours] = useState<Tour[]>([])
+export default function AppointmentsPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [expandedAppointment, setExpandedAppointment] = useState<string | null>(null)
+  const [showAttendees, setShowAttendees] = useState<string | null>(null)
+  const [rsvpLoading, setRsvpLoading] = useState<string | null>(null)
+  const [commentLoading, setCommentLoading] = useState<string | null>(null)
+  const [appointmentComments, setAppointmentComments] = useState<{[key: string]: string}>({})
 
   useEffect(() => {
-    fetchTours()
-  }, [])
+    if (status === 'loading') return
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+      return
+    }
+    fetchAppointments()
+  }, [status, router])
 
-  const fetchTours = async () => {
+  const fetchAppointments = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/tours')
-      if (!response.ok) throw new Error('Failed to fetch tours')
+      const response = await fetch('/api/schedules')
+      if (!response.ok) throw new Error('Failed to fetch appointments')
       const data = await response.json()
-      setTours(data.tours)
+      setAppointments(data.schedules)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -51,13 +88,85 @@ export default function ToursPage() {
     })
   }
 
-  if (loading) {
+  const formatTime = (date: string) =>
+    new Date(date).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+
+  const formatCommentDate = (date: string) =>
+    new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+
+  const isUpcoming = (date: string) => new Date(date) >= new Date()
+
+  const handleRSVP = async (appointmentId: string) => {
+    if (!session?.user) return
+
+    try {
+      setRsvpLoading(appointmentId)
+
+      const appointment = appointments.find(a => a.id === appointmentId)
+      const isAttending = appointment?.attendees?.some(a => a.user.id === (session.user as any).id) || false
+
+      const response = await fetch(`/api/schedules/${appointmentId}/attendees`, {
+        method: isAttending ? 'DELETE' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: (session.user as any).id }),
+      })
+
+      if (!response.ok) throw new Error('Failed to update RSVP')
+
+      await fetchAppointments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update RSVP')
+    } finally {
+      setRsvpLoading(null)
+    }
+  }
+
+  const handleComment = async (appointmentId: string) => {
+    if (!session?.user || !appointmentComments[appointmentId]?.trim()) return
+
+    try {
+      setCommentLoading(appointmentId)
+
+      const response = await fetch(`/api/schedules/${appointmentId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: (session.user as any).id,
+          content: appointmentComments[appointmentId].trim(),
+        }),
+      })
+
+      if (!response.ok) throw new Error('Failed to post comment')
+
+      setAppointmentComments(prev => ({ ...prev, [appointmentId]: '' }))
+      await fetchAppointments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to post comment')
+    } finally {
+      setCommentLoading(null)
+    }
+  }
+
+  if (status === 'loading' || loading) {
     return (
       <div className="text-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading tours...</p>
+        <p className="mt-4 text-gray-600">{status === 'loading' ? 'Authenticating...' : 'Loading appointments...'}</p>
       </div>
     )
+  }
+
+  if (status === 'unauthenticated') {
+    return null // Will redirect
   }
 
   if (error) {
@@ -65,7 +174,7 @@ export default function ToursPage() {
       <div className="text-center py-12">
         <div className="text-red-600 text-xl">Error: {error}</div>
         <button
-          onClick={fetchTours}
+          onClick={fetchAppointments}
           className="mt-4 bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
         >
           Try Again
@@ -80,79 +189,212 @@ export default function ToursPage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Temple Appointments</h1>
           <p className="text-gray-600 mt-1 text-sm sm:text-base">
-            Create a tour, invite others, and schedule temple appointments together
+            Schedule temple appointments, invite others, and coordinate visits together
           </p>
         </div>
         <Link
           href="/schedules/new"
           className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium shrink-0"
         >
-          Create a Tour
+          Create Appointment
         </Link>
       </div>
 
-      {tours.length === 0 ? (
+      {appointments.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="text-5xl mb-4">🗺️</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No tours yet</h3>
+          <div className="text-5xl mb-4">📅</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No appointments yet</h3>
           <p className="text-gray-600 mb-6 text-sm">
-            Create your first temple tour to start planning appointments with friends and family.
+            Create your first temple appointment to start planning visits with friends and family.
           </p>
           <Link
             href="/schedules/new"
             className="inline-flex items-center bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
           >
-            Create Your First Tour
+            Create Your First Appointment
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {tours.map((tour) => (
-            <Link
-              key={tour.id}
-              href={`/schedules/${tour.id}`}
-              className="block bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-lg hover:border-blue-200 transition-all"
+        <div className="space-y-4">
+          {appointments.map((appointment) => (
+            <div
+              key={appointment.id}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-lg hover:border-blue-200 transition-all"
             >
               <div className="flex justify-between items-start mb-3">
-                <h2 className="text-lg font-bold text-gray-900">{tour.name}</h2>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 shrink-0 ml-2">
-                  {tour._count.trips} {tour._count.trips === 1 ? 'appointment' : 'appointments'}
-                </span>
+                <div className="flex-1">
+                  <h2 className="text-lg font-bold text-gray-900">{appointment.title}</h2>
+                  <div className="flex items-center mt-1 text-sm text-gray-600">
+                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    {appointment.temple.name}, {appointment.temple.city}, {appointment.temple.state || appointment.temple.country}
+                  </div>
+                  <div className="flex items-center mt-1 text-sm text-gray-600">
+                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {formatDate(appointment.scheduledDate)} at {formatTime(appointment.scheduledDate)}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${
+                    isUpcoming(appointment.scheduledDate)
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {isUpcoming(appointment.scheduledDate) ? 'Upcoming' : 'Past'}
+                  </span>
+                  <button
+                    onClick={() => setExpandedAppointment(
+                      expandedAppointment === appointment.id ? null : appointment.id
+                    )}
+                    className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <svg
+                      className={`w-5 h-5 transform transition-transform ${
+                        expandedAppointment === appointment.id ? 'rotate-180' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
-              {tour.description && (
-                <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                  {tour.description}
+              {appointment.description && (
+                <p className="text-gray-600 text-sm mb-3">
+                  {appointment.description}
                 </p>
               )}
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
                 <div className="flex items-center">
                   <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
-                  {tour._count.members} {tour._count.members === 1 ? 'member' : 'members'}
+                  {appointment._count.attendees} {appointment._count.attendees === 1 ? 'attendee' : 'attendees'}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setShowAttendees(showAttendees === appointment.id ? null : appointment.id)
+                    }}
+                    className="ml-1 text-blue-600 hover:text-blue-700 underline"
+                  >
+                    {showAttendees === appointment.id ? 'hide' : 'show'}
+                  </button>
                 </div>
                 <div className="flex items-center">
                   <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  {tour._count.comments}
+                  {appointment._count.comments} {appointment._count.comments === 1 ? 'comment' : 'comments'}
                 </div>
-                {tour.nextTripDate && (
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Next: {formatDate(tour.nextTripDate)}
-                  </div>
-                )}
               </div>
 
-              <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400">
-                Created by {tour.createdBy.name} on {formatDate(tour.createdAt)}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleRSVP(appointment.id)}
+                  disabled={rsvpLoading === appointment.id}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    appointment.attendees?.some(a => a.user.id === (session?.user as any)?.id)
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  } ${rsvpLoading === appointment.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {rsvpLoading === appointment.id ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                      Loading...
+                    </div>
+                  ) : appointment.attendees?.some(a => a.user.id === (session?.user as any)?.id) ? (
+                    'Cancel RSVP'
+                  ) : (
+                    'RSVP'
+                  )}
+                </button>
               </div>
-            </Link>
+
+              {showAttendees === appointment.id && appointment.attendees && appointment.attendees.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Attendees</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {appointment.attendees.map((attendee) => (
+                      <div key={attendee.id} className="flex items-center bg-gray-100 rounded-full px-3 py-1">
+                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2">
+                          {attendee.user.name?.charAt(0)?.toUpperCase() || '?'}
+                        </div>
+                        <span className="text-sm text-gray-700">{attendee.user.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {expandedAppointment === appointment.id && (
+                <div className="mt-4 pt-4 border-t border-gray-100 space-y-4">
+                  {appointment.comments && appointment.comments.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-900 mb-3">Comments</h4>
+                      <div className="space-y-3 max-h-60 overflow-y-auto">
+                        {appointment.comments.map((comment) => (
+                          <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
+                            <div className="flex justify-between items-start mb-1">
+                              <span className="text-sm font-medium text-gray-900">{comment.user.name}</span>
+                              <span className="text-xs text-gray-500">{formatCommentDate(comment.createdAt)}</span>
+                            </div>
+                            <p className="text-sm text-gray-700">{comment.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <label htmlFor={`comment-${appointment.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                      Add a comment
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        id={`comment-${appointment.id}`}
+                        type="text"
+                        value={appointmentComments[appointment.id] || ''}
+                        onChange={(e) => setAppointmentComments(prev => ({
+                          ...prev,
+                          [appointment.id]: e.target.value
+                        }))}
+                        placeholder="Share your thoughts..."
+                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault()
+                            handleComment(appointment.id)
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => handleComment(appointment.id)}
+                        disabled={commentLoading === appointment.id || !appointmentComments[appointment.id]?.trim()}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {commentLoading === appointment.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        ) : (
+                          'Post'
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400">
+                Created by {appointment.createdBy.name} on {formatDate(appointment.createdAt)}
+              </div>
+            </div>
           ))}
         </div>
       )}

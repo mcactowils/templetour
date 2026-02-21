@@ -5,6 +5,11 @@ import { getCurrentUser, requireAuth } from '../../../lib/session'
 // GET /api/schedules - List temple schedules
 export async function GET(request: NextRequest) {
   try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { searchParams } = new URL(request.url)
     const templeId = searchParams.get('templeId')
     const upcoming = searchParams.get('upcoming')
@@ -15,11 +20,6 @@ export async function GET(request: NextRequest) {
 
     if (templeId) {
       where.templeId = templeId
-    }
-
-    const tourId = searchParams.get('tourId')
-    if (tourId) {
-      where.tourId = tourId
     }
 
     if (upcoming === 'true') {
@@ -50,6 +50,21 @@ export async function GET(request: NextRequest) {
               id: true,
               name: true,
             },
+          },
+          attendees: {
+            include: {
+              user: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+          comments: {
+            include: {
+              user: {
+                select: { id: true, name: true },
+              },
+            },
+            orderBy: { createdAt: 'asc' },
           },
           _count: {
             select: {
@@ -97,7 +112,6 @@ export async function POST(request: NextRequest) {
       data: {
         templeId: data.templeId,
         createdById: user.id,
-        tourId: data.tourId || null,
         scheduledDate: new Date(data.scheduledDate),
         title: data.title,
         description: data.description || null,
@@ -118,6 +132,21 @@ export async function POST(request: NextRequest) {
             id: true,
             name: true,
           },
+        },
+        attendees: {
+          include: {
+            user: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: { id: true, name: true },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
         },
         _count: {
           select: {
