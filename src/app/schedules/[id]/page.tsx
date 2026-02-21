@@ -92,14 +92,14 @@ export default function TourDetailPage({
   // Trip interaction states
   const [expandedTrip, setExpandedTrip] = useState<string | null>(null)
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null)
-  const [commentLoading, setCommentLoading] = useState<string | null>(null)
+  const [tripCommentLoading, setTripCommentLoading] = useState<string | null>(null)
   const [tripComments, setTripComments] = useState<{[key: string]: string}>({})
 
   // Member invite state
   const [inviteUserId, setInviteUserId] = useState('')
   const [inviteLoading, setInviteLoading] = useState(false)
 
-  // Comment state
+  // Tour comment state
   const [commentUserId, setCommentUserId] = useState('')
   const [commentText, setCommentText] = useState('')
   const [commentLoading, setCommentLoading] = useState(false)
@@ -240,7 +240,7 @@ export default function TourDetailPage({
     if (!session?.user || !tripComments[tripId]?.trim()) return
 
     try {
-      setCommentLoading(tripId)
+      setTripCommentLoading(tripId)
 
       const response = await fetch(`/api/schedules/${tripId}/comments`, {
         method: 'POST',
@@ -258,7 +258,7 @@ export default function TourDetailPage({
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to post comment')
     } finally {
-      setCommentLoading(null)
+      setTripCommentLoading(null)
     }
   }
 
@@ -527,10 +527,10 @@ export default function TourDetailPage({
                           <div className="flex justify-end mt-2">
                             <button
                               onClick={() => handleTripComment(trip.id)}
-                              disabled={commentLoading === trip.id || !tripComments[trip.id]?.trim()}
+                              disabled={tripCommentLoading === trip.id || !tripComments[trip.id]?.trim()}
                               className="bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
                             >
-                              {commentLoading === trip.id ? 'Posting...' : 'Post Comment'}
+                              {tripCommentLoading === trip.id ? 'Posting...' : 'Post Comment'}
                             </button>
                           </div>
                         </div>
