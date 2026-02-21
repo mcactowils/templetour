@@ -434,7 +434,7 @@ export default function TourDetailPage({
             <div className="space-y-4">
               {tour.trips.map((trip) => {
                 const upcoming = isUpcoming(trip.scheduledDate)
-                const isAttending = trip.attendees.some(a => a.user.id === (session?.user as any)?.id)
+                const isAttending = trip.attendees?.some(a => a.user.id === (session?.user as any)?.id) || false
                 const isExpanded = expandedTrip === trip.id
                 return (
                   <div
@@ -536,7 +536,7 @@ export default function TourDetailPage({
                         </div>
 
                         {/* Comments list */}
-                        {trip.comments.length === 0 ? (
+                        {(!trip.comments || trip.comments.length === 0) ? (
                           <p className="text-gray-500 text-sm text-center py-4">No comments yet. Be the first to comment!</p>
                         ) : (
                           <div className="space-y-3">
