@@ -57,8 +57,8 @@ function TempleCard({ temple, isDragging = false }: { temple: Temple; isDragging
   return (
     <div
       className={`
-        bg-white rounded-xl shadow-lg border border-gray-200 p-6 transition-all duration-200
-        ${isDragging ? 'opacity-50 rotate-2 scale-95' : 'hover:shadow-xl hover:-translate-y-1'}
+        bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 transition-all duration-200
+        ${isDragging ? 'opacity-50 rotate-2 scale-95' : 'hover:shadow-lg hover:-translate-y-1'}
       `}
     >
       <div className="flex justify-between items-start mb-4">
@@ -293,7 +293,7 @@ export default function HomePage() {
             <div className="text-red-600 text-xl">Error: {error}</div>
             <button
               onClick={fetchUtahTemples}
-              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="mt-4 bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
             >
               Try Again
             </button>
@@ -307,19 +307,19 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
             Utah Temples
           </h1>
-          <p className="text-xl text-gray-600 mb-2">
+          <p className="text-lg sm:text-xl text-gray-600 mb-2">
             Drag and drop to reorder the {temples.length} temples
           </p>
           <p className="text-sm text-gray-500 mb-4">
             Click and drag any temple card to rearrange them in your preferred order
           </p>
-          <div className="flex justify-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
             <a
               href="/schedules"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -328,7 +328,7 @@ export default function HomePage() {
             </a>
             <a
               href="/admin"
-              className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />

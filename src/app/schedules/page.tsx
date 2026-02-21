@@ -88,7 +88,7 @@ export default function SchedulesPage() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <button
           onClick={fetchSchedules}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="mt-4 bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
         >
           Try Again
         </button>
@@ -98,28 +98,28 @@ export default function SchedulesPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Temple Trip Schedules</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Temple Trip Schedules</h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">
             Plan temple visits, see who&apos;s attending, and share your thoughts
           </p>
         </div>
         <Link
           href="/schedules/new"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium shrink-0"
         >
           Schedule a Trip
         </Link>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex space-x-1 bg-gray-100 rounded-lg p-1 mb-8 w-fit">
+      <div className="flex bg-gray-100 rounded-lg p-1 mb-8 w-full sm:w-fit">
         {(['upcoming', 'past', 'all'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === f
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -131,10 +131,10 @@ export default function SchedulesPage() {
       </div>
 
       {schedules.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
+        <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="text-5xl mb-4">📅</div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">No schedules found</h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-6 text-sm">
             {filter === 'upcoming'
               ? 'No upcoming temple trips scheduled yet.'
               : filter === 'past'
@@ -143,7 +143,7 @@ export default function SchedulesPage() {
           </p>
           <Link
             href="/schedules/new"
-            className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="inline-flex items-center bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
           >
             Schedule the First Trip
           </Link>
@@ -156,7 +156,7 @@ export default function SchedulesPage() {
               <Link
                 key={schedule.id}
                 href={`/schedules/${schedule.id}`}
-                className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-200 transition-all"
+                className="block bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-lg hover:border-blue-200 transition-all"
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">

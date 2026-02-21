@@ -25,6 +25,25 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Consistent form element sizing */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="tel"],
+input[type="search"],
+select {
+  height: 42px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+textarea {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 /* Custom form styles for better font weight */
 input, textarea, select {
   font-weight: 500 !important;

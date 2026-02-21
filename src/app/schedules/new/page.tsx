@@ -139,14 +139,14 @@ export default function NewSchedulePage() {
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Schedule a Temple Trip</h1>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Who are you */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Who are you?</h2>
 
           {users.length > 0 && !showNewUser ? (
@@ -154,7 +154,7 @@ export default function NewSchedulePage() {
               <select
                 value={selectedUserId}
                 onChange={(e) => setSelectedUserId(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               >
                 <option value="">Select your name...</option>
@@ -180,7 +180,7 @@ export default function NewSchedulePage() {
                   type="text"
                   value={newUserName}
                   onChange={(e) => setNewUserName(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Your name"
                 />
               </div>
@@ -190,16 +190,16 @@ export default function NewSchedulePage() {
                   type="email"
                   value={newUserEmail}
                   onChange={(e) => setNewUserEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="your@email.com"
                 />
               </div>
-              <div className="flex space-x-2">
+              <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={handleCreateUser}
                   disabled={creatingUser || !newUserName || !newUserEmail}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50"
+                  className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
                 >
                   {creatingUser ? 'Creating...' : 'Create Profile'}
                 </button>
@@ -207,7 +207,7 @@ export default function NewSchedulePage() {
                   <button
                     type="button"
                     onClick={() => setShowNewUser(false)}
-                    className="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg text-sm"
+                    className="text-gray-600 hover:text-gray-800 px-4 py-2.5 rounded-lg text-sm font-medium"
                   >
                     Cancel
                   </button>
@@ -218,7 +218,7 @@ export default function NewSchedulePage() {
         </div>
 
         {/* Trip details */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Trip Details</h2>
 
           <div className="space-y-4">
@@ -230,7 +230,7 @@ export default function NewSchedulePage() {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g., Family Temple Day"
                 required
               />
@@ -243,7 +243,7 @@ export default function NewSchedulePage() {
               <select
                 value={templeId}
                 onChange={(e) => setTempleId(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               >
                 <option value="">Select a temple...</option>
@@ -264,7 +264,7 @@ export default function NewSchedulePage() {
                 type="datetime-local"
                 value={scheduledDate}
                 onChange={(e) => setScheduledDate(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />
             </div>
@@ -277,25 +277,25 @@ export default function NewSchedulePage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Share details about the trip - meeting point, what to bring, etc."
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
           <button
             type="button"
             onClick={() => router.push('/schedules')}
-            className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+            className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
+            className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
           >
             {submitting ? 'Creating...' : 'Create Schedule'}
           </button>

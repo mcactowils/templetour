@@ -176,7 +176,7 @@ export default function EditTemplePage() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <Link
           href="/admin"
-          className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="mt-4 inline-block bg-blue-600 text-white px-6 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >
           Back to Dashboard
         </Link>
@@ -204,22 +204,22 @@ export default function EditTemplePage() {
 
       {/* Success Message */}
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-md p-4">
-          <div className="text-green-800">✅ Temple updated successfully!</div>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="text-green-800 text-sm font-medium">Temple updated successfully!</div>
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <div className="text-red-800">❌ {error}</div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="text-red-800 text-sm font-medium">{error}</div>
         </div>
       )}
 
       {/* Edit Form */}
       <form onSubmit={handleSubmit} className="admin-form space-y-8">
         {/* Basic Information */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -232,7 +232,7 @@ export default function EditTemplePage() {
                 name="name"
                 defaultValue={temple.name}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -246,7 +246,7 @@ export default function EditTemplePage() {
                 name="slug"
                 defaultValue={temple.slug}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -260,7 +260,7 @@ export default function EditTemplePage() {
                 name="city"
                 defaultValue={temple.city}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -273,7 +273,7 @@ export default function EditTemplePage() {
                 id="state"
                 name="state"
                 defaultValue={temple.state || ''}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -287,7 +287,7 @@ export default function EditTemplePage() {
                 name="country"
                 defaultValue={temple.country}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -300,7 +300,7 @@ export default function EditTemplePage() {
                 name="status"
                 defaultValue={temple.status}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value={TempleStatus.ANNOUNCED}>Announced</option>
                 <option value={TempleStatus.UNDER_CONSTRUCTION}>Under Construction</option>
@@ -320,7 +320,7 @@ export default function EditTemplePage() {
               name="address"
               rows={2}
               defaultValue={temple.address || ''}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
@@ -333,13 +333,13 @@ export default function EditTemplePage() {
               id="telephone"
               name="telephone"
               defaultValue={temple.telephone || ''}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>
 
         {/* Important Dates */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Important Dates</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
@@ -351,7 +351,7 @@ export default function EditTemplePage() {
                 id="announcementDate"
                 name="announcementDate"
                 defaultValue={formatDateForInput(temple.announcementDate)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -364,7 +364,7 @@ export default function EditTemplePage() {
                 id="groundbreakingDate"
                 name="groundbreakingDate"
                 defaultValue={formatDateForInput(temple.groundbreakingDate)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -377,14 +377,14 @@ export default function EditTemplePage() {
                 id="dedicationDate"
                 name="dedicationDate"
                 defaultValue={formatDateForInput(temple.dedicationDate)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
         </div>
 
         {/* Physical Details */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Physical Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -397,7 +397,7 @@ export default function EditTemplePage() {
                 name="siteSize"
                 defaultValue={temple.siteSize || ''}
                 placeholder="e.g., 15.6 acres"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -411,7 +411,7 @@ export default function EditTemplePage() {
                 name="totalFloorArea"
                 defaultValue={temple.totalFloorArea || ''}
                 placeholder="e.g., 87,000 sq ft"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -425,7 +425,7 @@ export default function EditTemplePage() {
                 name="exteriorFinish"
                 defaultValue={temple.exteriorFinish || ''}
                 placeholder="e.g., Natural stone"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -439,14 +439,14 @@ export default function EditTemplePage() {
                 name="elevation"
                 defaultValue={temple.elevation || ''}
                 placeholder="e.g., 192 feet (59 meters)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
         </div>
 
         {/* Temple Features */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Temple Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
@@ -459,7 +459,7 @@ export default function EditTemplePage() {
                 name="instructionRooms"
                 defaultValue={temple.instructionRooms || ''}
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -473,7 +473,7 @@ export default function EditTemplePage() {
                 name="sealingRooms"
                 defaultValue={temple.sealingRooms || ''}
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -487,7 +487,7 @@ export default function EditTemplePage() {
                 name="spires"
                 defaultValue={temple.spires || ''}
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
@@ -522,7 +522,7 @@ export default function EditTemplePage() {
         </div>
 
         {/* Location Coordinates */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Geographic Coordinates</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -536,7 +536,7 @@ export default function EditTemplePage() {
                 step="any"
                 defaultValue={temple.latitude || ''}
                 placeholder="e.g., 40.7589"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -551,33 +551,33 @@ export default function EditTemplePage() {
                 step="any"
                 defaultValue={temple.longitude || ''}
                 placeholder="e.g., -111.8883"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3">
           <button
             type="button"
             onClick={() => setShowDeleteConfirm(true)}
-            className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            className="px-6 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
           >
             Delete Temple
           </button>
 
-          <div className="flex space-x-4">
+          <div className="flex gap-3">
             <Link
               href="/admin"
-              className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex-1 sm:flex-none text-center px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
@@ -587,36 +587,32 @@ export default function EditTemplePage() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-              </div>
-              <div className="mt-2 px-7 py-3">
-                <h3 className="text-lg font-medium text-gray-900 text-center">Delete Temple</h3>
-                <p className="text-sm text-gray-500 mt-2 text-center">
-                  Are you sure you want to delete <strong>{temple?.name}</strong>? This action cannot be undone.
-                </p>
-              </div>
-              <div className="flex items-center px-4 py-3 space-x-4">
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  disabled={deleting}
-                  className="flex-1 px-4 py-2 bg-gray-300 text-gray-800 text-sm rounded-md hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {deleting ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+              <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Delete Temple</h3>
+            <p className="text-sm text-gray-600 text-center mb-6">
+              Are you sure you want to delete <strong>{temple?.name}</strong>? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleting}
+                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
             </div>
           </div>
         </div>

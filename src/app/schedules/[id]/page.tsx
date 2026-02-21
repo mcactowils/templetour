@@ -233,20 +233,20 @@ export default function ScheduleDetailPage({
   return (
     <div className="max-w-4xl mx-auto">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-          {error}
-          <button onClick={() => setError(null)} className="ml-2 font-bold">
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6 flex items-center justify-between">
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="ml-2 font-bold text-red-500 hover:text-red-700">
             x
           </button>
         </div>
       )}
 
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-8 mb-6">
-        <div className="flex justify-between items-start mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-6">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">{schedule.title}</h1>
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{schedule.title}</h1>
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                   isUpcoming
@@ -263,7 +263,7 @@ export default function ScheduleDetailPage({
           </div>
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="text-red-500 hover:text-red-700 text-sm px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
+            className="text-red-500 hover:text-red-700 text-sm font-medium px-3 py-2 rounded-lg hover:bg-red-50 transition-colors"
           >
             Delete
           </button>
@@ -323,7 +323,7 @@ export default function ScheduleDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Attendees section */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Attending ({schedule._count.attendees})
             </h2>
@@ -336,7 +336,7 @@ export default function ScheduleDetailPage({
               <select
                 value={selectedUserId}
                 onChange={(e) => setSelectedUserId(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
               >
                 <option value="">Select your name...</option>
                 {users.map((user) => (
@@ -349,7 +349,7 @@ export default function ScheduleDetailPage({
                 <button
                   onClick={handleRsvp}
                   disabled={rsvpLoading}
-                  className={`w-full py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                  className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
                     isAttending(selectedUserId)
                       ? 'bg-red-100 text-red-700 hover:bg-red-200'
                       : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -391,7 +391,7 @@ export default function ScheduleDetailPage({
 
         {/* Comments section */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Discussion ({schedule._count.comments})
             </h2>
@@ -402,7 +402,7 @@ export default function ScheduleDetailPage({
                 <select
                   value={commentUserId}
                   onChange={(e) => setCommentUserId(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Post as...</option>
                   {users.map((user) => (
@@ -417,7 +417,7 @@ export default function ScheduleDetailPage({
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   rows={3}
-                  className="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder={
                     isUpcoming
                       ? "Share plans, questions, or get excited about the trip..."
@@ -429,7 +429,7 @@ export default function ScheduleDetailPage({
                 <button
                   type="submit"
                   disabled={commentLoading || !commentUserId || !commentText.trim()}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+                  className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
                 >
                   {commentLoading ? 'Posting...' : 'Post Comment'}
                 </button>
@@ -478,24 +478,24 @@ export default function ScheduleDetailPage({
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md mx-4">
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Delete Schedule?
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 text-sm mb-6">
               This will permanently delete this temple trip schedule, including all
               attendee RSVPs and comments. This action cannot be undone.
             </p>
-            <div className="flex justify-end space-x-3">
+            <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2.5 text-gray-700 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
               >
                 Delete
               </button>
