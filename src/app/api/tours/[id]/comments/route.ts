@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../../lib/prisma'
+import { requireAuth } from '../../../../../lib/session'
 
 // POST /api/tours/[id]/comments - Add a comment to a tour
 export async function POST(
@@ -7,12 +8,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await requireAuth()
     const { id } = await params
     const data = await request.json()
 
-    if (!data.userId || !data.content) {
+    if (!data.content) {
       return NextResponse.json(
-        { error: 'User ID and content are required' },
+        { error: 'Content is required' },
         { status: 400 }
       )
     }
@@ -20,7 +22,7 @@ export async function POST(
     const comment = await prisma.tourComment.create({
       data: {
         tourId: id,
-        userId: data.userId,
+        userId: user.id,
         content: data.content,
       },
       include: {

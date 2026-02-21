@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
+import { getCurrentUser, requireAuth } from '../../../lib/session'
 
 // GET /api/tours - List all tours
 export async function GET(request: NextRequest) {
   try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
@@ -60,11 +65,12 @@ export async function GET(request: NextRequest) {
 // POST /api/tours - Create a new tour
 export async function POST(request: NextRequest) {
   try {
+    const user = await requireAuth()
     const data = await request.json()
 
-    if (!data.name || !data.createdById) {
+    if (!data.name) {
       return NextResponse.json(
-        { error: 'Tour name and creator are required' },
+        { error: 'Tour name is required' },
         { status: 400 }
       )
     }
@@ -73,11 +79,11 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         description: data.description || null,
-        createdById: data.createdById,
+        createdById: user.id,
         // Auto-add creator as ORGANIZER member
         members: {
           create: {
-            userId: data.createdById,
+            userId: user.id,
             role: 'ORGANIZER',
           },
         },

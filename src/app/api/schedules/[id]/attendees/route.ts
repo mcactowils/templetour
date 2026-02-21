@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../../lib/prisma'
+import { getCurrentUser, requireAuth } from '../../../../../lib/session'
 
 // GET /api/schedules/[id]/attendees - List attendees for a schedule
 export async function GET(
@@ -39,20 +40,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await requireAuth()
     const { id } = await params
-    const data = await request.json()
-
-    if (!data.userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      )
-    }
 
     const attendee = await prisma.scheduleAttendee.create({
       data: {
         scheduleId: id,
-        userId: data.userId,
+        userId: user.id,
       },
       include: {
         user: {
@@ -86,22 +80,14 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await requireAuth()
     const { id } = await params
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      )
-    }
 
     await prisma.scheduleAttendee.delete({
       where: {
         scheduleId_userId: {
           scheduleId: id,
-          userId,
+          userId: user.id,
         },
       },
     })

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
+import { getCurrentUser, requireAuth } from '../../../lib/session'
 
 // GET /api/schedules - List temple schedules
 export async function GET(request: NextRequest) {
@@ -82,11 +83,12 @@ export async function GET(request: NextRequest) {
 // POST /api/schedules - Create a new temple schedule
 export async function POST(request: NextRequest) {
   try {
+    const user = await requireAuth()
     const data = await request.json()
 
-    if (!data.templeId || !data.scheduledDate || !data.title || !data.createdById) {
+    if (!data.templeId || !data.scheduledDate || !data.title) {
       return NextResponse.json(
-        { error: 'Temple, scheduled date, title, and creator are required' },
+        { error: 'Temple, scheduled date, and title are required' },
         { status: 400 }
       )
     }
@@ -94,7 +96,7 @@ export async function POST(request: NextRequest) {
     const schedule = await prisma.templeSchedule.create({
       data: {
         templeId: data.templeId,
-        createdById: data.createdById,
+        createdById: user.id,
         tourId: data.tourId || null,
         scheduledDate: new Date(data.scheduledDate),
         title: data.title,

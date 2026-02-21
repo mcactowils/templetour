@@ -12,12 +12,6 @@ interface Temple {
   country: string
 }
 
-interface User {
-  id: string
-  name: string
-  email: string
-}
-
 export default function NewTripPage({
   params,
 }: {
@@ -26,7 +20,6 @@ export default function NewTripPage({
   const { id: tourId } = use(params)
   const router = useRouter()
   const [temples, setTemples] = useState<Temple[]>([])
-  const [users, setUsers] = useState<User[]>([])
   const [tourName, setTourName] = useState('')
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -37,27 +30,20 @@ export default function NewTripPage({
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [scheduledDate, setScheduledDate] = useState('')
-  const [selectedUserId, setSelectedUserId] = useState('')
 
   useEffect(() => {
-    Promise.all([fetchTemples(), fetchUsers(), fetchTour()]).finally(() =>
+    Promise.all([fetchTemples(), fetchTour()]).finally(() =>
       setLoading(false)
     )
   }, [])
 
   const fetchTemples = async () => {
-    const response = await fetch('/api/temples?limit=200')
+    const response = await fetch('/api/temples?limit=200&status=DEDICATED')
     if (!response.ok) throw new Error('Failed to fetch temples')
     const data = await response.json()
     setTemples(data.temples)
   }
 
-  const fetchUsers = async () => {
-    const response = await fetch('/api/users')
-    if (!response.ok) throw new Error('Failed to fetch users')
-    const data = await response.json()
-    setUsers(data)
-  }
 
   const fetchTour = async () => {
     const response = await fetch(`/api/tours/${tourId}`)
@@ -68,7 +54,7 @@ export default function NewTripPage({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!templeId || !title || !scheduledDate || !selectedUserId) {
+    if (!templeId || !title || !scheduledDate) {
       setError('Please fill in all required fields')
       return
     }
@@ -85,7 +71,6 @@ export default function NewTripPage({
           title,
           description: description || null,
           scheduledDate: new Date(scheduledDate).toISOString(),
-          createdById: selectedUserId,
           tourId,
         }),
       })
@@ -131,24 +116,6 @@ export default function NewTripPage({
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Who are you */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Who are you?</h2>
-          <select
-            value={selectedUserId}
-            onChange={(e) => setSelectedUserId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            required
-          >
-            <option value="">Select your name...</option>
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
         {/* Trip details */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Trip Details</h2>
