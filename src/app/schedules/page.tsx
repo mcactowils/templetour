@@ -361,20 +361,28 @@ export default function AppointmentsPage() {
                   )}
                 </button>
                 {appointment.createdBy.id === (session?.user as any)?.id && (
-                  <button
-                    onClick={() => handleDeleteAppointment(appointment.id)}
-                    disabled={deleteAppointmentLoading === appointment.id}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-red-600 border border-red-300 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {deleteAppointmentLoading === appointment.id ? (
-                      <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>
-                        Deleting...
-                      </div>
-                    ) : (
-                      'Delete'
-                    )}
-                  </button>
+                  <>
+                    <Link
+                      href={`/schedules/${appointment.id}/edit`}
+                      className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteAppointment(appointment.id)}
+                      disabled={deleteAppointmentLoading === appointment.id}
+                      className="px-4 py-2 rounded-lg text-sm font-medium text-red-600 border border-red-300 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {deleteAppointmentLoading === appointment.id ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>
+                          Deleting...
+                        </div>
+                      ) : (
+                        'Delete'
+                      )}
+                    </button>
+                  </>
                 )}
               </div>
 

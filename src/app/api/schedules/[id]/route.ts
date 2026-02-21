@@ -84,8 +84,26 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { id } = await params
     const data = await request.json()
+
+    const existingSchedule = await prisma.templeSchedule.findUnique({
+      where: { id },
+      include: { createdBy: true }
+    })
+
+    if (!existingSchedule) {
+      return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+    }
+
+    if (existingSchedule.createdById !== user.id) {
+      return NextResponse.json({ error: 'You can only edit appointments you created' }, { status: 403 })
+    }
 
     const schedule = await prisma.templeSchedule.update({
       where: { id },
@@ -111,6 +129,21 @@ export async function PUT(
             id: true,
             name: true,
           },
+        },
+        attendees: {
+          include: {
+            user: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: { id: true, name: true },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
         },
         _count: {
           select: {
