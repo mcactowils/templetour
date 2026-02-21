@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
+import { getCurrentUser } from '../../../../lib/session'
 
 // GET /api/schedules/[id] - Get a specific schedule with attendees and comments
 export async function GET(
@@ -136,17 +137,35 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { id } = await params
 
-    await prisma.templeSchedule.delete({
+    const appointment = await prisma.templeSchedule.findUnique({
       where: { id },
+      include: { createdBy: true }
     })
 
-    return NextResponse.json({ message: 'Schedule deleted successfully' })
+    if (!appointment) {
+      return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+    }
+
+    if (appointment.createdById !== user.id) {
+      return NextResponse.json({ error: 'You can only delete appointments you created' }, { status: 403 })
+    }
+
+    await prisma.templeSchedule.delete({
+      where: { id }
+    })
+
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting schedule:', error)
+    console.error('Error deleting appointment:', error)
     return NextResponse.json(
-      { error: 'Failed to delete schedule' },
+      { error: 'Failed to delete appointment' },
       { status: 500 }
     )
   }

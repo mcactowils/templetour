@@ -57,6 +57,7 @@ export default function AppointmentsPage() {
   const [commentLoading, setCommentLoading] = useState<string | null>(null)
   const [appointmentComments, setAppointmentComments] = useState<{[key: string]: string}>({})
   const [deleteCommentLoading, setDeleteCommentLoading] = useState<string | null>(null)
+  const [deleteAppointmentLoading, setDeleteAppointmentLoading] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -191,6 +192,31 @@ export default function AppointmentsPage() {
       setError(err instanceof Error ? err.message : 'Failed to delete comment')
     } finally {
       setDeleteCommentLoading(null)
+    }
+  }
+
+  const handleDeleteAppointment = async (appointmentId: string) => {
+    if (!session?.user) return
+
+    if (!confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      setDeleteAppointmentLoading(appointmentId)
+
+      const response = await fetch(`/api/schedules/${appointmentId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (!response.ok) throw new Error('Failed to delete appointment')
+
+      await fetchAppointments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete appointment')
+    } finally {
+      setDeleteAppointmentLoading(null)
     }
   }
 
@@ -334,6 +360,22 @@ export default function AppointmentsPage() {
                     'RSVP'
                   )}
                 </button>
+                {appointment.createdBy.id === (session?.user as any)?.id && (
+                  <button
+                    onClick={() => handleDeleteAppointment(appointment.id)}
+                    disabled={deleteAppointmentLoading === appointment.id}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-red-600 border border-red-300 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {deleteAppointmentLoading === appointment.id ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>
+                        Deleting...
+                      </div>
+                    ) : (
+                      'Delete'
+                    )}
+                  </button>
+                )}
               </div>
 
               {showAttendees === appointment.id && appointment.attendees && appointment.attendees.length > 0 && (
