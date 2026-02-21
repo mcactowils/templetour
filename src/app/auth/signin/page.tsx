@@ -7,8 +7,10 @@ import Link from 'next/link'
 
 export default function SignIn() {
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [useCredentials, setUseCredentials] = useState(!process.env.NEXT_PUBLIC_EMAIL_PROVIDER)
   const router = useRouter()
 
   useEffect(() => {
@@ -26,15 +28,29 @@ export default function SignIn() {
     setMessage('')
 
     try {
-      const result = await signIn('email', {
-        email,
-        redirect: false,
-      })
+      if (useCredentials) {
+        const result = await signIn('credentials', {
+          email,
+          name: name || email.split('@')[0],
+          redirect: false,
+        })
 
-      if (result?.ok) {
-        setMessage('Check your email for a magic link to sign in!')
+        if (result?.ok) {
+          router.push('/')
+        } else {
+          setMessage('Something went wrong. Please try again.')
+        }
       } else {
-        setMessage('Something went wrong. Please try again.')
+        const result = await signIn('email', {
+          email,
+          redirect: false,
+        })
+
+        if (result?.ok) {
+          setMessage('Check your email for a magic link to sign in!')
+        } else {
+          setMessage('Something went wrong. Please try again.')
+        }
       }
     } catch (error) {
       setMessage('Something went wrong. Please try again.')
@@ -52,25 +68,44 @@ export default function SignIn() {
             Sign in to Temple Tours
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your email to get a magic link sent to your inbox
+            {useCredentials ? 'Enter your email and optional name to sign in' : 'Enter your email to get a magic link sent to your inbox'}
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email" className="sr-only">
-              Email address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Email address"
-            />
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="email" className="sr-only">
+                Email address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Email address"
+              />
+            </div>
+
+            {useCredentials && (
+              <div>
+                <label htmlFor="name" className="sr-only">
+                  Name (optional)
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Name (optional)"
+                />
+              </div>
+            )}
           </div>
 
           <div>
@@ -79,7 +114,7 @@ export default function SignIn() {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Sending...' : 'Send magic link'}
+              {isLoading ? 'Signing in...' : useCredentials ? 'Sign In' : 'Send magic link'}
             </button>
           </div>
 

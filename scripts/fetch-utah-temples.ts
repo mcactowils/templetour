@@ -67,7 +67,7 @@ async function fetchUtahTemples(): Promise<UtahTemple[]> {
       '.list-item:contains("Utah")'
     ]
 
-    let templeElements: cheerio.Cheerio<cheerio.Element> = $()
+    let templeElements: cheerio.Cheerio<any> = $()
 
     for (const selector of possibleSelectors) {
       templeElements = $(selector)
