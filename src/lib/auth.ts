@@ -33,10 +33,10 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         try {
-          console.log('Authorize attempt:', { email: credentials?.email })
+          console.log('Authorize attempt:', { email: credentials?.email, hasPassword: !!credentials?.password })
 
           if (!credentials?.email || !credentials?.password) {
-            console.log('Email and password required')
+            console.log('Missing credentials:', { email: !!credentials?.email, password: !!credentials?.password })
             return null
           }
 

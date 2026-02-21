@@ -11,7 +11,7 @@ export default function SignIn() {
   const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const [useCredentials, setUseCredentials] = useState(!process.env.NEXT_PUBLIC_EMAIL_PROVIDER)
+  const [useCredentials, setUseCredentials] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
