@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 interface User {
   id: string
@@ -37,6 +38,16 @@ interface Trip {
     country: string
   }
   createdBy: User
+  attendees: Array<{
+    id: string
+    user: User
+  }>
+  comments: Array<{
+    id: string
+    content: string
+    createdAt: string
+    user: User
+  }>
   _count: {
     attendees: number
     comments: number
@@ -72,10 +83,17 @@ export default function TourDetailPage({
 }) {
   const { id } = use(params)
   const router = useRouter()
+  const { data: session } = useSession()
   const [tour, setTour] = useState<Tour | null>(null)
   const [users, setUsers] = useState<AllUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Trip interaction states
+  const [expandedTrip, setExpandedTrip] = useState<string | null>(null)
+  const [rsvpLoading, setRsvpLoading] = useState<string | null>(null)
+  const [commentLoading, setCommentLoading] = useState<string | null>(null)
+  const [tripComments, setTripComments] = useState<{[key: string]: string}>({})
 
   // Member invite state
   const [inviteUserId, setInviteUserId] = useState('')
@@ -189,6 +207,58 @@ export default function TourDetailPage({
       router.push('/schedules')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete tour')
+    }
+  }
+
+  const handleRSVP = async (tripId: string) => {
+    if (!session?.user) return
+
+    try {
+      setRsvpLoading(tripId)
+
+      // Check if already attending
+      const trip = tour?.trips.find(t => t.id === tripId)
+      const isAttending = trip?.attendees.some(a => a.user.id === (session.user as any).id)
+
+      const response = await fetch(`/api/schedules/${tripId}/attendees`, {
+        method: isAttending ? 'DELETE' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: (session.user as any).id }),
+      })
+
+      if (!response.ok) throw new Error('Failed to update RSVP')
+
+      await fetchTour()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update RSVP')
+    } finally {
+      setRsvpLoading(null)
+    }
+  }
+
+  const handleTripComment = async (tripId: string) => {
+    if (!session?.user || !tripComments[tripId]?.trim()) return
+
+    try {
+      setCommentLoading(tripId)
+
+      const response = await fetch(`/api/schedules/${tripId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: (session.user as any).id,
+          content: tripComments[tripId].trim(),
+        }),
+      })
+
+      if (!response.ok) throw new Error('Failed to post comment')
+
+      setTripComments(prev => ({ ...prev, [tripId]: '' }))
+      await fetchTour()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to post comment')
+    } finally {
+      setCommentLoading(null)
     }
   }
 
@@ -361,52 +431,136 @@ export default function TourDetailPage({
               </Link>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {tour.trips.map((trip) => {
                 const upcoming = isUpcoming(trip.scheduledDate)
+                const isAttending = trip.attendees.some(a => a.user.id === (session?.user as any)?.id)
+                const isExpanded = expandedTrip === trip.id
                 return (
-                  <Link
+                  <div
                     key={trip.id}
-                    href={`/schedules/${id}/trips/${trip.id}`}
-                    className="block bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 hover:shadow-lg hover:border-blue-200 transition-all"
+                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
                   >
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-1">
-                          <h3 className="text-base font-bold text-gray-900">{trip.title}</h3>
-                          <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                              upcoming
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-gray-100 text-gray-600'
-                            }`}
-                          >
-                            {upcoming ? 'Upcoming' : 'Past'}
-                          </span>
-                        </div>
-                        <div className="flex items-center text-gray-600 text-sm mb-1">
-                          <svg className="w-4 h-4 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                          </svg>
-                          <span className="font-medium">{trip.temple.name}</span>
-                          <span className="text-gray-400 ml-1.5">
-                            {trip.temple.city}
-                            {trip.temple.state ? `, ${trip.temple.state}` : ''}
-                          </span>
-                        </div>
-                        <div className="flex items-center text-gray-500 text-sm">
-                          <svg className="w-4 h-4 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          {formatDate(trip.scheduledDate)} at {formatTime(trip.scheduledDate)}
+                    <div className="p-4 sm:p-5">
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <h3 className="text-base font-bold text-gray-900">{trip.title}</h3>
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                upcoming
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-gray-100 text-gray-600'
+                              }`}
+                            >
+                              {upcoming ? 'Upcoming' : 'Past'}
+                            </span>
+                          </div>
+                          <div className="flex items-center text-gray-600 text-sm mb-1">
+                            <svg className="w-4 h-4 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            <span className="font-medium">{trip.temple.name}</span>
+                            <span className="text-gray-400 ml-1.5">
+                              {trip.temple.city}
+                              {trip.temple.state ? `, ${trip.temple.state}` : ''}
+                            </span>
+                          </div>
+                          <div className="flex items-center text-gray-500 text-sm">
+                            <svg className="w-4 h-4 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {formatDate(trip.scheduledDate)} at {formatTime(trip.scheduledDate)}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500 shrink-0">
-                        <span>{trip._count.attendees} attending</span>
-                        <span>{trip._count.comments} comments</span>
+
+                      {/* Actions row */}
+                      <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <button
+                          onClick={() => handleRSVP(trip.id)}
+                          disabled={rsvpLoading === trip.id}
+                          className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                            isAttending
+                              ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                          } disabled:opacity-50`}
+                        >
+                          {rsvpLoading === trip.id ? '...' : isAttending ? '✓ Attending' : 'RSVP'}
+                        </button>
+
+                        <button
+                          onClick={() => setExpandedTrip(isExpanded ? null : trip.id)}
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                        >
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                          {trip._count.comments} {trip._count.comments === 1 ? 'comment' : 'comments'}
+                        </button>
+
+                        <span className="text-gray-500 text-sm">
+                          {trip._count.attendees} attending
+                        </span>
+
+                        <Link
+                          href={`/schedules/${id}/trips/${trip.id}`}
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-auto"
+                        >
+                          View Details →
+                        </Link>
                       </div>
                     </div>
-                  </Link>
+
+                    {/* Expanded comments section */}
+                    {isExpanded && (
+                      <div className="border-t border-gray-200 p-4 sm:p-5 bg-gray-50">
+                        {/* Add comment form */}
+                        <div className="mb-4">
+                          <textarea
+                            value={tripComments[trip.id] || ''}
+                            onChange={(e) => setTripComments(prev => ({ ...prev, [trip.id]: e.target.value }))}
+                            placeholder="Add a comment about this trip..."
+                            rows={2}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          />
+                          <div className="flex justify-end mt-2">
+                            <button
+                              onClick={() => handleTripComment(trip.id)}
+                              disabled={commentLoading === trip.id || !tripComments[trip.id]?.trim()}
+                              className="bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+                            >
+                              {commentLoading === trip.id ? 'Posting...' : 'Post Comment'}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Comments list */}
+                        {trip.comments.length === 0 ? (
+                          <p className="text-gray-500 text-sm text-center py-4">No comments yet. Be the first to comment!</p>
+                        ) : (
+                          <div className="space-y-3">
+                            {trip.comments.map((comment) => (
+                              <div key={comment.id} className="flex space-x-3">
+                                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-medium">
+                                  {comment.user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-sm font-medium text-gray-900">{comment.user.name}</span>
+                                    <span className="text-xs text-gray-500">
+                                      {formatCommentDate(comment.createdAt)}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-gray-700 mt-1 whitespace-pre-wrap">{comment.content}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )
               })}
             </div>
