@@ -56,6 +56,7 @@ export default function AppointmentsPage() {
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null)
   const [commentLoading, setCommentLoading] = useState<string | null>(null)
   const [appointmentComments, setAppointmentComments] = useState<{[key: string]: string}>({})
+  const [deleteCommentLoading, setDeleteCommentLoading] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -156,6 +157,27 @@ export default function AppointmentsPage() {
     }
   }
 
+  const handleDeleteComment = async (appointmentId: string, commentId: string) => {
+    if (!session?.user) return
+
+    try {
+      setDeleteCommentLoading(commentId)
+
+      const response = await fetch(`/api/schedules/${appointmentId}/comments/${commentId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (!response.ok) throw new Error('Failed to delete comment')
+
+      await fetchAppointments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete comment')
+    } finally {
+      setDeleteCommentLoading(null)
+    }
+  }
+
   if (status === 'loading' || loading) {
     return (
       <div className="text-center py-12">
@@ -245,23 +267,6 @@ export default function AppointmentsPage() {
                   }`}>
                     {isUpcoming(appointment.scheduledDate) ? 'Upcoming' : 'Past'}
                   </span>
-                  <button
-                    onClick={() => setExpandedAppointment(
-                      expandedAppointment === appointment.id ? null : appointment.id
-                    )}
-                    className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    <svg
-                      className={`w-5 h-5 transform transition-transform ${
-                        expandedAppointment === appointment.id ? 'rotate-180' : ''
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
                 </div>
               </div>
 
@@ -272,27 +277,24 @@ export default function AppointmentsPage() {
               )}
 
               <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
-                <div className="flex items-center">
+                <button
+                  onClick={() => setShowAttendees(showAttendees === appointment.id ? null : appointment.id)}
+                  className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+                >
                   <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                   {appointment._count.attendees} {appointment._count.attendees === 1 ? 'attendee' : 'attendees'}
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setShowAttendees(showAttendees === appointment.id ? null : appointment.id)
-                    }}
-                    className="ml-1 text-blue-600 hover:text-blue-700 underline"
-                  >
-                    {showAttendees === appointment.id ? 'hide' : 'show'}
-                  </button>
-                </div>
-                <div className="flex items-center">
+                </button>
+                <button
+                  onClick={() => setExpandedAppointment(expandedAppointment === appointment.id ? null : appointment.id)}
+                  className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+                >
                   <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
                   {appointment._count.comments} {appointment._count.comments === 1 ? 'comment' : 'comments'}
-                </div>
+                </button>
               </div>
 
               <div className="flex gap-2">
@@ -320,14 +322,10 @@ export default function AppointmentsPage() {
 
               {showAttendees === appointment.id && appointment.attendees && appointment.attendees.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-gray-100">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Attendees</h4>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="space-y-2">
                     {appointment.attendees.map((attendee) => (
-                      <div key={attendee.id} className="flex items-center bg-gray-100 rounded-full px-3 py-1">
-                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2">
-                          {attendee.user.name?.charAt(0)?.toUpperCase() || '?'}
-                        </div>
-                        <span className="text-sm text-gray-700">{attendee.user.name}</span>
+                      <div key={attendee.id} className="text-sm text-gray-700">
+                        {attendee.user.name}
                       </div>
                     ))}
                   </div>
@@ -337,36 +335,40 @@ export default function AppointmentsPage() {
               {expandedAppointment === appointment.id && (
                 <div className="mt-4 pt-4 border-t border-gray-100 space-y-4">
                   {appointment.comments && appointment.comments.length > 0 && (
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-900 mb-3">Comments</h4>
-                      <div className="space-y-3 max-h-60 overflow-y-auto">
-                        {appointment.comments.map((comment) => (
-                          <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
-                            <div className="flex justify-between items-start mb-1">
-                              <span className="text-sm font-medium text-gray-900">{comment.user.name}</span>
+                    <div className="space-y-2">
+                      {appointment.comments.map((comment) => (
+                        <div key={comment.id} className="text-sm">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-gray-900">{comment.user.name}</span>
                               <span className="text-xs text-gray-500">{formatCommentDate(comment.createdAt)}</span>
                             </div>
-                            <p className="text-sm text-gray-700">{comment.content}</p>
+                            {comment.user.id === (session?.user as any)?.id && (
+                              <button
+                                onClick={() => handleDeleteComment(appointment.id, comment.id)}
+                                disabled={deleteCommentLoading === comment.id}
+                                className="text-red-600 hover:text-red-800 text-xs disabled:opacity-50"
+                              >
+                                {deleteCommentLoading === comment.id ? 'Deleting...' : 'Delete'}
+                              </button>
+                            )}
                           </div>
-                        ))}
-                      </div>
+                          <p className="text-gray-700 mt-1">{comment.content}</p>
+                        </div>
+                      ))}
                     </div>
                   )}
 
                   <div>
-                    <label htmlFor={`comment-${appointment.id}`} className="block text-sm font-medium text-gray-700 mb-2">
-                      Add a comment
-                    </label>
                     <div className="flex gap-2">
                       <input
-                        id={`comment-${appointment.id}`}
                         type="text"
                         value={appointmentComments[appointment.id] || ''}
                         onChange={(e) => setAppointmentComments(prev => ({
                           ...prev,
                           [appointment.id]: e.target.value
                         }))}
-                        placeholder="Share your thoughts..."
+                        placeholder="Add a comment..."
                         className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && !e.shiftKey) {
