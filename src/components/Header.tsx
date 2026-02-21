@@ -62,6 +62,13 @@ export default function Header() {
                     <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-100">
                       {session.user.email}
                     </div>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Profile Settings
+                    </Link>
                     <button
                       onClick={() => signOut()}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"

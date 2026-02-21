@@ -29,7 +29,8 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
-        name: { label: 'Name', type: 'text' }
+        name: { label: 'Name', type: 'text' },
+        isSignUp: { label: 'Is Sign Up', type: 'text' }
       },
       async authorize(credentials) {
         try {
@@ -41,13 +42,20 @@ export const authOptions: NextAuthOptions = {
           }
 
           try {
+            const isSignUpMode = credentials.isSignUp === 'true'
+
             // Check if user exists
             let user = await prisma.user.findUnique({
               where: { email: credentials.email }
             })
 
             if (!user) {
-              // Create new user with hashed password
+              if (!isSignUpMode) {
+                console.log('User not found for signin')
+                return null
+              }
+
+              // Create new user with hashed password (signup mode)
               console.log('Creating new user with password')
               const hashedPassword = await bcrypt.hash(credentials.password, 12)
 
@@ -60,15 +68,15 @@ export const authOptions: NextAuthOptions = {
               })
               console.log('Created user:', user.id)
             } else {
-              // Verify password for existing user
+              if (isSignUpMode) {
+                console.log('User already exists for signup')
+                return null
+              }
+
+              // Verify password for existing user (signin mode)
               if (!user.password) {
-                // User exists but has no password, set one
-                console.log('Setting password for existing user')
-                const hashedPassword = await bcrypt.hash(credentials.password, 12)
-                user = await prisma.user.update({
-                  where: { id: user.id },
-                  data: { password: hashedPassword }
-                })
+                console.log('User has no password set')
+                return null
               } else {
                 // Verify existing password
                 const isValidPassword = await bcrypt.compare(credentials.password, user.password)

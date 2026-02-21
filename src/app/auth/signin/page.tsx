@@ -12,6 +12,7 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [useCredentials, setUseCredentials] = useState(true)
+  const [isSignUp, setIsSignUp] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -34,11 +35,14 @@ export default function SignIn() {
           email,
           password,
           name: name || email.split('@')[0],
+          isSignUp: isSignUp.toString(),
           redirect: false,
         })
 
         if (result?.ok) {
           router.push('/')
+        } else if (result?.error === 'CredentialsSignin') {
+          setMessage('Invalid email or password. Please try again.')
         } else {
           setMessage('Something went wrong. Please try again.')
         }
@@ -67,10 +71,10 @@ export default function SignIn() {
         <div>
           <div className="text-center text-4xl mb-4">🏛️</div>
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Sign in to Temple Tours
+            {isSignUp ? 'Create Account' : 'Sign in to Temple Tours'}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            {useCredentials ? 'Enter your email and password to sign in or create an account' : 'Enter your email to get a magic link sent to your inbox'}
+            {isSignUp ? 'Enter your details to create a new account' : 'Enter your email and password to sign in'}
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -109,7 +113,7 @@ export default function SignIn() {
               />
             </div>
 
-            {useCredentials && (
+            {isSignUp && (
               <div>
                 <label htmlFor="name" className="sr-only">
                   Name (optional)
@@ -133,7 +137,7 @@ export default function SignIn() {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Signing in...' : useCredentials ? 'Sign In' : 'Send magic link'}
+              {isLoading ? (isSignUp ? 'Creating account...' : 'Signing in...') : (isSignUp ? 'Create Account' : 'Sign In')}
             </button>
           </div>
 
@@ -144,10 +148,21 @@ export default function SignIn() {
           )}
         </form>
 
-        <div className="text-center">
-          <Link href="/" className="text-blue-600 hover:text-blue-800 text-sm">
-            ← Back to Tours
-          </Link>
+        <div className="text-center space-y-4">
+          <div>
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'}
+            </button>
+          </div>
+          <div>
+            <Link href="/" className="text-blue-600 hover:text-blue-800 text-sm">
+              ← Back to Tours
+            </Link>
+          </div>
         </div>
       </div>
     </div>
