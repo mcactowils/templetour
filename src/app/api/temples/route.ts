@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         orderBy: { name: 'asc' },
         include: {
           _count: {
-            select: { tours: true }
+            select: { schedules: true }
           }
         }
       }),

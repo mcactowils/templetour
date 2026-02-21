@@ -96,7 +96,7 @@ export default function AdminDashboard() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <button
           onClick={fetchTemples}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="mt-4 bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
         >
           Try Again
         </button>
@@ -113,27 +113,27 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
           <div className="text-sm text-gray-600">Total Temples</div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <div className="text-2xl font-bold text-green-600">{stats.dedicated}</div>
           <div className="text-sm text-gray-600">Dedicated</div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <div className="text-2xl font-bold text-blue-600">{stats.underConstruction}</div>
           <div className="text-sm text-gray-600">Under Construction</div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <div className="text-2xl font-bold text-yellow-600">{stats.announced}</div>
           <div className="text-sm text-gray-600">Announced</div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
@@ -145,10 +145,10 @@ export default function AdminDashboard() {
               placeholder="Search by name, city, or state..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <div>
+          <div className="sm:w-48">
             <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
               Filter by Status
             </label>
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
               id="status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as TempleStatus | 'ALL')}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="ALL">All Statuses</option>
               <option value={TempleStatus.DEDICATED}>Dedicated</option>
@@ -170,7 +170,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Temples Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
             Temples ({filteredTemples.length})
