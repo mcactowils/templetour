@@ -26,7 +26,9 @@ export default function NewAppointmentPage() {
   const [templeId, setTempleId] = useState('')
   const [schedulingType, setSchedulingType] = useState<'specific' | 'month'>('specific')
   const [scheduledDate, setScheduledDate] = useState('')
-  const [scheduledTime, setScheduledTime] = useState('')
+  const [scheduledHour, setScheduledHour] = useState('')
+  const [scheduledMinute, setScheduledMinute] = useState('')
+  const [scheduledAmPm, setScheduledAmPm] = useState('AM')
   const [scheduledMonth, setScheduledMonth] = useState('')
   const [scheduledYear, setScheduledYear] = useState(new Date().getFullYear().toString())
 
@@ -60,7 +62,7 @@ export default function NewAppointmentPage() {
       return
     }
 
-    if (schedulingType === 'specific' && (!scheduledDate || !scheduledTime)) {
+    if (schedulingType === 'specific' && (!scheduledDate || !scheduledHour || !scheduledMinute)) {
       setError('Please fill in the date and time for specific scheduling')
       return
     }
@@ -84,7 +86,17 @@ export default function NewAppointmentPage() {
       let title: string
 
       if (schedulingType === 'specific') {
-        scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`)
+        // Convert 12-hour format to 24-hour format
+        let hour24 = parseInt(scheduledHour)
+        if (scheduledAmPm === 'PM' && hour24 !== 12) {
+          hour24 += 12
+        } else if (scheduledAmPm === 'AM' && hour24 === 12) {
+          hour24 = 0
+        }
+
+        // Create time string in HH:MM format
+        const timeString = `${hour24.toString().padStart(2, '0')}:${scheduledMinute.padStart(2, '0')}`
+        scheduledDateTime = new Date(`${scheduledDate}T${timeString}`)
         title = selectedTemple.name
       } else {
         // For month scheduling, set to first day of the month at noon
@@ -221,13 +233,47 @@ export default function NewAppointmentPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Time <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="time"
-                    value={scheduledTime}
-                    onChange={(e) => setScheduledTime(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required={schedulingType === 'specific'}
-                  />
+                  <div className="grid grid-cols-3 gap-2">
+                    <select
+                      value={scheduledHour}
+                      onChange={(e) => setScheduledHour(e.target.value)}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required={schedulingType === 'specific'}
+                    >
+                      <option value="">Hour</option>
+                      {Array.from({ length: 12 }, (_, i) => {
+                        const hour = i + 1
+                        return (
+                          <option key={hour} value={hour.toString()}>
+                            {hour}
+                          </option>
+                        )
+                      })}
+                    </select>
+
+                    <select
+                      value={scheduledMinute}
+                      onChange={(e) => setScheduledMinute(e.target.value)}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required={schedulingType === 'specific'}
+                    >
+                      <option value="">Min</option>
+                      <option value="00">00</option>
+                      <option value="15">15</option>
+                      <option value="30">30</option>
+                      <option value="45">45</option>
+                    </select>
+
+                    <select
+                      value={scheduledAmPm}
+                      onChange={(e) => setScheduledAmPm(e.target.value)}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required={schedulingType === 'specific'}
+                    >
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             ) : (
