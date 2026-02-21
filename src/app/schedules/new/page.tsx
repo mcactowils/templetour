@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 interface User {
   id: string
@@ -11,7 +12,7 @@ interface User {
 
 export default function NewTourPage() {
   const router = useRouter()
-  const [users, setUsers] = useState<User[]>([])
+  const { data: session, status } = useSession()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -19,58 +20,19 @@ export default function NewTourPage() {
   // Form state
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [selectedUserId, setSelectedUserId] = useState('')
-
-  // New user form
-  const [showNewUser, setShowNewUser] = useState(false)
-  const [newUserName, setNewUserName] = useState('')
-  const [newUserEmail, setNewUserEmail] = useState('')
-  const [creatingUser, setCreatingUser] = useState(false)
 
   useEffect(() => {
-    fetchUsers().finally(() => setLoading(false))
-  }, [])
-
-  const fetchUsers = async () => {
-    const response = await fetch('/api/users')
-    if (!response.ok) throw new Error('Failed to fetch users')
-    const data = await response.json()
-    setUsers(data)
-  }
-
-  const handleCreateUser = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newUserName || !newUserEmail) return
-
-    try {
-      setCreatingUser(true)
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newUserName, email: newUserEmail }),
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to create user')
-      }
-
-      const user = await response.json()
-      setUsers((prev) => [...prev, user].sort((a, b) => a.name.localeCompare(b.name)))
-      setSelectedUserId(user.id)
-      setShowNewUser(false)
-      setNewUserName('')
-      setNewUserEmail('')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create user')
-    } finally {
-      setCreatingUser(false)
+    if (status === 'loading') return
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+      return
     }
-  }
+    setLoading(false)
+  }, [status, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name || !selectedUserId) {
+    if (!name || !session?.user) {
       setError('Please fill in all required fields')
       return
     }
@@ -85,7 +47,7 @@ export default function NewTourPage() {
         body: JSON.stringify({
           name,
           description: description || null,
-          createdById: selectedUserId,
+          createdById: (session.user as any).id,
         }),
       })
 
@@ -122,79 +84,20 @@ export default function NewTourPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Who are you */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Who are you?</h2>
-
-          {users.length > 0 && !showNewUser ? (
-            <div>
-              <select
-                value={selectedUserId}
-                onChange={(e) => setSelectedUserId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="">Select your name...</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => setShowNewUser(true)}
-                className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-              >
-                Not listed? Create a new profile
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input
-                  type="text"
-                  value={newUserName}
-                  onChange={(e) => setNewUserName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Your name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={newUserEmail}
-                  onChange={(e) => setNewUserEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="your@email.com"
-                />
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={handleCreateUser}
-                  disabled={creatingUser || !newUserName || !newUserEmail}
-                  className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
-                >
-                  {creatingUser ? 'Creating...' : 'Create Profile'}
-                </button>
-                {users.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowNewUser(false)}
-                    className="text-gray-600 hover:text-gray-800 px-4 py-2.5 rounded-lg text-sm font-medium"
-                  >
-                    Cancel
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+      <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="flex items-center">
+          <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-medium mr-3">
+            {session?.user?.name?.[0] || session?.user?.email?.[0] || '?'}
+          </div>
+          <div>
+            <p className="text-sm font-medium text-blue-900">
+              Creating tour as: {session?.user?.name || session?.user?.email}
+            </p>
+          </div>
         </div>
+      </div>
 
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Tour details */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Tour Details</h2>

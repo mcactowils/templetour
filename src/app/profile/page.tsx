@@ -8,8 +8,13 @@ export default function Profile() {
   const { data: session, status, update } = useSession()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [passwordMessage, setPasswordMessage] = useState('')
   const router = useRouter()
 
   useEffect(() => {
@@ -56,6 +61,51 @@ export default function Profile() {
       setMessage('Something went wrong. Please try again.')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsPasswordLoading(true)
+    setPasswordMessage('')
+
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage('New passwords do not match.')
+      setIsPasswordLoading(false)
+      return
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordMessage('New password must be at least 6 characters long.')
+      setIsPasswordLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/profile/password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword
+        }),
+      })
+
+      if (response.ok) {
+        setPasswordMessage('Password updated successfully!')
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+      } else {
+        const data = await response.json()
+        setPasswordMessage(data.error || 'Failed to update password.')
+      }
+    } catch (error) {
+      setPasswordMessage('Something went wrong. Please try again.')
+    } finally {
+      setIsPasswordLoading(false)
     }
   }
 
@@ -123,6 +173,72 @@ export default function Profile() {
               </div>
             )}
           </form>
+
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Change Password</h2>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Current Password
+                </label>
+                <input
+                  id="currentPassword"
+                  name="currentPassword"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
+                <input
+                  id="newPassword"
+                  name="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  minLength={6}
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm New Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  minLength={6}
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isPasswordLoading}
+                className="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              >
+                {isPasswordLoading ? 'Updating Password...' : 'Change Password'}
+              </button>
+
+              {passwordMessage && (
+                <div className={`text-center text-sm ${passwordMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
+                  {passwordMessage}
+                </div>
+              )}
+            </form>
+          </div>
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <button
