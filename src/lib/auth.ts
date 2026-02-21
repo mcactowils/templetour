@@ -7,6 +7,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 export const authOptions: NextAuthOptions = {
   // Use adapter only when email provider is available
   ...(process.env.EMAIL_SERVER_HOST ? { adapter: PrismaAdapter(prisma) } : {}),
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development',
   providers: [
     ...(process.env.EMAIL_SERVER_HOST ? [
       EmailProvider({
@@ -29,26 +30,51 @@ export const authOptions: NextAuthOptions = {
         name: { label: 'Name', type: 'text' }
       },
       async authorize(credentials) {
-        if (!credentials?.email) return null
+        try {
+          console.log('Authorize attempt:', { email: credentials?.email })
 
-        // Find or create user
-        let user = await prisma.user.findUnique({
-          where: { email: credentials.email }
-        })
+          if (!credentials?.email) {
+            console.log('No email provided')
+            return null
+          }
 
-        if (!user) {
-          user = await prisma.user.create({
-            data: {
-              email: credentials.email,
-              name: credentials.name || credentials.email.split('@')[0]
+          try {
+            // Try to find or create user in database
+            let user = await prisma.user.findUnique({
+              where: { email: credentials.email }
+            })
+
+            console.log('Found user:', user ? 'yes' : 'no')
+
+            if (!user) {
+              console.log('Creating new user')
+              user = await prisma.user.create({
+                data: {
+                  email: credentials.email,
+                  name: credentials.name || credentials.email.split('@')[0]
+                }
+              })
+              console.log('Created user:', user.id)
             }
-          })
-        }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+            }
+          } catch (dbError) {
+            // If database is not set up, create a temporary user for JWT-only auth
+            console.log('Database error, using temporary auth:', dbError)
+
+            return {
+              id: `temp_${credentials.email}`,
+              email: credentials.email,
+              name: credentials.name || credentials.email.split('@')[0],
+            }
+          }
+        } catch (error) {
+          console.error('Authorization error:', error)
+          return null
         }
       }
     })
