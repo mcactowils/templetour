@@ -22,11 +22,13 @@ export default function NewAppointmentPage() {
   const [temples, setTemples] = useState<Temple[]>([])
 
   // Form state
-  const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [templeId, setTempleId] = useState('')
+  const [schedulingType, setSchedulingType] = useState<'specific' | 'month'>('specific')
   const [scheduledDate, setScheduledDate] = useState('')
   const [scheduledTime, setScheduledTime] = useState('')
+  const [scheduledMonth, setScheduledMonth] = useState('')
+  const [scheduledYear, setScheduledYear] = useState(new Date().getFullYear().toString())
 
   useEffect(() => {
     if (status === 'loading') return
@@ -51,8 +53,20 @@ export default function NewAppointmentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title || !templeId || !scheduledDate || !scheduledTime || !session?.user) {
+
+    // Validation based on scheduling type
+    if (!templeId || !session?.user) {
       setError('Please fill in all required fields')
+      return
+    }
+
+    if (schedulingType === 'specific' && (!scheduledDate || !scheduledTime)) {
+      setError('Please fill in the date and time for specific scheduling')
+      return
+    }
+
+    if (schedulingType === 'month' && (!scheduledMonth || !scheduledYear)) {
+      setError('Please fill in the month and year for month scheduling')
       return
     }
 
@@ -60,7 +74,23 @@ export default function NewAppointmentPage() {
       setSubmitting(true)
       setError(null)
 
-      const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`)
+      const selectedTemple = temples.find(t => t.id === templeId)
+      if (!selectedTemple) {
+        setError('Selected temple not found')
+        return
+      }
+
+      let scheduledDateTime: Date
+      let title: string
+
+      if (schedulingType === 'specific') {
+        scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`)
+        title = selectedTemple.name
+      } else {
+        // For month scheduling, set to first day of the month at noon
+        scheduledDateTime = new Date(parseInt(scheduledYear), parseInt(scheduledMonth) - 1, 1, 12, 0)
+        title = `${selectedTemple.name} (${new Date(scheduledDateTime).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })})`
+      }
 
       const response = await fetch('/api/schedules', {
         method: 'POST',
@@ -142,48 +172,114 @@ export default function NewAppointmentPage() {
               </select>
             </div>
 
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Appointment Title <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Scheduling Type <span className="text-red-500">*</span>
               </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder='e.g., "Family Temple Visit" or "Endowment Session"'
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Date <span className="text-red-500">*</span>
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="specific"
+                    checked={schedulingType === 'specific'}
+                    onChange={(e) => setSchedulingType(e.target.value as 'specific' | 'month')}
+                    className="mr-2"
+                  />
+                  Specific Date & Time
                 </label>
-                <input
-                  type="date"
-                  value={scheduledDate}
-                  onChange={(e) => setScheduledDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Time <span className="text-red-500">*</span>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="month"
+                    checked={schedulingType === 'month'}
+                    onChange={(e) => setSchedulingType(e.target.value as 'specific' | 'month')}
+                    className="mr-2"
+                  />
+                  Pencil In (Month Only)
                 </label>
-                <input
-                  type="time"
-                  value={scheduledTime}
-                  onChange={(e) => setScheduledTime(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
               </div>
             </div>
+
+            {schedulingType === 'specific' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required={schedulingType === 'specific'}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Time <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    value={scheduledTime}
+                    onChange={(e) => setScheduledTime(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required={schedulingType === 'specific'}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Month <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={scheduledMonth}
+                    onChange={(e) => setScheduledMonth(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required={schedulingType === 'month'}
+                  >
+                    <option value="">Select month...</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Year <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={scheduledYear}
+                    onChange={(e) => setScheduledYear(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required={schedulingType === 'month'}
+                  >
+                    {Array.from({ length: 5 }, (_, i) => {
+                      const year = new Date().getFullYear() + i
+                      return (
+                        <option key={year} value={year.toString()}>
+                          {year}
+                        </option>
+                      )
+                    })}
+                  </select>
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
