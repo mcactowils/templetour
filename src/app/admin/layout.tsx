@@ -28,7 +28,7 @@ export default function AdminLayout({
                 href="/schedules"
                 className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
               >
-                Schedules
+                Tours
               </Link>
               <Link
                 href="/"

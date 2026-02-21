@@ -11,12 +11,12 @@ export async function GET(
     const temple = await prisma.temple.findUnique({
       where: { id },
       include: {
-        tours: {
-          orderBy: { visitDate: 'desc' },
-          take: 10 // Latest 10 tours
+        schedules: {
+          orderBy: { scheduledDate: 'desc' },
+          take: 10
         },
         _count: {
-          select: { tours: true }
+          select: { schedules: true }
         }
       }
     })

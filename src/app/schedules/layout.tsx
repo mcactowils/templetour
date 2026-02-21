@@ -12,8 +12,8 @@ export default function SchedulesLayout({
           <div className="flex flex-wrap items-center justify-between gap-2 py-3 sm:py-0 sm:h-16">
             <div className="flex items-center">
               <Link href="/schedules" className="flex items-center space-x-2">
-                <div className="text-2xl">📅</div>
-                <span className="text-xl font-bold text-gray-900">Temple Schedules</span>
+                <div className="text-2xl">🗺️</div>
+                <span className="text-xl font-bold text-gray-900">Temple Tours</span>
               </Link>
             </div>
 
@@ -22,13 +22,13 @@ export default function SchedulesLayout({
                 href="/schedules"
                 className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
               >
-                All Schedules
+                All Tours
               </Link>
               <Link
                 href="/schedules/new"
                 className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
-                New Trip
+                New Tour
               </Link>
               <Link
                 href="/"

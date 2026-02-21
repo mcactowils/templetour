@@ -3,34 +3,22 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-interface Temple {
-  id: string
-  name: string
-  city: string
-  state: string | null
-  country: string
-  status: string
-}
-
 interface User {
   id: string
   name: string
   email: string
 }
 
-export default function NewSchedulePage() {
+export default function NewTourPage() {
   const router = useRouter()
-  const [temples, setTemples] = useState<Temple[]>([])
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Form state
-  const [templeId, setTempleId] = useState('')
-  const [title, setTitle] = useState('')
+  const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [scheduledDate, setScheduledDate] = useState('')
   const [selectedUserId, setSelectedUserId] = useState('')
 
   // New user form
@@ -40,16 +28,8 @@ export default function NewSchedulePage() {
   const [creatingUser, setCreatingUser] = useState(false)
 
   useEffect(() => {
-    Promise.all([fetchTemples(), fetchUsers()])
-      .finally(() => setLoading(false))
+    fetchUsers().finally(() => setLoading(false))
   }, [])
-
-  const fetchTemples = async () => {
-    const response = await fetch('/api/temples?limit=200')
-    if (!response.ok) throw new Error('Failed to fetch temples')
-    const data = await response.json()
-    setTemples(data.temples)
-  }
 
   const fetchUsers = async () => {
     const response = await fetch('/api/users')
@@ -90,7 +70,7 @@ export default function NewSchedulePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!templeId || !title || !scheduledDate || !selectedUserId) {
+    if (!name || !selectedUserId) {
       setError('Please fill in all required fields')
       return
     }
@@ -99,27 +79,25 @@ export default function NewSchedulePage() {
       setSubmitting(true)
       setError(null)
 
-      const response = await fetch('/api/schedules', {
+      const response = await fetch('/api/tours', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          templeId,
-          title,
+          name,
           description: description || null,
-          scheduledDate: new Date(scheduledDate).toISOString(),
           createdById: selectedUserId,
         }),
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to create schedule')
+        throw new Error(data.error || 'Failed to create tour')
       }
 
-      const schedule = await response.json()
-      router.push(`/schedules/${schedule.id}`)
+      const tour = await response.json()
+      router.push(`/schedules/${tour.id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create schedule')
+      setError(err instanceof Error ? err.message : 'Failed to create tour')
     } finally {
       setSubmitting(false)
     }
@@ -136,7 +114,7 @@ export default function NewSchedulePage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Schedule a Temple Trip</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Create a Temple Tour</h1>
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6">
@@ -217,54 +195,21 @@ export default function NewSchedulePage() {
           )}
         </div>
 
-        {/* Trip details */}
+        {/* Tour details */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Trip Details</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Tour Details</h2>
 
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Trip Title <span className="text-red-500">*</span>
+                Tour Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="e.g., Family Temple Day"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Temple <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={templeId}
-                onChange={(e) => setTempleId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="">Select a temple...</option>
-                {temples.map((temple) => (
-                  <option key={temple.id} value={temple.id}>
-                    {temple.name} - {temple.city}
-                    {temple.state ? `, ${temple.state}` : ''}, {temple.country}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date & Time <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="datetime-local"
-                value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder='e.g., "Summer 2026 Temple Tour"'
                 required
               />
             </div>
@@ -278,7 +223,7 @@ export default function NewSchedulePage() {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Share details about the trip - meeting point, what to bring, etc."
+                placeholder="Describe the tour - what's the plan, who's invited, any special details..."
               />
             </div>
           </div>
@@ -297,7 +242,7 @@ export default function NewSchedulePage() {
             disabled={submitting}
             className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
           >
-            {submitting ? 'Creating...' : 'Create Schedule'}
+            {submitting ? 'Creating...' : 'Create Tour'}
           </button>
         </div>
       </form>

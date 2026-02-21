@@ -58,7 +58,6 @@ model Temple {
   status            TempleStatus @default(ANNOUNCED)
 
   // Relations
-  tours             TempleTour[]
   schedules         TempleSchedule[]
 
   @@map("temples")
@@ -72,22 +71,62 @@ enum TempleStatus {
   CLOSED
 }
 
-// Future model for temple tours/visits
-model TempleTour {
+// A Tour is a group itinerary (e.g., "Summer 2026 Temple Tour")
+// containing multiple individual temple trips
+model Tour {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  name        String
+  description String?
+
+  createdById String   @map("created_by_id")
+  createdBy   User     @relation("ToursCreated", fields: [createdById], references: [id])
+
+  // Relations
+  members     TourMember[]
+  comments    TourComment[]
+  trips       TempleSchedule[]
+
+  @@map("tours")
+}
+
+enum TourRole {
+  ORGANIZER
+  MEMBER
+}
+
+model TourMember {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  tourId    String
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  role      TourRole @default(MEMBER)
+
+  @@unique([tourId, userId])
+  @@map("tour_members")
+}
+
+model TourComment {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  templeId  String
-  temple    Temple   @relation(fields: [templeId], references: [id])
+  tourId    String
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
 
-  userId    String?  @map("user_id")
-  user      User?    @relation(fields: [userId], references: [id])
-  visitDate DateTime
-  notes     String?
-  rating    Int?     // 1-5 rating
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 
-  @@map("temple_tours")
+  content   String
+
+  @@map("tour_comments")
 }
 
 model User {
@@ -99,7 +138,9 @@ model User {
   email     String   @unique
 
   // Relations
-  tours              TempleTour[]
+  createdTours       Tour[]            @relation("ToursCreated")
+  tourMemberships    TourMember[]
+  tourComments       TourComment[]
   createdSchedules   TempleSchedule[]
   attendingSchedules ScheduleAttendee[]
   comments           ScheduleComment[]
@@ -117,6 +158,9 @@ model TempleSchedule {
 
   createdById String   @map("created_by_id")
   createdBy   User     @relation(fields: [createdById], references: [id])
+
+  tourId      String?
+  tour        Tour?    @relation(fields: [tourId], references: [id], onDelete: Cascade)
 
   scheduledDate DateTime
   title         String

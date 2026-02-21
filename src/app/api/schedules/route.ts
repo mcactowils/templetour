@@ -16,6 +16,11 @@ export async function GET(request: NextRequest) {
       where.templeId = templeId
     }
 
+    const tourId = searchParams.get('tourId')
+    if (tourId) {
+      where.tourId = tourId
+    }
+
     if (upcoming === 'true') {
       where.scheduledDate = { gte: new Date() }
     } else if (upcoming === 'false') {
@@ -90,6 +95,7 @@ export async function POST(request: NextRequest) {
       data: {
         templeId: data.templeId,
         createdById: data.createdById,
+        tourId: data.tourId || null,
         scheduledDate: new Date(data.scheduledDate),
         title: data.title,
         description: data.description || null,

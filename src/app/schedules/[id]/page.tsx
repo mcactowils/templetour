@@ -9,25 +9,25 @@ interface User {
   name: string
 }
 
-interface Attendee {
+interface TourMember {
   id: string
   createdAt: string
-  user: User
+  role: 'ORGANIZER' | 'MEMBER'
+  user: User & { email: string }
 }
 
-interface Comment {
+interface TourComment {
   id: string
   createdAt: string
   content: string
   user: User
 }
 
-interface Schedule {
+interface Trip {
   id: string
   title: string
   description: string | null
   scheduledDate: string
-  createdAt: string
   temple: {
     id: string
     name: string
@@ -35,13 +35,26 @@ interface Schedule {
     city: string
     state: string | null
     country: string
-    address: string | null
   }
   createdBy: User
-  attendees: Attendee[]
-  comments: Comment[]
   _count: {
     attendees: number
+    comments: number
+  }
+}
+
+interface Tour {
+  id: string
+  name: string
+  description: string | null
+  createdAt: string
+  createdBy: User
+  members: TourMember[]
+  trips: Trip[]
+  comments: TourComment[]
+  _count: {
+    members: number
+    trips: number
     comments: number
   }
 }
@@ -52,21 +65,21 @@ interface AllUser {
   email: string
 }
 
-export default function ScheduleDetailPage({
+export default function TourDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const { id } = use(params)
   const router = useRouter()
-  const [schedule, setSchedule] = useState<Schedule | null>(null)
+  const [tour, setTour] = useState<Tour | null>(null)
   const [users, setUsers] = useState<AllUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // RSVP state
-  const [selectedUserId, setSelectedUserId] = useState('')
-  const [rsvpLoading, setRsvpLoading] = useState(false)
+  // Member invite state
+  const [inviteUserId, setInviteUserId] = useState('')
+  const [inviteLoading, setInviteLoading] = useState(false)
 
   // Comment state
   const [commentUserId, setCommentUserId] = useState('')
@@ -76,17 +89,19 @@ export default function ScheduleDetailPage({
   // Delete state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
+  // Tab state
+  const [activeTab, setActiveTab] = useState<'trips' | 'members' | 'discussion'>('trips')
+
   useEffect(() => {
-    Promise.all([fetchSchedule(), fetchUsers()])
-      .finally(() => setLoading(false))
+    Promise.all([fetchTour(), fetchUsers()]).finally(() => setLoading(false))
   }, [id])
 
-  const fetchSchedule = async () => {
+  const fetchTour = async () => {
     try {
-      const response = await fetch(`/api/schedules/${id}`)
-      if (!response.ok) throw new Error('Failed to fetch schedule')
+      const response = await fetch(`/api/tours/${id}`)
+      if (!response.ok) throw new Error('Failed to fetch tour')
       const data = await response.json()
-      setSchedule(data)
+      setTour(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     }
@@ -98,46 +113,46 @@ export default function ScheduleDetailPage({
       if (!response.ok) throw new Error('Failed to fetch users')
       const data = await response.json()
       setUsers(data)
-    } catch (err) {
-      // Non-critical, users can still view
+    } catch {
+      // Non-critical
     }
   }
 
-  const isUpcoming = schedule
-    ? new Date(schedule.scheduledDate) >= new Date()
-    : false
-
-  const isAttending = (userId: string) =>
-    schedule?.attendees.some((a) => a.user.id === userId) ?? false
-
-  const handleRsvp = async () => {
-    if (!selectedUserId || !schedule) return
+  const handleInvite = async () => {
+    if (!inviteUserId) return
 
     try {
-      setRsvpLoading(true)
+      setInviteLoading(true)
+      const response = await fetch(`/api/tours/${id}/members`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: inviteUserId }),
+      })
 
-      if (isAttending(selectedUserId)) {
-        // Leave
-        const response = await fetch(
-          `/api/schedules/${id}/attendees?userId=${selectedUserId}`,
-          { method: 'DELETE' }
-        )
-        if (!response.ok) throw new Error('Failed to leave schedule')
-      } else {
-        // Join
-        const response = await fetch(`/api/schedules/${id}/attendees`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: selectedUserId }),
-        })
-        if (!response.ok) throw new Error('Failed to join schedule')
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to add member')
       }
 
-      await fetchSchedule()
+      setInviteUserId('')
+      await fetchTour()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update RSVP')
+      setError(err instanceof Error ? err.message : 'Failed to add member')
     } finally {
-      setRsvpLoading(false)
+      setInviteLoading(false)
+    }
+  }
+
+  const handleRemoveMember = async (userId: string) => {
+    try {
+      const response = await fetch(
+        `/api/tours/${id}/members?userId=${userId}`,
+        { method: 'DELETE' }
+      )
+      if (!response.ok) throw new Error('Failed to remove member')
+      await fetchTour()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove member')
     }
   }
 
@@ -147,7 +162,7 @@ export default function ScheduleDetailPage({
 
     try {
       setCommentLoading(true)
-      const response = await fetch(`/api/schedules/${id}/comments`, {
+      const response = await fetch(`/api/tours/${id}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -159,7 +174,7 @@ export default function ScheduleDetailPage({
       if (!response.ok) throw new Error('Failed to post comment')
 
       setCommentText('')
-      await fetchSchedule()
+      await fetchTour()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to post comment')
     } finally {
@@ -169,52 +184,55 @@ export default function ScheduleDetailPage({
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/schedules/${id}`, {
-        method: 'DELETE',
-      })
-      if (!response.ok) throw new Error('Failed to delete schedule')
+      const response = await fetch(`/api/tours/${id}`, { method: 'DELETE' })
+      if (!response.ok) throw new Error('Failed to delete tour')
       router.push('/schedules')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete schedule')
+      setError(err instanceof Error ? err.message : 'Failed to delete tour')
     }
   }
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
+  const formatDate = (date: string) =>
+    new Date(date).toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
+      year: 'numeric',
     })
-  }
 
-  const formatTime = (date: string) => {
-    return new Date(date).toLocaleTimeString('en-US', {
+  const formatTime = (date: string) =>
+    new Date(date).toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
     })
-  }
 
-  const formatCommentDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
+  const formatCommentDate = (date: string) =>
+    new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
     })
-  }
+
+  const isUpcoming = (date: string) => new Date(date) >= new Date()
+
+  const isMember = (userId: string) =>
+    tour?.members.some((m) => m.user.id === userId) ?? false
+
+  // Users not yet in the tour
+  const nonMemberUsers = users.filter((u) => !isMember(u.id))
 
   if (loading) {
     return (
       <div className="text-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading schedule...</p>
+        <p className="mt-4 text-gray-600">Loading tour...</p>
       </div>
     )
   }
 
-  if (error && !schedule) {
+  if (error && !tour) {
     return (
       <div className="text-center py-12">
         <div className="text-red-600 text-xl">Error: {error}</div>
@@ -222,269 +240,340 @@ export default function ScheduleDetailPage({
           href="/schedules"
           className="mt-4 inline-block text-blue-600 hover:text-blue-800"
         >
-          Back to Schedules
+          Back to Tours
         </Link>
       </div>
     )
   }
 
-  if (!schedule) return null
+  if (!tour) return null
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6 flex items-center justify-between">
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="ml-2 font-bold text-red-500 hover:text-red-700">
+          <button
+            onClick={() => setError(null)}
+            className="ml-2 font-bold text-red-500 hover:text-red-700"
+          >
             x
           </button>
         </div>
       )}
 
-      {/* Header */}
+      {/* Tour Header */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8 mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
           <div>
-            <div className="flex flex-wrap items-center gap-3 mb-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{schedule.title}</h1>
-              <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  isUpcoming
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-600'
-                }`}
-              >
-                {isUpcoming ? 'Upcoming' : 'Past'}
-              </span>
-            </div>
-            <p className="text-sm text-gray-500">
-              Created by {schedule.createdBy.name}
+            <Link
+              href="/schedules"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium mb-2 inline-flex items-center"
+            >
+              ← Back to Tours
+            </Link>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              {tour.name}
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Created by {tour.createdBy.name}
             </p>
           </div>
           <button
             onClick={() => setShowDeleteConfirm(true)}
             className="text-red-500 hover:text-red-700 text-sm font-medium px-3 py-2 rounded-lg hover:bg-red-50 transition-colors"
           >
-            Delete
+            Delete Tour
           </button>
         </div>
 
-        {/* Temple info */}
-        <div className="bg-blue-50 rounded-lg p-4 mb-6">
-          <div className="flex items-center mb-2">
-            <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-            <span className="text-lg font-semibold text-blue-900">
-              {schedule.temple.name}
-            </span>
-          </div>
-          <p className="text-blue-700 text-sm ml-7">
-            {schedule.temple.city}
-            {schedule.temple.state ? `, ${schedule.temple.state}` : ''},{' '}
-            {schedule.temple.country}
-          </p>
-          {schedule.temple.address && (
-            <a
-              href={`https://maps.apple.com/?q=${encodeURIComponent(schedule.temple.address)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 text-sm ml-7 underline"
-            >
-              {schedule.temple.address}
-            </a>
-          )}
-        </div>
-
-        {/* Date & Time */}
-        <div className="flex items-center text-gray-700 mb-4">
-          <svg className="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span className="text-lg">
-            {formatDate(schedule.scheduledDate)} at{' '}
-            {formatTime(schedule.scheduledDate)}
-          </span>
-        </div>
-
-        {/* Description */}
-        {schedule.description && (
-          <div className="border-t border-gray-100 pt-4 mt-4">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Details
-            </h3>
-            <p className="text-gray-700 whitespace-pre-wrap">
-              {schedule.description}
-            </p>
-          </div>
+        {tour.description && (
+          <p className="text-gray-600 whitespace-pre-wrap">{tour.description}</p>
         )}
+
+        {/* Stats row */}
+        <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center text-sm text-gray-500">
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            {tour._count.members} {tour._count.members === 1 ? 'member' : 'members'}
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {tour._count.trips} {tour._count.trips === 1 ? 'trip' : 'trips'}
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            {tour._count.comments} {tour._count.comments === 1 ? 'comment' : 'comments'}
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Attendees section */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Attending ({schedule._count.attendees})
-            </h2>
+      {/* Tab navigation */}
+      <div className="flex bg-gray-100 rounded-lg p-1 mb-6 w-full sm:w-fit">
+        {(['trips', 'members', 'discussion'] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === tab
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            {tab === 'trips' && `Trips (${tour._count.trips})`}
+            {tab === 'members' && `Members (${tour._count.members})`}
+            {tab === 'discussion' && `Discussion (${tour._count.comments})`}
+          </button>
+        ))}
+      </div>
 
-            {/* RSVP */}
-            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                RSVP as:
-              </label>
-              <select
-                value={selectedUserId}
-                onChange={(e) => setSelectedUserId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
+      {/* Trips Tab */}
+      {activeTab === 'trips' && (
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Scheduled Trips</h2>
+            <Link
+              href={`/schedules/${id}/trips/new`}
+              className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+            >
+              Add Trip
+            </Link>
+          </div>
+
+          {tour.trips.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
+              <div className="text-4xl mb-3">🏛️</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No trips scheduled yet</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Add your first temple trip to this tour.
+              </p>
+              <Link
+                href={`/schedules/${id}/trips/new`}
+                className="inline-flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
               >
-                <option value="">Select your name...</option>
+                Schedule a Trip
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {tour.trips.map((trip) => {
+                const upcoming = isUpcoming(trip.scheduledDate)
+                return (
+                  <Link
+                    key={trip.id}
+                    href={`/schedules/${id}/trips/${trip.id}`}
+                    className="block bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 hover:shadow-lg hover:border-blue-200 transition-all"
+                  >
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <h3 className="text-base font-bold text-gray-900">{trip.title}</h3>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                              upcoming
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-gray-100 text-gray-600'
+                            }`}
+                          >
+                            {upcoming ? 'Upcoming' : 'Past'}
+                          </span>
+                        </div>
+                        <div className="flex items-center text-gray-600 text-sm mb-1">
+                          <svg className="w-4 h-4 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                          </svg>
+                          <span className="font-medium">{trip.temple.name}</span>
+                          <span className="text-gray-400 ml-1.5">
+                            {trip.temple.city}
+                            {trip.temple.state ? `, ${trip.temple.state}` : ''}
+                          </span>
+                        </div>
+                        <div className="flex items-center text-gray-500 text-sm">
+                          <svg className="w-4 h-4 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          {formatDate(trip.scheduledDate)} at {formatTime(trip.scheduledDate)}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-gray-500 shrink-0">
+                        <span>{trip._count.attendees} attending</span>
+                        <span>{trip._count.comments} comments</span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Members Tab */}
+      {activeTab === 'members' && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Tour Members</h2>
+
+          {/* Add member */}
+          {nonMemberUsers.length > 0 && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Add a member to this tour:
+              </label>
+              <div className="flex gap-2">
+                <select
+                  value={inviteUserId}
+                  onChange={(e) => setInviteUserId(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select a person...</option>
+                  {nonMemberUsers.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleInvite}
+                  disabled={!inviteUserId || inviteLoading}
+                  className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 shrink-0"
+                >
+                  {inviteLoading ? 'Adding...' : 'Add'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Member list */}
+          <ul className="space-y-2">
+            {tour.members.map((member) => (
+              <li
+                key={member.id}
+                className="flex items-center justify-between py-3 px-4 rounded-lg bg-gray-50"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-semibold">
+                    {member.user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-900">
+                      {member.user.name}
+                    </span>
+                    {member.role === 'ORGANIZER' && (
+                      <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+                        Organizer
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {member.role !== 'ORGANIZER' && (
+                  <button
+                    onClick={() => handleRemoveMember(member.user.id)}
+                    className="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                  >
+                    Remove
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Discussion Tab */}
+      {activeTab === 'discussion' && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Tour Discussion ({tour._count.comments})
+          </h2>
+
+          {/* Comment form */}
+          <form onSubmit={handleComment} className="mb-6">
+            <div className="flex gap-3 mb-3">
+              <select
+                value={commentUserId}
+                onChange={(e) => setCommentUserId(e.target.value)}
+                className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Post as...</option>
                 {users.map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.name}
                   </option>
                 ))}
               </select>
-              {selectedUserId && (
-                <button
-                  onClick={handleRsvp}
-                  disabled={rsvpLoading}
-                  className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
-                    isAttending(selectedUserId)
-                      ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-                >
-                  {rsvpLoading
-                    ? 'Updating...'
-                    : isAttending(selectedUserId)
-                    ? "I Can't Make It"
-                    : "I'm Attending"}
-                </button>
-              )}
             </div>
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Share thoughts about the tour, suggest temples to visit, coordinate plans..."
+            />
+            <div className="flex justify-end mt-2">
+              <button
+                type="submit"
+                disabled={commentLoading || !commentUserId || !commentText.trim()}
+                className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+              >
+                {commentLoading ? 'Posting...' : 'Post Comment'}
+              </button>
+            </div>
+          </form>
 
-            {/* Attendee list */}
-            {schedule.attendees.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-4">
-                No one has RSVP&apos;d yet. Be the first!
-              </p>
-            ) : (
-              <ul className="space-y-2">
-                {schedule.attendees.map((attendee) => (
-                  <li
-                    key={attendee.id}
-                    className="flex items-center space-x-3 py-2 px-3 rounded-lg bg-gray-50"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-semibold">
-                      {attendee.user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="text-sm font-medium text-gray-900">
-                      {attendee.user.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        {/* Comments section */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Discussion ({schedule._count.comments})
-            </h2>
-
-            {/* Comment form */}
-            <form onSubmit={handleComment} className="mb-6">
-              <div className="flex gap-3 mb-3">
-                <select
-                  value={commentUserId}
-                  onChange={(e) => setCommentUserId(e.target.value)}
-                  className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          {/* Comments list */}
+          {tour.comments.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              <p className="text-sm">No comments yet. Start the conversation!</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {tour.comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="border-b border-gray-100 pb-4 last:border-0"
                 >
-                  <option value="">Post as...</option>
-                  {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-3">
-                <textarea
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  rows={3}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder={
-                    isUpcoming
-                      ? "Share plans, questions, or get excited about the trip..."
-                      : "Share your experience or memories from this trip..."
-                  }
-                />
-              </div>
-              <div className="flex justify-end mt-2">
-                <button
-                  type="submit"
-                  disabled={commentLoading || !commentUserId || !commentText.trim()}
-                  className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
-                >
-                  {commentLoading ? 'Posting...' : 'Post Comment'}
-                </button>
-              </div>
-            </form>
-
-            {/* Comments list */}
-            {schedule.comments.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                <p className="text-sm">No comments yet. Start the conversation!</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {schedule.comments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="border-b border-gray-100 pb-4 last:border-0"
-                  >
-                    <div className="flex items-center space-x-3 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-semibold">
-                        {comment.user.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <span className="text-sm font-semibold text-gray-900">
-                          {comment.user.name}
-                        </span>
-                        <span className="text-xs text-gray-500 ml-2">
-                          {formatCommentDate(comment.createdAt)}
-                        </span>
-                      </div>
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-semibold">
+                      {comment.user.name.charAt(0).toUpperCase()}
                     </div>
-                    <p className="text-gray-700 text-sm ml-11 whitespace-pre-wrap">
-                      {comment.content}
-                    </p>
+                    <div>
+                      <span className="text-sm font-semibold text-gray-900">
+                        {comment.user.name}
+                      </span>
+                      <span className="text-xs text-gray-500 ml-2">
+                        {formatCommentDate(comment.createdAt)}
+                      </span>
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  <p className="text-gray-700 text-sm ml-11 whitespace-pre-wrap">
+                    {comment.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
+      )}
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Delete Schedule?
+              Delete Tour?
             </h3>
             <p className="text-gray-600 text-sm mb-6">
-              This will permanently delete this temple trip schedule, including all
-              attendee RSVPs and comments. This action cannot be undone.
+              This will permanently delete <strong>{tour.name}</strong>, including
+              all trips, RSVPs, and comments. This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
