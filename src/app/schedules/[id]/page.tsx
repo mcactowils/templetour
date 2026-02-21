@@ -91,6 +91,7 @@ export default function TourDetailPage({
 
   // Trip interaction states
   const [expandedTrip, setExpandedTrip] = useState<string | null>(null)
+  const [showAttendees, setShowAttendees] = useState<string | null>(null)
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null)
   const [tripCommentLoading, setTripCommentLoading] = useState<string | null>(null)
   const [tripComments, setTripComments] = useState<{[key: string]: string}>({})
@@ -373,7 +374,7 @@ export default function TourDetailPage({
             <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            {tour._count.trips} {tour._count.trips === 1 ? 'trip' : 'trips'}
+            {tour._count.trips} {tour._count.trips === 1 ? 'appointment' : 'appointments'}
           </div>
           <div className="flex items-center text-sm text-gray-500">
             <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -396,7 +397,7 @@ export default function TourDetailPage({
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            {tab === 'trips' && `Trips (${tour._count.trips})`}
+            {tab === 'trips' && `Appointments (${tour._count.trips})`}
             {tab === 'members' && `Members (${tour._count.members})`}
             {tab === 'discussion' && `Discussion (${tour._count.comments})`}
           </button>
@@ -407,27 +408,27 @@ export default function TourDetailPage({
       {activeTab === 'trips' && (
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Scheduled Trips</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Scheduled Appointments</h2>
             <Link
               href={`/schedules/${id}/trips/new`}
               className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
             >
-              Add Trip
+              Add Appointment
             </Link>
           </div>
 
           {tour.trips.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="text-4xl mb-3">🏛️</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No trips scheduled yet</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No appointments scheduled yet</h3>
               <p className="text-gray-600 text-sm mb-4">
-                Add your first temple trip to this tour.
+                Add your first temple appointment to this tour.
               </p>
               <Link
                 href={`/schedules/${id}/trips/new`}
                 className="inline-flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
               >
-                Schedule a Trip
+                Schedule an Appointment
               </Link>
             </div>
           ) : (
@@ -490,6 +491,16 @@ export default function TourDetailPage({
                         </button>
 
                         <button
+                          onClick={() => setShowAttendees(showAttendees === trip.id ? null : trip.id)}
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                        >
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          {trip._count.attendees} attending
+                        </button>
+
+                        <button
                           onClick={() => setExpandedTrip(isExpanded ? null : trip.id)}
                           className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
                         >
@@ -499,10 +510,6 @@ export default function TourDetailPage({
                           {trip._count.comments} {trip._count.comments === 1 ? 'comment' : 'comments'}
                         </button>
 
-                        <span className="text-gray-500 text-sm">
-                          {trip._count.attendees} attending
-                        </span>
-
                         <Link
                           href={`/schedules/${id}/trips/${trip.id}`}
                           className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-auto"
@@ -510,6 +517,32 @@ export default function TourDetailPage({
                           View Details →
                         </Link>
                       </div>
+
+                      {/* Attendees section */}
+                      {showAttendees === trip.id && (
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                          <h4 className="text-sm font-medium text-gray-900 mb-3">
+                            Attendees ({trip._count.attendees})
+                          </h4>
+                          {trip.attendees && trip.attendees.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {trip.attendees.map((attendee) => (
+                                <div
+                                  key={attendee.id}
+                                  className="inline-flex items-center space-x-2 bg-green-50 text-green-800 px-3 py-1.5 rounded-full text-sm"
+                                >
+                                  <div className="w-5 h-5 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-xs font-medium">
+                                    {attendee.user.name.charAt(0).toUpperCase()}
+                                  </div>
+                                  <span>{attendee.user.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-gray-500 text-sm">No one is attending yet.</p>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Expanded comments section */}
@@ -520,7 +553,7 @@ export default function TourDetailPage({
                           <textarea
                             value={tripComments[trip.id] || ''}
                             onChange={(e) => setTripComments(prev => ({ ...prev, [trip.id]: e.target.value }))}
-                            placeholder="Add a comment about this trip..."
+                            placeholder="Add a comment about this appointment..."
                             rows={2}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                           />

@@ -22,10 +22,10 @@ export default function Header() {
           {session?.user && (
             <nav className="hidden md:flex items-center space-x-8">
               <Link
-                href="/"
+                href="/schedules"
                 className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
               >
-                Tours
+                Appointments
               </Link>
               <Link
                 href="/temples"
@@ -99,11 +99,11 @@ export default function Header() {
         {isMenuOpen && session?.user && (
           <div className="md:hidden border-t border-gray-200 py-2">
             <Link
-              href="/"
+              href="/schedules"
               className="block px-3 py-2 text-gray-700 hover:bg-gray-50 text-sm font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
-              Tours
+              Appointments
             </Link>
             <Link
               href="/temples"

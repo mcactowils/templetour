@@ -78,9 +78,9 @@ export default function ToursPage() {
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Temple Tours</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Temple Appointments</h1>
           <p className="text-gray-600 mt-1 text-sm sm:text-base">
-            Create a tour, invite others, and schedule temple trips together
+            Create a tour, invite others, and schedule temple appointments together
           </p>
         </div>
         <Link
@@ -96,7 +96,7 @@ export default function ToursPage() {
           <div className="text-5xl mb-4">🗺️</div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">No tours yet</h3>
           <p className="text-gray-600 mb-6 text-sm">
-            Create your first temple tour to start planning trips with friends and family.
+            Create your first temple tour to start planning appointments with friends and family.
           </p>
           <Link
             href="/schedules/new"
@@ -116,7 +116,7 @@ export default function ToursPage() {
               <div className="flex justify-between items-start mb-3">
                 <h2 className="text-lg font-bold text-gray-900">{tour.name}</h2>
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 shrink-0 ml-2">
-                  {tour._count.trips} {tour._count.trips === 1 ? 'trip' : 'trips'}
+                  {tour._count.trips} {tour._count.trips === 1 ? 'appointment' : 'appointments'}
                 </span>
               </div>
 
