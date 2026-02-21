@@ -4,7 +4,7 @@ import { getCurrentUser } from '../../../../../../lib/session'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; commentId: string } }
+  { params }: { params: Promise<{ id: string; commentId: string }> }
 ) {
   try {
     const user = await getCurrentUser()
@@ -12,7 +12,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id: scheduleId, commentId } = params
+    const { id: scheduleId, commentId } = await params
 
     const comment = await prisma.scheduleComment.findUnique({
       where: { id: commentId },
