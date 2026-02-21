@@ -122,7 +122,11 @@ export default function EditTemplePage() {
       const updatedTemple = await response.json()
       setTemple(updatedTemple)
       setSuccess(true)
-      setTimeout(() => setSuccess(false), 3000)
+
+      // Redirect to admin dashboard after successful save
+      setTimeout(() => {
+        router.push('/admin')
+      }, 1500)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update temple')
     } finally {
