@@ -59,6 +59,7 @@ model Temple {
 
   // Relations
   tours             TempleTour[]
+  schedules         TempleSchedule[]
 
   @@map("temples")
 }
@@ -80,10 +81,80 @@ model TempleTour {
   templeId  String
   temple    Temple   @relation(fields: [templeId], references: [id])
 
-  userId    String?  // For future user system
+  userId    String?  @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
   visitDate DateTime
   notes     String?
   rating    Int?     // 1-5 rating
 
   @@map("temple_tours")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name      String
+  email     String   @unique
+
+  // Relations
+  tours              TempleTour[]
+  createdSchedules   TempleSchedule[]
+  attendingSchedules ScheduleAttendee[]
+  comments           ScheduleComment[]
+
+  @@map("users")
+}
+
+model TempleSchedule {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  templeId    String
+  temple      Temple   @relation(fields: [templeId], references: [id])
+
+  createdById String   @map("created_by_id")
+  createdBy   User     @relation(fields: [createdById], references: [id])
+
+  scheduledDate DateTime
+  title         String
+  description   String?
+
+  // Relations
+  attendees   ScheduleAttendee[]
+  comments    ScheduleComment[]
+
+  @@map("temple_schedules")
+}
+
+model ScheduleAttendee {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+
+  scheduleId String
+  schedule   TempleSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([scheduleId, userId])
+  @@map("schedule_attendees")
+}
+
+model ScheduleComment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scheduleId String
+  schedule   TempleSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  content   String
+
+  @@map("schedule_comments")
 }
