@@ -1,5 +1,3 @@
-import Link from 'next/link'
-
 export default function SchedulesLayout({
   children,
 }: {
@@ -7,40 +5,6 @@ export default function SchedulesLayout({
 }) {
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-2 py-3 sm:py-0 sm:h-16">
-            <div className="flex items-center">
-              <Link href="/schedules" className="flex items-center space-x-2">
-                <div className="text-2xl">🗺️</div>
-                <span className="text-xl font-bold text-gray-900">Temple Tours</span>
-              </Link>
-            </div>
-
-            <div className="flex items-center flex-wrap gap-1 sm:gap-2">
-              <Link
-                href="/schedules"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                All Tours
-              </Link>
-              <Link
-                href="/schedules/new"
-                className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                New Tour
-              </Link>
-              <Link
-                href="/"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                View Temples
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {children}
       </main>
