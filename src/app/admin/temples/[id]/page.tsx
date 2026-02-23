@@ -168,8 +168,8 @@ export default function EditTemplePage() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading temple...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-warm-coral mx-auto"></div>
+        <p className="mt-4 text-medium-gray">Loading temple...</p>
       </div>
     )
   }
@@ -180,7 +180,7 @@ export default function EditTemplePage() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <Link
           href="/admin"
-          className="mt-4 inline-block bg-blue-600 text-white px-6 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          className="mt-4 inline-block bg-warm-coral text-white px-6 py-2.5 text-sm font-medium rounded-lg hover:bg-warm-coral-hover transition-colors"
         >
           Back to Dashboard
         </Link>
@@ -197,12 +197,12 @@ export default function EditTemplePage() {
         <div>
           <Link
             href="/admin"
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium mb-2 inline-flex items-center"
+            className="text-warm-coral hover:text-warm-coral-hover text-sm font-medium mb-2 inline-flex items-center"
           >
             ← Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Edit Temple</h1>
-          <p className="mt-2 text-gray-600">{temple.name}</p>
+          <h1 className="text-3xl font-bold text-charcoal">Edit Temple</h1>
+          <p className="mt-2 text-medium-gray">{temple.name}</p>
         </div>
       </div>
 
@@ -223,11 +223,11 @@ export default function EditTemplePage() {
       {/* Edit Form */}
       <form onSubmit={handleSubmit} className="admin-form space-y-8">
         {/* Basic Information */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Basic Information</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-xl font-semibold text-charcoal mb-6">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-charcoal mb-2">
                 Temple Name *
               </label>
               <input
@@ -236,12 +236,12 @@ export default function EditTemplePage() {
                 name="name"
                 defaultValue={temple.name}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="slug" className="block text-sm font-medium text-charcoal mb-2">
                 URL Slug *
               </label>
               <input
@@ -250,12 +250,12 @@ export default function EditTemplePage() {
                 name="slug"
                 defaultValue={temple.slug}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="city" className="block text-sm font-medium text-charcoal mb-2">
                 City *
               </label>
               <input
@@ -264,12 +264,12 @@ export default function EditTemplePage() {
                 name="city"
                 defaultValue={temple.city}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="state" className="block text-sm font-medium text-charcoal mb-2">
                 State/Province
               </label>
               <input
@@ -277,12 +277,12 @@ export default function EditTemplePage() {
                 id="state"
                 name="state"
                 defaultValue={temple.state || ''}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="country" className="block text-sm font-medium text-charcoal mb-2">
                 Country *
               </label>
               <input
@@ -291,12 +291,12 @@ export default function EditTemplePage() {
                 name="country"
                 defaultValue={temple.country}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="status" className="block text-sm font-medium text-charcoal mb-2">
                 Status *
               </label>
               <select
@@ -304,7 +304,7 @@ export default function EditTemplePage() {
                 name="status"
                 defaultValue={temple.status}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               >
                 <option value={TempleStatus.ANNOUNCED}>Announced</option>
                 <option value={TempleStatus.UNDER_CONSTRUCTION}>Under Construction</option>
@@ -316,7 +316,7 @@ export default function EditTemplePage() {
           </div>
 
           <div className="mt-6">
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="address" className="block text-sm font-medium text-charcoal mb-2">
               Address
             </label>
             <textarea
@@ -324,12 +324,12 @@ export default function EditTemplePage() {
               name="address"
               rows={2}
               defaultValue={temple.address || ''}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
             />
           </div>
 
           <div className="mt-6">
-            <label htmlFor="telephone" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="telephone" className="block text-sm font-medium text-charcoal mb-2">
               Telephone
             </label>
             <input
@@ -337,17 +337,17 @@ export default function EditTemplePage() {
               id="telephone"
               name="telephone"
               defaultValue={temple.telephone || ''}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
             />
           </div>
         </div>
 
         {/* Important Dates */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Important Dates</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-xl font-semibold text-charcoal mb-6">Important Dates</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label htmlFor="announcementDate" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="announcementDate" className="block text-sm font-medium text-charcoal mb-2">
                 Announcement Date
               </label>
               <input
@@ -355,12 +355,12 @@ export default function EditTemplePage() {
                 id="announcementDate"
                 name="announcementDate"
                 defaultValue={formatDateForInput(temple.announcementDate)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="groundbreakingDate" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="groundbreakingDate" className="block text-sm font-medium text-charcoal mb-2">
                 Groundbreaking Date
               </label>
               <input
@@ -368,12 +368,12 @@ export default function EditTemplePage() {
                 id="groundbreakingDate"
                 name="groundbreakingDate"
                 defaultValue={formatDateForInput(temple.groundbreakingDate)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="dedicationDate" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="dedicationDate" className="block text-sm font-medium text-charcoal mb-2">
                 Dedication Date
               </label>
               <input
@@ -381,18 +381,18 @@ export default function EditTemplePage() {
                 id="dedicationDate"
                 name="dedicationDate"
                 defaultValue={formatDateForInput(temple.dedicationDate)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
           </div>
         </div>
 
         {/* Physical Details */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Physical Details</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-xl font-semibold text-charcoal mb-6">Physical Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="siteSize" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="siteSize" className="block text-sm font-medium text-charcoal mb-2">
                 Site Size
               </label>
               <input
@@ -401,12 +401,12 @@ export default function EditTemplePage() {
                 name="siteSize"
                 defaultValue={temple.siteSize || ''}
                 placeholder="e.g., 15.6 acres"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="totalFloorArea" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="totalFloorArea" className="block text-sm font-medium text-charcoal mb-2">
                 Total Floor Area
               </label>
               <input
@@ -415,12 +415,12 @@ export default function EditTemplePage() {
                 name="totalFloorArea"
                 defaultValue={temple.totalFloorArea || ''}
                 placeholder="e.g., 87,000 sq ft"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="exteriorFinish" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="exteriorFinish" className="block text-sm font-medium text-charcoal mb-2">
                 Exterior Finish
               </label>
               <input
@@ -429,12 +429,12 @@ export default function EditTemplePage() {
                 name="exteriorFinish"
                 defaultValue={temple.exteriorFinish || ''}
                 placeholder="e.g., Natural stone"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="elevation" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="elevation" className="block text-sm font-medium text-charcoal mb-2">
                 Elevation
               </label>
               <input
@@ -443,18 +443,18 @@ export default function EditTemplePage() {
                 name="elevation"
                 defaultValue={temple.elevation || ''}
                 placeholder="e.g., 192 feet (59 meters)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
           </div>
         </div>
 
         {/* Temple Features */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Temple Features</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-xl font-semibold text-charcoal mb-6">Temple Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label htmlFor="instructionRooms" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="instructionRooms" className="block text-sm font-medium text-charcoal mb-2">
                 Instruction Rooms
               </label>
               <input
@@ -463,12 +463,12 @@ export default function EditTemplePage() {
                 name="instructionRooms"
                 defaultValue={temple.instructionRooms || ''}
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="sealingRooms" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="sealingRooms" className="block text-sm font-medium text-charcoal mb-2">
                 Sealing Rooms
               </label>
               <input
@@ -477,12 +477,12 @@ export default function EditTemplePage() {
                 name="sealingRooms"
                 defaultValue={temple.sealingRooms || ''}
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="spires" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="spires" className="block text-sm font-medium text-charcoal mb-2">
                 Number of Spires
               </label>
               <input
@@ -491,14 +491,14 @@ export default function EditTemplePage() {
                 name="spires"
                 defaultValue={temple.spires || ''}
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
           </div>
 
           {/* Boolean Features */}
           <div className="mt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Features & Services</h3>
+            <h3 className="text-lg font-medium text-charcoal mb-4">Features & Services</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 { name: 'baptistry', label: 'Baptistry', defaultChecked: temple.baptistry },
@@ -514,9 +514,9 @@ export default function EditTemplePage() {
                     id={name}
                     name={name}
                     defaultChecked={defaultChecked}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-warm-coral focus:ring-warm-coral border-light-gray rounded"
                   />
-                  <label htmlFor={name} className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor={name} className="ml-2 block text-sm text-charcoal">
                     {label}
                   </label>
                 </div>
@@ -526,11 +526,11 @@ export default function EditTemplePage() {
         </div>
 
         {/* Location Coordinates */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Geographic Coordinates</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-xl font-semibold text-charcoal mb-6">Geographic Coordinates</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="latitude" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="latitude" className="block text-sm font-medium text-charcoal mb-2">
                 Latitude
               </label>
               <input
@@ -540,12 +540,12 @@ export default function EditTemplePage() {
                 step="any"
                 defaultValue={temple.latitude || ''}
                 placeholder="e.g., 40.7589"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
 
             <div>
-              <label htmlFor="longitude" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="longitude" className="block text-sm font-medium text-charcoal mb-2">
                 Longitude
               </label>
               <input
@@ -555,7 +555,7 @@ export default function EditTemplePage() {
                 step="any"
                 defaultValue={temple.longitude || ''}
                 placeholder="e.g., -111.8883"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               />
             </div>
           </div>
@@ -574,14 +574,14 @@ export default function EditTemplePage() {
           <div className="flex gap-3">
             <Link
               href="/admin"
-              className="flex-1 sm:flex-none text-center px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex-1 sm:flex-none text-center px-6 py-2.5 border border-light-gray rounded-lg text-sm font-medium text-charcoal hover:bg-warm-gray-light transition-colors"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 sm:flex-none px-6 py-2.5 bg-warm-coral text-white text-sm font-medium rounded-lg hover:bg-warm-coral-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
@@ -598,15 +598,15 @@ export default function EditTemplePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Delete Temple</h3>
-            <p className="text-sm text-gray-600 text-center mb-6">
+            <h3 className="text-lg font-semibold text-charcoal text-center mb-2">Delete Temple</h3>
+            <p className="text-sm text-medium-gray text-center mb-6">
               Are you sure you want to delete <strong>{temple?.name}</strong>? This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleting}
-                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 px-4 py-2.5 border border-light-gray text-charcoal text-sm font-medium rounded-lg hover:bg-warm-gray-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Cancel
               </button>

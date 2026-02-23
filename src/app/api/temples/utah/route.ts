@@ -9,6 +9,20 @@ export async function GET() {
       },
       orderBy: {
         name: 'asc'
+      },
+      include: {
+        schedules: {
+          where: {
+            scheduledDate: { gte: new Date() }
+          },
+          orderBy: { scheduledDate: 'asc' },
+          take: 1,
+          select: {
+            id: true,
+            scheduledDate: true,
+            title: true,
+          }
+        }
       }
     })
 

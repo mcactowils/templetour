@@ -195,8 +195,8 @@ export default function EditAppointmentPage() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading appointment...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-warm-coral mx-auto"></div>
+        <p className="mt-4 text-medium-gray">Loading appointment...</p>
       </div>
     )
   }
@@ -207,7 +207,7 @@ export default function EditAppointmentPage() {
         <div className="text-red-600 text-xl mb-4">Error: {error}</div>
         <button
           onClick={() => router.push('/schedules')}
-          className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+          className="bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium"
         >
           Back to Appointments
         </button>
@@ -221,7 +221,7 @@ export default function EditAppointmentPage() {
         <div className="text-red-600 text-xl mb-4">You can only edit appointments you created</div>
         <button
           onClick={() => router.push('/schedules')}
-          className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+          className="bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium"
         >
           Back to Appointments
         </button>
@@ -231,7 +231,7 @@ export default function EditAppointmentPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Edit Temple Appointment</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-charcoal mb-8">Edit Temple Appointment</h1>
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6">
@@ -239,13 +239,13 @@ export default function EditAppointmentPage() {
         </div>
       )}
 
-      <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="mb-6 bg-warm-gray-light border border-warm-gray rounded-lg p-4">
         <div className="flex items-center">
-          <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-medium mr-3">
+          <div className="w-8 h-8 bg-warm-coral text-white rounded-full flex items-center justify-center font-medium mr-3">
             {session?.user?.name?.[0] || session?.user?.email?.[0] || '?'}
           </div>
           <div>
-            <p className="text-sm font-medium text-blue-900">
+            <p className="text-sm font-medium text-charcoal">
               Editing appointment as: {session?.user?.name || session?.user?.email}
             </p>
           </div>
@@ -253,18 +253,18 @@ export default function EditAppointmentPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Appointment Details</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-lg font-semibold text-charcoal mb-4">Appointment Details</h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-charcoal mb-1">
                 Temple <span className="text-red-500">*</span>
               </label>
               <select
                 value={templeId}
                 onChange={(e) => setTempleId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 required
               >
                 <option value="">Select a temple...</option>
@@ -277,7 +277,7 @@ export default function EditAppointmentPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-charcoal mb-2">
                 Scheduling Type <span className="text-red-500">*</span>
               </label>
               <div className="flex gap-4">
@@ -307,7 +307,7 @@ export default function EditAppointmentPage() {
             {schedulingType === 'specific' ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-charcoal mb-1">
                     Date <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -315,20 +315,20 @@ export default function EditAppointmentPage() {
                     value={scheduledDate}
                     onChange={(e) => setScheduledDate(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                     required={schedulingType === 'specific'}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-charcoal mb-1">
                     Time <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     <select
                       value={scheduledHour}
                       onChange={(e) => setScheduledHour(e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                       required={schedulingType === 'specific'}
                     >
                       <option value="">Hour</option>
@@ -345,7 +345,7 @@ export default function EditAppointmentPage() {
                     <select
                       value={scheduledMinute}
                       onChange={(e) => setScheduledMinute(e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                       required={schedulingType === 'specific'}
                     >
                       <option value="">Min</option>
@@ -358,7 +358,7 @@ export default function EditAppointmentPage() {
                     <select
                       value={scheduledAmPm}
                       onChange={(e) => setScheduledAmPm(e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                       required={schedulingType === 'specific'}
                     >
                       <option value="AM">AM</option>
@@ -370,13 +370,13 @@ export default function EditAppointmentPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-charcoal mb-1">
                     Month <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={scheduledMonth}
                     onChange={(e) => setScheduledMonth(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                     required={schedulingType === 'month'}
                   >
                     <option value="">Select month...</option>
@@ -396,13 +396,13 @@ export default function EditAppointmentPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-charcoal mb-1">
                     Year <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={scheduledYear}
                     onChange={(e) => setScheduledYear(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                     required={schedulingType === 'month'}
                   >
                     {Array.from({ length: 5 }, (_, i) => {
@@ -419,14 +419,14 @@ export default function EditAppointmentPage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-charcoal mb-1">
                 Description
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 placeholder="Add any details about the appointment - purpose, special instructions, etc..."
               />
             </div>
@@ -437,14 +437,14 @@ export default function EditAppointmentPage() {
           <button
             type="button"
             onClick={() => router.push('/schedules')}
-            className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="px-6 py-2.5 border border-light-gray rounded-lg text-charcoal text-sm font-medium hover:bg-warm-gray-light transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+            className="bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50"
           >
             {submitting ? 'Updating...' : 'Update Appointment'}
           </button>
