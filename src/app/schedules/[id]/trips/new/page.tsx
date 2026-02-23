@@ -91,8 +91,8 @@ export default function NewTripPage({
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-warm-coral mx-auto"></div>
+        <p className="mt-4 text-medium-gray">Loading...</p>
       </div>
     )
   }
@@ -101,11 +101,11 @@ export default function NewTripPage({
     <div className="max-w-2xl mx-auto">
       <Link
         href={`/schedules/${tourId}`}
-        className="text-blue-600 hover:text-blue-800 text-sm font-medium mb-4 inline-flex items-center"
+        className="text-warm-coral hover:text-warm-coral-hover text-sm font-medium mb-4 inline-flex items-center"
       >
         ← Back to {tourName || 'Tour'}
       </Link>
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">
+      <h1 className="text-2xl sm:text-3xl font-bold text-charcoal mb-8">
         Add a Trip to {tourName || 'Tour'}
       </h1>
 
@@ -117,32 +117,32 @@ export default function NewTripPage({
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Trip details */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Trip Details</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-lg font-semibold text-charcoal mb-4">Trip Details</h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-charcoal mb-1">
                 Trip Title <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 placeholder="e.g., Salt Lake Temple Visit"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-charcoal mb-1">
                 Temple <span className="text-red-500">*</span>
               </label>
               <select
                 value={templeId}
                 onChange={(e) => setTempleId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 required
               >
                 <option value="">Select a temple...</option>
@@ -156,27 +156,27 @@ export default function NewTripPage({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-charcoal mb-1">
                 Date & Time <span className="text-red-500">*</span>
               </label>
               <input
                 type="datetime-local"
                 value={scheduledDate}
                 onChange={(e) => setScheduledDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-charcoal mb-1">
                 Description
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 placeholder="Meeting point, what to bring, session time, etc."
               />
             </div>
@@ -187,14 +187,14 @@ export default function NewTripPage({
           <button
             type="button"
             onClick={() => router.push(`/schedules/${tourId}`)}
-            className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="px-6 py-2.5 border border-light-gray rounded-lg text-charcoal text-sm font-medium hover:bg-warm-gray-light transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+            className="bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50"
           >
             {submitting ? 'Adding...' : 'Add Trip'}
           </button>

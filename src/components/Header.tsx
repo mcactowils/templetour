@@ -60,7 +60,7 @@ function PlusIcon({ className }: { className?: string }) {
 const tabs = [
   { label: 'Dashboard', href: '/schedules' },
   { label: 'Temples', href: '/temples' },
-  { label: 'Calendar', href: '#' },
+  { label: 'Calendar', href: '/calendar' },
   { label: 'Messages', href: '#' },
 ]
 
@@ -72,6 +72,7 @@ export default function Header() {
   const getActiveTab = () => {
     if (pathname === '/schedules' || pathname === '/') return '/schedules'
     if (pathname.startsWith('/temples')) return '/temples'
+    if (pathname.startsWith('/calendar')) return '/calendar'
     return '/schedules'
   }
 

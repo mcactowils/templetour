@@ -203,8 +203,8 @@ export default function TripDetailPage({
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading trip...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-warm-coral mx-auto"></div>
+        <p className="mt-4 text-medium-gray">Loading trip...</p>
       </div>
     )
   }
@@ -215,7 +215,7 @@ export default function TripDetailPage({
         <div className="text-red-600 text-xl">Error: {error}</div>
         <Link
           href={`/schedules/${tourId}`}
-          className="mt-4 inline-block text-blue-600 hover:text-blue-800"
+          className="mt-4 inline-block text-warm-coral hover:text-warm-coral-hover"
         >
           Back to Tour
         </Link>
@@ -240,30 +240,30 @@ export default function TripDetailPage({
       )}
 
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-8 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-6">
           <div>
             <Link
               href={`/schedules/${tourId}`}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium mb-2 inline-flex items-center"
+              className="text-warm-coral hover:text-warm-coral-hover text-sm font-medium mb-2 inline-flex items-center"
             >
               ← Back to Tour
             </Link>
             <div className="flex flex-wrap items-center gap-3 mb-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold text-charcoal">
                 {schedule.title}
               </h1>
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                   isUpcoming
                     ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-600'
+                    : 'bg-warm-gray-light text-medium-gray'
                 }`}
               >
                 {isUpcoming ? 'Upcoming' : 'Past'}
               </span>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-medium-gray">
               Added by {schedule.createdBy.name}
             </p>
           </div>
@@ -276,16 +276,16 @@ export default function TripDetailPage({
         </div>
 
         {/* Temple info */}
-        <div className="bg-blue-50 rounded-lg p-4 mb-6">
+        <div className="bg-warm-gray-light rounded-lg p-4 mb-6">
           <div className="flex items-center mb-2">
-            <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 mr-2 text-warm-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
-            <span className="text-lg font-semibold text-blue-900">
+            <span className="text-lg font-semibold text-charcoal">
               {schedule.temple.name}
             </span>
           </div>
-          <p className="text-blue-700 text-sm ml-7">
+          <p className="text-warm-coral text-sm ml-7">
             {schedule.temple.city}
             {schedule.temple.state ? `, ${schedule.temple.state}` : ''},{' '}
             {schedule.temple.country}
@@ -295,7 +295,7 @@ export default function TripDetailPage({
               href={`https://maps.apple.com/?q=${encodeURIComponent(schedule.temple.address)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 text-sm ml-7 underline"
+              className="text-warm-coral hover:text-warm-coral-hover text-sm ml-7 underline"
             >
               {schedule.temple.address}
             </a>
@@ -303,8 +303,8 @@ export default function TripDetailPage({
         </div>
 
         {/* Date & Time */}
-        <div className="flex items-center text-gray-700 mb-4">
-          <svg className="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center text-charcoal mb-4">
+          <svg className="w-5 h-5 mr-3 text-medium-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           <span className="text-lg">
@@ -315,11 +315,11 @@ export default function TripDetailPage({
 
         {/* Description */}
         {schedule.description && (
-          <div className="border-t border-gray-100 pt-4 mt-4">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          <div className="border-t border-light-gray pt-4 mt-4">
+            <h3 className="text-sm font-semibold text-medium-gray uppercase tracking-wider mb-2">
               Details
             </h3>
-            <p className="text-gray-700 whitespace-pre-wrap">
+            <p className="text-charcoal whitespace-pre-wrap">
               {schedule.description}
             </p>
           </div>
@@ -329,20 +329,20 @@ export default function TripDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Attendees section */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+            <h2 className="text-lg font-semibold text-charcoal mb-4">
               Attending ({schedule._count.attendees})
             </h2>
 
             {/* RSVP */}
-            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="mb-4 p-4 bg-warm-gray-light rounded-lg">
+              <label className="block text-sm font-medium text-charcoal mb-2">
                 RSVP as:
               </label>
               <select
                 value={selectedUserId}
                 onChange={(e) => setSelectedUserId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
+                className="w-full px-3 py-2 border border-light-gray rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral mb-2"
               >
                 <option value="">Select your name...</option>
                 {users.map((user) => (
@@ -358,7 +358,7 @@ export default function TripDetailPage({
                   className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
                     isAttending(selectedUserId)
                       ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-warm-coral text-white hover:bg-warm-coral-hover'
                   }`}
                 >
                   {rsvpLoading
@@ -372,7 +372,7 @@ export default function TripDetailPage({
 
             {/* Attendee list */}
             {schedule.attendees.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-4">
+              <p className="text-medium-gray text-sm text-center py-4">
                 No one has RSVP&apos;d yet. Be the first!
               </p>
             ) : (
@@ -380,12 +380,12 @@ export default function TripDetailPage({
                 {schedule.attendees.map((attendee) => (
                   <li
                     key={attendee.id}
-                    className="flex items-center space-x-3 py-2 px-3 rounded-lg bg-gray-50"
+                    className="flex items-center space-x-3 py-2 px-3 rounded-lg bg-warm-gray-light"
                   >
-                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-semibold">
+                    <div className="w-8 h-8 rounded-full bg-warm-coral/20 text-warm-coral flex items-center justify-center text-sm font-semibold">
                       {attendee.user.name.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-charcoal">
                       {attendee.user.name}
                     </span>
                   </li>
@@ -397,8 +397,8 @@ export default function TripDetailPage({
 
         {/* Comments section */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+            <h2 className="text-lg font-semibold text-charcoal mb-4">
               Trip Discussion ({schedule._count.comments})
             </h2>
 
@@ -408,7 +408,7 @@ export default function TripDetailPage({
                 <select
                   value={commentUserId}
                   onChange={(e) => setCommentUserId(e.target.value)}
-                  className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full sm:w-auto px-3 py-2 border border-light-gray rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 >
                   <option value="">Post as...</option>
                   {users.map((user) => (
@@ -423,7 +423,7 @@ export default function TripDetailPage({
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   rows={3}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="flex-1 px-3 py-2 border border-light-gray rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                   placeholder={
                     isUpcoming
                       ? 'Share plans, questions, or coordinate for this trip...'
@@ -435,7 +435,7 @@ export default function TripDetailPage({
                 <button
                   type="submit"
                   disabled={commentLoading || !commentUserId || !commentText.trim()}
-                  className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+                  className="bg-warm-coral text-white px-4 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50"
                 >
                   {commentLoading ? 'Posting...' : 'Post Comment'}
                 </button>
@@ -444,8 +444,8 @@ export default function TripDetailPage({
 
             {/* Comments list */}
             {schedule.comments.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="text-center py-8 text-medium-gray">
+                <svg className="w-12 h-12 mx-auto mb-3 text-light-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <p className="text-sm">No comments yet. Start the conversation!</p>
@@ -455,22 +455,22 @@ export default function TripDetailPage({
                 {schedule.comments.map((comment) => (
                   <div
                     key={comment.id}
-                    className="border-b border-gray-100 pb-4 last:border-0"
+                    className="border-b border-light-gray pb-4 last:border-0"
                   >
                     <div className="flex items-center space-x-3 mb-2">
                       <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-semibold">
                         {comment.user.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <span className="text-sm font-semibold text-gray-900">
+                        <span className="text-sm font-semibold text-charcoal">
                           {comment.user.name}
                         </span>
-                        <span className="text-xs text-gray-500 ml-2">
+                        <span className="text-xs text-medium-gray ml-2">
                           {formatCommentDate(comment.createdAt)}
                         </span>
                       </div>
                     </div>
-                    <p className="text-gray-700 text-sm ml-11 whitespace-pre-wrap">
+                    <p className="text-charcoal text-sm ml-11 whitespace-pre-wrap">
                       {comment.content}
                     </p>
                   </div>
@@ -485,17 +485,17 @@ export default function TripDetailPage({
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-charcoal mb-2">
               Delete Trip?
             </h3>
-            <p className="text-gray-600 text-sm mb-6">
+            <p className="text-medium-gray text-sm mb-6">
               This will permanently delete this trip, including all
               RSVPs and comments. This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 px-4 py-2.5 text-gray-700 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2.5 text-charcoal text-sm font-medium border border-light-gray rounded-lg hover:bg-warm-gray-light transition-colors"
               >
                 Cancel
               </button>
