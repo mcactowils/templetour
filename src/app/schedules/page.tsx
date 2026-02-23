@@ -45,19 +45,43 @@ interface Appointment {
   }
 }
 
-export default function AppointmentsPage() {
+function LocationPinIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+    </svg>
+  )
+}
+
+function ChatBubbleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zm-4 0H9v2h2V9z" clipRule="evenodd" />
+    </svg>
+  )
+}
+
+function SectionHeader({ title, subLabel }: { title: string; subLabel: string }) {
+  return (
+    <div className="mb-3 mt-8 first:mt-4">
+      <div className="flex items-center gap-3">
+        <div className="shrink-0">
+          <h2 className="text-xl font-light text-charcoal tracking-wide">{title}</h2>
+          <span className="text-xs text-medium-gray tracking-widest">{subLabel}</span>
+        </div>
+        <div className="flex-1 border-b border-section-rule" />
+      </div>
+    </div>
+  )
+}
+
+export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [expandedAppointment, setExpandedAppointment] = useState<string | null>(null)
-  const [showAttendees, setShowAttendees] = useState<string | null>(null)
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null)
-  const [commentLoading, setCommentLoading] = useState<string | null>(null)
-  const [appointmentComments, setAppointmentComments] = useState<{[key: string]: string}>({})
-  const [deleteCommentLoading, setDeleteCommentLoading] = useState<string | null>(null)
-  const [deleteAppointmentLoading, setDeleteAppointmentLoading] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -82,8 +106,19 @@ export default function AppointmentsPage() {
     }
   }
 
-  const formatDate = (date: string) => {
+  const isUpcoming = (date: string) => new Date(date) >= new Date()
+
+  const isMonthOnlyAppointment = (date: string, title: string) => {
+    const appointmentDate = new Date(date)
+    return appointmentDate.getDate() === 1 &&
+           appointmentDate.getHours() === 12 &&
+           appointmentDate.getMinutes() === 0 &&
+           title.includes('(')
+  }
+
+  const formatFullDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
+      weekday: 'long',
       month: 'long',
       day: 'numeric',
       year: 'numeric',
@@ -96,32 +131,18 @@ export default function AppointmentsPage() {
       minute: '2-digit',
     })
 
-  const isMonthOnlyAppointment = (date: string, title: string) => {
-    const appointmentDate = new Date(date)
-    // Check if it's the first day of the month at noon (indicating month-only scheduling)
-    return appointmentDate.getDate() === 1 &&
-           appointmentDate.getHours() === 12 &&
-           appointmentDate.getMinutes() === 0 &&
-           title.includes('(') // Month-only titles include the month/year in parentheses
-  }
-
-  const formatAppointmentDateTime = (date: string, title: string) => {
-    if (isMonthOnlyAppointment(date, title)) {
-      return `Penciled in for ${formatDate(date).split(' ').slice(0, 2).join(' ')}`
-    }
-    return `${formatDate(date)} at ${formatTime(date)}`
-  }
-
-  const formatCommentDate = (date: string) =>
-    new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
+  const formatMonthYear = (date: string) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'long',
       year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
     })
+  }
 
-  const isUpcoming = (date: string) => new Date(date) >= new Date()
+  const getArriveByTime = (date: string) => {
+    const d = new Date(date)
+    d.setMinutes(d.getMinutes() - 30)
+    return formatTime(d.toISOString())
+  }
 
   const handleRSVP = async (appointmentId: string) => {
     if (!session?.user) return
@@ -148,98 +169,37 @@ export default function AppointmentsPage() {
     }
   }
 
-  const handleComment = async (appointmentId: string) => {
-    if (!session?.user || !appointmentComments[appointmentId]?.trim()) return
-
-    try {
-      setCommentLoading(appointmentId)
-
-      const response = await fetch(`/api/schedules/${appointmentId}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: (session.user as any).id,
-          content: appointmentComments[appointmentId].trim(),
-        }),
-      })
-
-      if (!response.ok) throw new Error('Failed to post comment')
-
-      setAppointmentComments(prev => ({ ...prev, [appointmentId]: '' }))
-      await fetchAppointments()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to post comment')
-    } finally {
-      setCommentLoading(null)
-    }
-  }
-
-  const handleDeleteComment = async (appointmentId: string, commentId: string) => {
-    if (!session?.user) return
-
-    try {
-      setDeleteCommentLoading(commentId)
-
-      const response = await fetch(`/api/schedules/${appointmentId}/comments/${commentId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      })
-
-      if (!response.ok) throw new Error('Failed to delete comment')
-
-      await fetchAppointments()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete comment')
-    } finally {
-      setDeleteCommentLoading(null)
-    }
-  }
-
-  const handleDeleteAppointment = async (appointmentId: string) => {
-    if (!session?.user) return
-
-    if (!confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
-      return
-    }
-
-    try {
-      setDeleteAppointmentLoading(appointmentId)
-
-      const response = await fetch(`/api/schedules/${appointmentId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      })
-
-      if (!response.ok) throw new Error('Failed to delete appointment')
-
-      await fetchAppointments()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete appointment')
-    } finally {
-      setDeleteAppointmentLoading(null)
-    }
-  }
+  // Split appointments into scheduled vs unscheduled
+  const upcomingAppointments = appointments.filter(a => isUpcoming(a.scheduledDate))
+  const scheduledAppointments = upcomingAppointments
+    .filter(a => !isMonthOnlyAppointment(a.scheduledDate, a.title))
+    .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
+  const unscheduledAppointments = upcomingAppointments
+    .filter(a => isMonthOnlyAppointment(a.scheduledDate, a.title))
+    .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
 
   if (status === 'loading' || loading) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">{status === 'loading' ? 'Authenticating...' : 'Loading appointments...'}</p>
+      <div className="text-center py-16">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-warm-coral mx-auto"></div>
+        <p className="mt-4 text-medium-gray text-sm">
+          {status === 'loading' ? 'Authenticating...' : 'Loading appointments...'}
+        </p>
       </div>
     )
   }
 
   if (status === 'unauthenticated') {
-    return null // Will redirect
+    return null
   }
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <div className="text-red-600 text-xl">Error: {error}</div>
+      <div className="text-center py-16">
+        <div className="text-red-600 text-base">Error: {error}</div>
         <button
           onClick={fetchAppointments}
-          className="mt-4 bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+          className="mt-4 bg-warm-coral text-white px-6 py-2 rounded-full hover:bg-warm-coral-hover transition-colors text-sm font-medium"
         >
           Try Again
         </button>
@@ -247,223 +207,139 @@ export default function AppointmentsPage() {
     )
   }
 
-  return (
-    <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Temple Appointments</h1>
-          <p className="text-gray-600 mt-1 text-sm sm:text-base">
-            Schedule temple appointments, invite others, and coordinate visits together
-          </p>
+  if (appointments.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <div className="w-16 h-16 mx-auto mb-4 text-warm-gray">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+          </svg>
         </div>
+        <h3 className="text-lg font-light text-charcoal mb-2">No appointments yet</h3>
+        <p className="text-medium-gray text-sm mb-6">
+          Create your first temple appointment to start planning visits.
+        </p>
         <Link
           href="/schedules/new"
-          className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium shrink-0"
+          className="inline-flex items-center bg-warm-coral text-white px-6 py-2 rounded-full hover:bg-warm-coral-hover transition-colors text-sm font-medium"
         >
           Create Appointment
         </Link>
       </div>
+    )
+  }
 
-      {appointments.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="text-5xl mb-4">📅</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No appointments yet</h3>
-          <p className="text-gray-600 mb-6 text-sm">
-            Create your first temple appointment to start planning visits with friends and family.
-          </p>
-          <Link
-            href="/schedules/new"
-            className="inline-flex items-center bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-          >
-            Create Your First Appointment
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {appointments.map((appointment) => (
-            <div
-              key={appointment.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-lg hover:border-blue-200 transition-all"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex-1">
-                  <h2 className="text-lg font-bold text-gray-900">{appointment.title}</h2>
-                  <div className="flex items-center mt-1 text-sm text-gray-600">
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                    {appointment.temple.name}, {appointment.temple.city}, {appointment.temple.state || appointment.temple.country}
-                  </div>
-                  <div className="flex items-center mt-1 text-sm text-gray-600">
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {formatAppointmentDateTime(appointment.scheduledDate, appointment.title)}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${
-                    isUpcoming(appointment.scheduledDate)
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}>
-                    {isUpcoming(appointment.scheduledDate) ? 'Upcoming' : 'Past'}
-                  </span>
-                </div>
-              </div>
+  return (
+    <div className="pb-8">
+      {/* Scheduled Appointments */}
+      {scheduledAppointments.length > 0 && (
+        <div>
+          <SectionHeader title="Upcoming Appointments" subLabel="Scheduled" />
+          <div className="bg-white">
+            {scheduledAppointments.map((appointment) => {
+              const isAttending = appointment.attendees?.some(
+                a => a.user.id === (session?.user as any)?.id
+              ) || false
 
-              {appointment.description && (
-                <p className="text-gray-600 text-sm mb-3">
-                  {appointment.description}
-                </p>
-              )}
-
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
-                <button
-                  onClick={() => setShowAttendees(showAttendees === appointment.id ? null : appointment.id)}
-                  className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              return (
+                <div
+                  key={appointment.id}
+                  className="py-4 border-b border-light-gray last:border-b-0 pl-3 border-l-2 border-l-warm-gray"
                 >
-                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  {appointment._count.attendees} {appointment._count.attendees === 1 ? 'attendee' : 'attendees'}
-                </button>
-                <button
-                  onClick={() => setExpandedAppointment(expandedAppointment === appointment.id ? null : appointment.id)}
-                  className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  {appointment._count.comments} {appointment._count.comments === 1 ? 'comment' : 'comments'}
-                </button>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleRSVP(appointment.id)}
-                  disabled={rsvpLoading === appointment.id}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    appointment.attendees?.some(a => a.user.id === (session?.user as any)?.id)
-                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                  } ${rsvpLoading === appointment.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  {rsvpLoading === appointment.id ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                      Loading...
-                    </div>
-                  ) : appointment.attendees?.some(a => a.user.id === (session?.user as any)?.id) ? (
-                    'Cancel RSVP'
-                  ) : (
-                    'RSVP'
-                  )}
-                </button>
-                {appointment.createdBy.id === (session?.user as any)?.id && (
-                  <>
+                  {/* Temple name + pin */}
+                  <div className="flex items-center gap-1.5 mb-1">
                     <Link
-                      href={`/schedules/${appointment.id}/edit`}
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+                      href={`/schedules/${appointment.id}`}
+                      className="font-bold text-charcoal text-base hover:text-charcoal-dark transition-colors"
                     >
-                      Edit
+                      {appointment.temple.name}
+                    </Link>
+                    <LocationPinIcon className="w-3.5 h-3.5 text-medium-gray shrink-0" />
+                  </div>
+
+                  {/* Date + time */}
+                  <p className="text-sm text-medium-gray">
+                    {formatFullDate(appointment.scheduledDate)} | {formatTime(appointment.scheduledDate)}
+                  </p>
+
+                  {/* Arrive by */}
+                  <p className="text-sm text-medium-gray mt-0.5">
+                    Arrive by {getArriveByTime(appointment.scheduledDate)}
+                  </p>
+
+                  {/* Bottom row: chat icon + RSVP button */}
+                  <div className="flex items-center justify-end gap-3 mt-3">
+                    <Link
+                      href={`/schedules/${appointment.id}`}
+                      className="text-medium-gray hover:text-charcoal transition-colors"
+                    >
+                      <ChatBubbleIcon className="w-5 h-5" />
                     </Link>
                     <button
-                      onClick={() => handleDeleteAppointment(appointment.id)}
-                      disabled={deleteAppointmentLoading === appointment.id}
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-red-600 border border-red-300 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => handleRSVP(appointment.id)}
+                      disabled={rsvpLoading === appointment.id}
+                      className={`px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider transition-colors ${
+                        rsvpLoading === appointment.id ? 'opacity-50 cursor-not-allowed' : ''
+                      } ${
+                        isAttending
+                          ? 'bg-warm-coral/20 text-warm-coral hover:bg-warm-coral/30'
+                          : 'bg-warm-coral text-white hover:bg-warm-coral-hover'
+                      }`}
                     >
-                      {deleteAppointmentLoading === appointment.id ? (
-                        <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>
-                          Deleting...
-                        </div>
-                      ) : (
-                        'Delete'
-                      )}
+                      {rsvpLoading === appointment.id ? '...' : isAttending ? 'RSVP\'d' : 'RSVP'}
                     </button>
-                  </>
-                )}
-              </div>
-
-              {showAttendees === appointment.id && appointment.attendees && appointment.attendees.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <div className="space-y-2">
-                    {appointment.attendees.map((attendee) => (
-                      <div key={attendee.id} className="text-sm text-gray-700">
-                        {attendee.user.name}
-                      </div>
-                    ))}
                   </div>
                 </div>
-              )}
+              )
+            })}
+          </div>
+        </div>
+      )}
 
-              {expandedAppointment === appointment.id && (
-                <div className="mt-4 pt-4 border-t border-gray-100 space-y-4">
-                  {appointment.comments && appointment.comments.length > 0 && (
-                    <div className="space-y-2">
-                      {appointment.comments.map((comment) => (
-                        <div key={comment.id} className="text-sm">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-gray-900">{comment.user.name}</span>
-                              <span className="text-xs text-gray-500">{formatCommentDate(comment.createdAt)}</span>
-                            </div>
-                            {comment.user.id === (session?.user as any)?.id && (
-                              <button
-                                onClick={() => handleDeleteComment(appointment.id, comment.id)}
-                                disabled={deleteCommentLoading === comment.id}
-                                className="text-red-600 hover:text-red-800 text-xs disabled:opacity-50"
-                              >
-                                {deleteCommentLoading === comment.id ? 'Deleting...' : 'Delete'}
-                              </button>
-                            )}
-                          </div>
-                          <p className="text-gray-700 mt-1">{comment.content}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={appointmentComments[appointment.id] || ''}
-                        onChange={(e) => setAppointmentComments(prev => ({
-                          ...prev,
-                          [appointment.id]: e.target.value
-                        }))}
-                        placeholder="Add a comment..."
-                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault()
-                            handleComment(appointment.id)
-                          }
-                        }}
-                      />
-                      <button
-                        onClick={() => handleComment(appointment.id)}
-                        disabled={commentLoading === appointment.id || !appointmentComments[appointment.id]?.trim()}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {commentLoading === appointment.id ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        ) : (
-                          'Post'
-                        )}
-                      </button>
-                    </div>
-                  </div>
+      {/* Unscheduled Appointments */}
+      {unscheduledAppointments.length > 0 && (
+        <div>
+          <SectionHeader title="Upcoming Appointments" subLabel="unscheduled" />
+          <div className="bg-white">
+            {unscheduledAppointments.map((appointment) => (
+              <div
+                key={appointment.id}
+                className="py-4 border-b border-light-gray last:border-b-0 pl-3 border-l-2 border-l-warm-gray"
+              >
+                {/* Temple name + pin */}
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Link
+                    href={`/schedules/${appointment.id}`}
+                    className="font-bold text-charcoal text-base hover:text-charcoal-dark transition-colors"
+                  >
+                    {appointment.temple.name}
+                  </Link>
+                  <LocationPinIcon className="w-3.5 h-3.5 text-medium-gray shrink-0" />
                 </div>
-              )}
 
-              <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400">
-                Created by {appointment.createdBy.name} on {formatDate(appointment.createdAt)}
+                {/* Month/year */}
+                <p className="text-sm text-medium-gray">
+                  {formatMonthYear(appointment.scheduledDate)}
+                </p>
+
+                {/* Bottom row: chat icon + Schedule button */}
+                <div className="flex items-center justify-end gap-3 mt-3">
+                  <Link
+                    href={`/schedules/${appointment.id}`}
+                    className="text-medium-gray hover:text-charcoal transition-colors"
+                  >
+                    <ChatBubbleIcon className="w-5 h-5" />
+                  </Link>
+                  <Link
+                    href={`/schedules/${appointment.id}/edit`}
+                    className="px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider bg-warm-coral text-white hover:bg-warm-coral-hover transition-colors"
+                  >
+                    Schedule
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
