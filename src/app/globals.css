@@ -24,3 +24,46 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Consistent form element sizing and styling */
+input, textarea, select {
+  font-weight: 500 !important;
+  color: #374151 !important;
+  height: 42px !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid #D1D5DB !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+textarea {
+  height: auto !important;
+  min-height: 84px !important;
+  padding: 8px 12px !important;
+  resize: vertical !important;
+}
+
+input::placeholder, textarea::placeholder {
+  font-weight: 400 !important;
+  color: #9CA3AF !important;
+}
+
+/* Admin form specific styles */
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  font-weight: 600 !important;
+  color: #1F2937 !important;
+  height: 42px !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid #D1D5DB !important;
+  font-size: 14px !important;
+  background-color: #FFFFFF !important;
+}
+
+.admin-form textarea {
+  height: auto !important;
+  min-height: 84px !important;
+}
