@@ -112,7 +112,7 @@ export default function Profile() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+        <div className="w-8 h-8 bg-light-gray rounded-full animate-pulse"></div>
       </div>
     )
   }
@@ -122,14 +122,14 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-warm-gray-light py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
         <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Profile Settings</h1>
+          <h1 className="text-2xl font-bold text-charcoal mb-6">Profile Settings</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-charcoal mb-2">
                 Name
               </label>
               <input
@@ -138,13 +138,13 @@ export default function Profile() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-3 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 placeholder="Your name"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-charcoal mb-2">
                 Email
               </label>
               <input
@@ -153,7 +153,7 @@ export default function Profile() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-3 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 placeholder="your@email.com"
                 required
               />
@@ -162,7 +162,7 @@ export default function Profile() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="w-full bg-warm-coral text-white py-3 px-4 rounded-lg hover:bg-warm-coral-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-warm-coral disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               {isLoading ? 'Updating...' : 'Update Profile'}
             </button>
@@ -174,11 +174,11 @@ export default function Profile() {
             )}
           </form>
 
-          <div className="mt-8 pt-8 border-t border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Change Password</h2>
+          <div className="mt-8 pt-8 border-t border-light-gray">
+            <h2 className="text-lg font-semibold text-charcoal mb-4">Change Password</h2>
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div>
-                <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="currentPassword" className="block text-sm font-medium text-charcoal mb-2">
                   Current Password
                 </label>
                 <input
@@ -187,13 +187,13 @@ export default function Profile() {
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-3 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="newPassword" className="block text-sm font-medium text-charcoal mb-2">
                   New Password
                 </label>
                 <input
@@ -202,14 +202,14 @@ export default function Profile() {
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-3 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                   minLength={6}
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-charcoal mb-2">
                   Confirm New Password
                 </label>
                 <input
@@ -218,7 +218,7 @@ export default function Profile() {
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-3 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                   minLength={6}
                   required
                 />
@@ -240,10 +240,10 @@ export default function Profile() {
             </form>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="mt-6 pt-6 border-t border-light-gray">
             <button
               onClick={() => router.back()}
-              className="text-blue-600 hover:text-blue-800 text-sm"
+              className="text-warm-coral hover:text-warm-coral-hover text-sm"
             >
               ← Back
             </button>

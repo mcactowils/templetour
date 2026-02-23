@@ -297,8 +297,8 @@ export default function TourDetailPage({
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading tour...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-warm-coral mx-auto"></div>
+        <p className="mt-4 text-medium-gray">Loading tour...</p>
       </div>
     )
   }
@@ -309,7 +309,7 @@ export default function TourDetailPage({
         <div className="text-red-600 text-xl">Error: {error}</div>
         <Link
           href="/schedules"
-          className="mt-4 inline-block text-blue-600 hover:text-blue-800"
+          className="mt-4 inline-block text-warm-coral hover:text-warm-coral-hover"
         >
           Back to Tours
         </Link>
@@ -334,19 +334,19 @@ export default function TourDetailPage({
       )}
 
       {/* Tour Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-8 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
           <div>
             <Link
               href="/schedules"
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium mb-2 inline-flex items-center"
+              className="text-warm-coral hover:text-warm-coral-hover text-sm font-medium mb-2 inline-flex items-center"
             >
               ← Back to Tours
             </Link>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-bold text-charcoal">
               {tour.name}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-medium-gray mt-1">
               Created by {tour.createdBy.name}
             </p>
           </div>
@@ -359,24 +359,24 @@ export default function TourDetailPage({
         </div>
 
         {tour.description && (
-          <p className="text-gray-600 whitespace-pre-wrap">{tour.description}</p>
+          <p className="text-medium-gray whitespace-pre-wrap">{tour.description}</p>
         )}
 
         {/* Stats row */}
-        <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-100">
-          <div className="flex items-center text-sm text-gray-500">
+        <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-light-gray">
+          <div className="flex items-center text-sm text-medium-gray">
             <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             {tour._count.members} {tour._count.members === 1 ? 'member' : 'members'}
           </div>
-          <div className="flex items-center text-sm text-gray-500">
+          <div className="flex items-center text-sm text-medium-gray">
             <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             {tour._count.trips} {tour._count.trips === 1 ? 'appointment' : 'appointments'}
           </div>
-          <div className="flex items-center text-sm text-gray-500">
+          <div className="flex items-center text-sm text-medium-gray">
             <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
@@ -386,15 +386,15 @@ export default function TourDetailPage({
       </div>
 
       {/* Tab navigation */}
-      <div className="flex bg-gray-100 rounded-lg p-1 mb-6 w-full sm:w-fit">
+      <div className="flex bg-warm-gray-light rounded-lg p-1 mb-6 w-full sm:w-fit">
         {(['trips', 'members', 'discussion'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white text-charcoal shadow-sm'
+                : 'text-medium-gray hover:text-charcoal'
             }`}
           >
             {tab === 'trips' && `Appointments (${tour._count.trips})`}
@@ -408,25 +408,25 @@ export default function TourDetailPage({
       {activeTab === 'trips' && (
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Scheduled Appointments</h2>
+            <h2 className="text-lg font-semibold text-charcoal">Scheduled Appointments</h2>
             <Link
               href={`/schedules/${id}/trips/new`}
-              className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              className="bg-warm-coral text-white px-4 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium"
             >
               Add Appointment
             </Link>
           </div>
 
           {tour.trips.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
+            <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-light-gray">
               <div className="text-4xl mb-3">🏛️</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No appointments scheduled yet</h3>
-              <p className="text-gray-600 text-sm mb-4">
+              <h3 className="text-lg font-semibold text-charcoal mb-2">No appointments scheduled yet</h3>
+              <p className="text-medium-gray text-sm mb-4">
                 Add your first temple appointment to this tour.
               </p>
               <Link
                 href={`/schedules/${id}/trips/new`}
-                className="inline-flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                className="inline-flex items-center bg-warm-coral text-white px-5 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium"
               >
                 Schedule an Appointment
               </Link>
@@ -440,34 +440,34 @@ export default function TourDetailPage({
                 return (
                   <div
                     key={trip.id}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                    className="bg-white rounded-xl shadow-sm border border-light-gray overflow-hidden"
                   >
                     <div className="p-4 sm:p-5">
                       <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-3">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <h3 className="text-base font-bold text-gray-900">{trip.title}</h3>
+                            <h3 className="text-base font-bold text-charcoal">{trip.title}</h3>
                             <span
                               className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                                 upcoming
                                   ? 'bg-green-100 text-green-800'
-                                  : 'bg-gray-100 text-gray-600'
+                                  : 'bg-warm-gray-light text-medium-gray'
                               }`}
                             >
                               {upcoming ? 'Upcoming' : 'Past'}
                             </span>
                           </div>
-                          <div className="flex items-center text-gray-600 text-sm mb-1">
+                          <div className="flex items-center text-medium-gray text-sm mb-1">
                             <svg className="w-4 h-4 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                             <span className="font-medium">{trip.temple.name}</span>
-                            <span className="text-gray-400 ml-1.5">
+                            <span className="text-medium-gray ml-1.5">
                               {trip.temple.city}
                               {trip.temple.state ? `, ${trip.temple.state}` : ''}
                             </span>
                           </div>
-                          <div className="flex items-center text-gray-500 text-sm">
+                          <div className="flex items-center text-medium-gray text-sm">
                             <svg className="w-4 h-4 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
@@ -484,7 +484,7 @@ export default function TourDetailPage({
                           className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                             isAttending
                               ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                              : 'bg-warm-coral text-white hover:bg-warm-coral-hover'
                           } disabled:opacity-50`}
                         >
                           {rsvpLoading === trip.id ? '...' : isAttending ? '✓ Attending' : 'RSVP'}
@@ -492,7 +492,7 @@ export default function TourDetailPage({
 
                         <button
                           onClick={() => setShowAttendees(showAttendees === trip.id ? null : trip.id)}
-                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-medium-gray hover:text-charcoal hover:bg-warm-gray-light transition-colors"
                         >
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -502,7 +502,7 @@ export default function TourDetailPage({
 
                         <button
                           onClick={() => setExpandedTrip(isExpanded ? null : trip.id)}
-                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-medium-gray hover:text-charcoal hover:bg-warm-gray-light transition-colors"
                         >
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -512,7 +512,7 @@ export default function TourDetailPage({
 
                         <Link
                           href={`/schedules/${id}/trips/${trip.id}`}
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-auto"
+                          className="text-warm-coral hover:text-warm-coral-hover text-sm font-medium ml-auto"
                         >
                           View Details →
                         </Link>
@@ -520,8 +520,8 @@ export default function TourDetailPage({
 
                       {/* Attendees section */}
                       {showAttendees === trip.id && (
-                        <div className="mt-4 pt-4 border-t border-gray-100">
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">
+                        <div className="mt-4 pt-4 border-t border-light-gray">
+                          <h4 className="text-sm font-medium text-charcoal mb-3">
                             Attendees ({trip._count.attendees})
                           </h4>
                           {trip.attendees && trip.attendees.length > 0 ? (
@@ -539,7 +539,7 @@ export default function TourDetailPage({
                               ))}
                             </div>
                           ) : (
-                            <p className="text-gray-500 text-sm">No one is attending yet.</p>
+                            <p className="text-medium-gray text-sm">No one is attending yet.</p>
                           )}
                         </div>
                       )}
@@ -547,7 +547,7 @@ export default function TourDetailPage({
 
                     {/* Expanded comments section */}
                     {isExpanded && (
-                      <div className="border-t border-gray-200 p-4 sm:p-5 bg-gray-50">
+                      <div className="border-t border-light-gray p-4 sm:p-5 bg-warm-gray-light">
                         {/* Add comment form */}
                         <div className="mb-4">
                           <textarea
@@ -555,13 +555,13 @@ export default function TourDetailPage({
                             onChange={(e) => setTripComments(prev => ({ ...prev, [trip.id]: e.target.value }))}
                             placeholder="Add a comment about this appointment..."
                             rows={2}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-light-gray rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                           />
                           <div className="flex justify-end mt-2">
                             <button
                               onClick={() => handleTripComment(trip.id)}
                               disabled={tripCommentLoading === trip.id || !tripComments[trip.id]?.trim()}
-                              className="bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+                              className="bg-warm-coral text-white px-3 py-1.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50"
                             >
                               {tripCommentLoading === trip.id ? 'Posting...' : 'Post Comment'}
                             </button>
@@ -570,22 +570,22 @@ export default function TourDetailPage({
 
                         {/* Comments list */}
                         {(!trip.comments || trip.comments.length === 0) ? (
-                          <p className="text-gray-500 text-sm text-center py-4">No comments yet. Be the first to comment!</p>
+                          <p className="text-medium-gray text-sm text-center py-4">No comments yet. Be the first to comment!</p>
                         ) : (
                           <div className="space-y-3">
                             {trip.comments.map((comment) => (
                               <div key={comment.id} className="flex space-x-3">
-                                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-medium">
+                                <div className="w-6 h-6 rounded-full bg-warm-coral/20 text-warm-coral flex items-center justify-center text-xs font-medium">
                                   {comment.user.name.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center space-x-2">
-                                    <span className="text-sm font-medium text-gray-900">{comment.user.name}</span>
-                                    <span className="text-xs text-gray-500">
+                                    <span className="text-sm font-medium text-charcoal">{comment.user.name}</span>
+                                    <span className="text-xs text-medium-gray">
                                       {formatCommentDate(comment.createdAt)}
                                     </span>
                                   </div>
-                                  <p className="text-sm text-gray-700 mt-1 whitespace-pre-wrap">{comment.content}</p>
+                                  <p className="text-sm text-charcoal mt-1 whitespace-pre-wrap">{comment.content}</p>
                                 </div>
                               </div>
                             ))}
@@ -603,20 +603,20 @@ export default function TourDetailPage({
 
       {/* Members Tab */}
       {activeTab === 'members' && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Tour Members</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-lg font-semibold text-charcoal mb-4">Tour Members</h2>
 
           {/* Add member */}
           {nonMemberUsers.length > 0 && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="mb-6 p-4 bg-warm-gray-light rounded-lg">
+              <label className="block text-sm font-medium text-charcoal mb-2">
                 Add a member to this tour:
               </label>
               <div className="flex gap-2">
                 <select
                   value={inviteUserId}
                   onChange={(e) => setInviteUserId(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="flex-1 px-3 py-2 border border-light-gray rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
                 >
                   <option value="">Select a person...</option>
                   {nonMemberUsers.map((user) => (
@@ -628,7 +628,7 @@ export default function TourDetailPage({
                 <button
                   onClick={handleInvite}
                   disabled={!inviteUserId || inviteLoading}
-                  className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 shrink-0"
+                  className="bg-warm-coral text-white px-4 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50 shrink-0"
                 >
                   {inviteLoading ? 'Adding...' : 'Add'}
                 </button>
@@ -641,14 +641,14 @@ export default function TourDetailPage({
             {tour.members.map((member) => (
               <li
                 key={member.id}
-                className="flex items-center justify-between py-3 px-4 rounded-lg bg-gray-50"
+                className="flex items-center justify-between py-3 px-4 rounded-lg bg-warm-gray-light"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-semibold">
+                  <div className="w-9 h-9 rounded-full bg-warm-coral/20 text-warm-coral flex items-center justify-center text-sm font-semibold">
                     {member.user.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-charcoal">
                       {member.user.name}
                     </span>
                     {member.role === 'ORGANIZER' && (
@@ -674,8 +674,8 @@ export default function TourDetailPage({
 
       {/* Discussion Tab */}
       {activeTab === 'discussion' && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <h2 className="text-lg font-semibold text-charcoal mb-4">
             Tour Discussion ({tour._count.comments})
           </h2>
 
@@ -685,7 +685,7 @@ export default function TourDetailPage({
               <select
                 value={commentUserId}
                 onChange={(e) => setCommentUserId(e.target.value)}
-                className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full sm:w-auto px-3 py-2 border border-light-gray rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               >
                 <option value="">Post as...</option>
                 {users.map((user) => (
@@ -699,14 +699,14 @@ export default function TourDetailPage({
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-light-gray rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-coral focus:border-warm-coral"
               placeholder="Share thoughts about the tour, suggest temples to visit, coordinate plans..."
             />
             <div className="flex justify-end mt-2">
               <button
                 type="submit"
                 disabled={commentLoading || !commentUserId || !commentText.trim()}
-                className="bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+                className="bg-warm-coral text-white px-4 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50"
               >
                 {commentLoading ? 'Posting...' : 'Post Comment'}
               </button>
@@ -715,8 +715,8 @@ export default function TourDetailPage({
 
           {/* Comments list */}
           {tour.comments.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="text-center py-8 text-medium-gray">
+              <svg className="w-12 h-12 mx-auto mb-3 text-light-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
               <p className="text-sm">No comments yet. Start the conversation!</p>
@@ -726,22 +726,22 @@ export default function TourDetailPage({
               {tour.comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="border-b border-gray-100 pb-4 last:border-0"
+                  className="border-b border-light-gray pb-4 last:border-0"
                 >
                   <div className="flex items-center space-x-3 mb-2">
                     <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-semibold">
                       {comment.user.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <span className="text-sm font-semibold text-gray-900">
+                      <span className="text-sm font-semibold text-charcoal">
                         {comment.user.name}
                       </span>
-                      <span className="text-xs text-gray-500 ml-2">
+                      <span className="text-xs text-medium-gray ml-2">
                         {formatCommentDate(comment.createdAt)}
                       </span>
                     </div>
                   </div>
-                  <p className="text-gray-700 text-sm ml-11 whitespace-pre-wrap">
+                  <p className="text-charcoal text-sm ml-11 whitespace-pre-wrap">
                     {comment.content}
                   </p>
                 </div>
@@ -755,17 +755,17 @@ export default function TourDetailPage({
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-charcoal mb-2">
               Delete Tour?
             </h3>
-            <p className="text-gray-600 text-sm mb-6">
+            <p className="text-medium-gray text-sm mb-6">
               This will permanently delete <strong>{tour.name}</strong>, including
               all trips, RSVPs, and comments. This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 px-4 py-2.5 text-gray-700 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2.5 text-charcoal text-sm font-medium border border-light-gray rounded-lg hover:bg-warm-gray-light transition-colors"
               >
                 Cancel
               </button>
