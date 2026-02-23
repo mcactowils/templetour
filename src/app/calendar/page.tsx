@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import TempleIcon from '@/components/TempleIcon'
 
 interface Schedule {
   id: string
@@ -16,32 +17,6 @@ interface Schedule {
     city: string
     state: string
   }
-}
-
-function TempleIconSmall({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 40 44" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <rect x="18" y="0" width="4" height="8" rx="1" />
-      <circle cx="20" cy="1" r="1.5" />
-      <rect x="14" y="8" width="12" height="4" rx="1" />
-      <rect x="8" y="6" width="3" height="6" rx="0.5" />
-      <rect x="29" y="6" width="3" height="6" rx="0.5" />
-      <rect x="6" y="12" width="28" height="3" rx="0.5" />
-      <rect x="8" y="15" width="2" height="16" />
-      <rect x="14" y="15" width="2" height="16" />
-      <rect x="20" y="15" width="2" height="16" />
-      <rect x="24" y="15" width="2" height="16" />
-      <rect x="30" y="15" width="2" height="16" />
-      <rect x="10.5" y="18" width="3" height="5" rx="1.5" opacity="0.3" />
-      <rect x="16.5" y="18" width="3" height="5" rx="1.5" opacity="0.3" />
-      <rect x="26.5" y="18" width="3" height="5" rx="1.5" opacity="0.3" />
-      <rect x="4" y="31" width="32" height="3" rx="0.5" />
-      <rect x="2" y="34" width="36" height="3" rx="0.5" />
-      <rect x="0" y="37" width="40" height="2" rx="0.5" />
-      <rect x="1" y="39" width="38" height="2" rx="0.5" />
-      <rect x="3" y="41" width="34" height="2" rx="0.5" />
-    </svg>
-  )
 }
 
 function ChevronLeftIcon({ className }: { className?: string }) {
@@ -255,7 +230,7 @@ export default function CalendarPage() {
                             className="block group"
                           >
                             <div className="flex flex-col items-center text-center mt-0.5">
-                              <TempleIconSmall className="w-4 h-4 sm:w-5 sm:h-5 text-temple-tan group-hover:text-warm-coral transition-colors" />
+                              <TempleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-temple-tan group-hover:text-warm-coral transition-colors" />
                               <span className="text-[8px] sm:text-[10px] text-charcoal leading-tight mt-0.5 group-hover:text-warm-coral transition-colors">
                                 {shortName}
                               </span>

@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Temple Tours",
   description: "Plan and organize temple visits with friends and family",
+  icons: {
+    icon: "/temple-icon.svg",
+  },
 };
 
 export default function RootLayout({

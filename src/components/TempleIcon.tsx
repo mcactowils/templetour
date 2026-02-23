@@ -1,0 +1,76 @@
+/**
+ * Salt Lake Temple silhouette icon matching the Utah Temple Tour brand.
+ * Used in the header, calendar appointments, and throughout the app.
+ *
+ * The SVG renders a front-elevation silhouette of the Salt Lake Temple
+ * with Angel Moroni, three Gothic spires, pointed arch openings,
+ * arched windows, circular windows, and stepped base.
+ *
+ * Window/arch cutouts render as transparent on white backgrounds.
+ */
+export default function TempleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 100 130"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* ── Foundation / Steps ── */}
+      <rect x="1" y="123" width="98" height="2.5" rx="0.5" />
+      <rect x="3" y="120" width="94" height="3" rx="0.5" />
+      <rect x="5" y="117" width="90" height="3" rx="0.5" />
+      <rect x="8" y="114" width="84" height="3" />
+
+      {/* ── Lower body (second tier windows) ── */}
+      <rect x="10" y="83" width="80" height="31" />
+
+      {/* ── Main facade ── */}
+      <rect x="14" y="40" width="72" height="43" />
+
+      {/* ── Upper connecting band ── */}
+      <rect x="18" y="36" width="64" height="6" />
+
+      {/* ── Central spire ── */}
+      <polygon points="50,10 57,18 57,36 43,36 43,18" />
+
+      {/* ── Left spire ── */}
+      <polygon points="26,17 32,26 33,36 19,36 20,26" />
+
+      {/* ── Right spire ── */}
+      <polygon points="74,17 80,26 81,36 67,36 68,26" />
+
+      {/* ── Small left pinnacle ── */}
+      <polygon points="38,28 41,36 35,36" />
+
+      {/* ── Small right pinnacle ── */}
+      <polygon points="62,28 65,36 59,36" />
+
+      {/* ── Angel Moroni ── */}
+      <circle cx="50" cy="4.5" r="2.2" />
+      <rect x="48.8" y="6" width="2.4" height="4.5" rx="0.5" />
+      {/* Trumpet extending up-right */}
+      <path d="M52,4 L56,1.5 L56.5,2.5 L52.5,5" />
+
+      {/* ── Large Gothic arch cutouts (main level) ── */}
+      {/* Left arch */}
+      <path d="M23,82 L23,58 C23,47 37,47 37,58 L37,82 Z" fill="white" />
+      {/* Center arch (taller) */}
+      <path d="M40,82 L40,54 C40,43 60,43 60,54 L60,82 Z" fill="white" />
+      {/* Right arch */}
+      <path d="M63,82 L63,58 C63,47 77,47 77,58 L77,82 Z" fill="white" />
+
+      {/* ── Lower arched windows (second tier) ── */}
+      <path d="M14,112 L14,98 C14,91 26,91 26,98 L26,112 Z" fill="white" />
+      <path d="M29,112 L29,97 C29,90 41,90 41,97 L41,112 Z" fill="white" />
+      <path d="M43,112 L43,96 C43,88 57,88 57,96 L57,112 Z" fill="white" />
+      <path d="M59,112 L59,97 C59,90 71,90 71,97 L71,112 Z" fill="white" />
+      <path d="M74,112 L74,98 C74,91 86,91 86,98 L86,112 Z" fill="white" />
+
+      {/* ── Circular / rose windows ── */}
+      <circle cx="30" cy="43" r="3.5" fill="white" />
+      <circle cx="70" cy="43" r="3.5" fill="white" />
+    </svg>
+  )
+}

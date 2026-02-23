@@ -4,42 +4,7 @@ import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-
-function TempleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 40 44" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      {/* Central spire */}
-      <rect x="18" y="0" width="4" height="8" rx="1" />
-      {/* Spire cap */}
-      <circle cx="20" cy="1" r="1.5" />
-      {/* Upper structure */}
-      <rect x="14" y="8" width="12" height="4" rx="1" />
-      {/* Side spires */}
-      <rect x="8" y="6" width="3" height="6" rx="0.5" />
-      <rect x="29" y="6" width="3" height="6" rx="0.5" />
-      {/* Main body top */}
-      <rect x="6" y="12" width="28" height="3" rx="0.5" />
-      {/* Columns */}
-      <rect x="8" y="15" width="2" height="16" />
-      <rect x="14" y="15" width="2" height="16" />
-      <rect x="20" y="15" width="2" height="16" />
-      <rect x="24" y="15" width="2" height="16" />
-      <rect x="30" y="15" width="2" height="16" />
-      {/* Windows between columns */}
-      <rect x="10.5" y="18" width="3" height="5" rx="1.5" opacity="0.3" />
-      <rect x="16.5" y="18" width="3" height="5" rx="1.5" opacity="0.3" />
-      <rect x="26.5" y="18" width="3" height="5" rx="1.5" opacity="0.3" />
-      {/* Base */}
-      <rect x="4" y="31" width="32" height="3" rx="0.5" />
-      {/* Foundation */}
-      <rect x="2" y="34" width="36" height="3" rx="0.5" />
-      {/* Steps */}
-      <rect x="0" y="37" width="40" height="2" rx="0.5" />
-      <rect x="1" y="39" width="38" height="2" rx="0.5" />
-      <rect x="3" y="41" width="34" height="2" rx="0.5" />
-    </svg>
-  )
-}
+import TempleIcon from './TempleIcon'
 
 function UserIcon({ className }: { className?: string }) {
   return (
