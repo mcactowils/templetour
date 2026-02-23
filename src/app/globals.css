@@ -2,7 +2,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #4A4A4A;
 }
 
 @theme inline {
@@ -10,17 +10,65 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Design System Colors */
+  --color-charcoal: #4A4A4A;
+  --color-charcoal-dark: #3D3D3D;
+  --color-warm-coral: #C4956A;
+  --color-warm-coral-hover: #B3845A;
+  --color-warm-gray: #E8E4E0;
+  --color-warm-gray-light: #F5F3F1;
+  --color-medium-gray: #7A7A7A;
+  --color-light-gray: #E5E5E5;
+  --color-section-rule: #D4D4D4;
+  --color-temple-tan: #D4BFA8;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Consistent form element sizing and styling */
+input, textarea, select {
+  font-weight: 500 !important;
+  color: #374151 !important;
+  height: 42px !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid #D1D5DB !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+textarea {
+  height: auto !important;
+  min-height: 84px !important;
+  padding: 8px 12px !important;
+  resize: vertical !important;
+}
+
+input::placeholder, textarea::placeholder {
+  font-weight: 400 !important;
+  color: #9CA3AF !important;
+}
+
+/* Admin form specific styles */
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  font-weight: 600 !important;
+  color: #1F2937 !important;
+  height: 42px !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid #D1D5DB !important;
+  font-size: 14px !important;
+  background-color: #FFFFFF !important;
+}
+
+.admin-form textarea {
+  height: auto !important;
+  min-height: 84px !important;
 }
