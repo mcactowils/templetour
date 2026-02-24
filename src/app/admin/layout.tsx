@@ -89,18 +89,6 @@ export default function AdminLayout({
               >
                 Users
               </Link>
-              <Link
-                href="/"
-                className="text-charcoal hover:text-charcoal px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                Tours
-              </Link>
-              <Link
-                href="/temples"
-                className="text-charcoal hover:text-charcoal px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                View Temples
-              </Link>
               <div className="hidden sm:block text-sm text-medium-gray pl-2 border-l border-light-gray">Admin Panel</div>
             </div>
           </div>
