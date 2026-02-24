@@ -94,6 +94,7 @@ export default function DashboardPage() {
   const [showComments, setShowComments] = useState<string | null>(null)
   const [commentText, setCommentText] = useState<{[key: string]: string}>({})
   const [commentLoading, setCommentLoading] = useState<string | null>(null)
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -241,6 +242,30 @@ export default function DashboardPage() {
       setError(err instanceof Error ? err.message : 'Failed to post comment')
     } finally {
       setCommentLoading(null)
+    }
+  }
+
+  const handleDeleteComment = async (appointmentId: string, commentId: string) => {
+    if (!session?.user) return
+
+    try {
+      setDeleteLoading(commentId)
+
+      const response = await fetch(`/api/schedules/${appointmentId}/comments/${commentId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to delete comment')
+      }
+
+      // Refresh appointments to show updated comments
+      await fetchAppointments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete comment')
+    } finally {
+      setDeleteLoading(null)
     }
   }
 
@@ -442,12 +467,25 @@ export default function DashboardPage() {
                         <div className="space-y-2 max-h-32 overflow-y-auto">
                           {appointment.comments.slice(0, 3).map((comment) => (
                             <div key={comment.id} className="text-sm">
-                              <div className="flex items-center gap-1.5 mb-1">
-                                <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
-                                  {comment.user.name.charAt(0).toUpperCase()}
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-1.5">
+                                  <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
+                                    {comment.user.name.charAt(0).toUpperCase()}
+                                  </div>
+                                  <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
+                                  <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
                                 </div>
-                                <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
-                                <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
+                                {/* Delete button for own comments */}
+                                {session?.user && comment.user.id === (session.user as any).id && (
+                                  <button
+                                    onClick={() => handleDeleteComment(appointment.id, comment.id)}
+                                    disabled={deleteLoading === comment.id}
+                                    className="text-red-400 hover:text-red-600 text-xs p-1 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                                    title="Delete comment"
+                                  >
+                                    {deleteLoading === comment.id ? '...' : '×'}
+                                  </button>
+                                )}
                               </div>
                               <p className="text-charcoal text-sm pl-5 line-clamp-2" style={{
                                 display: '-webkit-box',
@@ -598,12 +636,25 @@ export default function DashboardPage() {
                       <div className="space-y-2 max-h-32 overflow-y-auto">
                         {appointment.comments.slice(0, 3).map((comment) => (
                           <div key={comment.id} className="text-sm">
-                            <div className="flex items-center gap-1.5 mb-1">
-                              <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
-                                {comment.user.name.charAt(0).toUpperCase()}
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
+                                  {comment.user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
+                                <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
                               </div>
-                              <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
-                              <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
+                              {/* Delete button for own comments */}
+                              {session?.user && comment.user.id === (session.user as any).id && (
+                                <button
+                                  onClick={() => handleDeleteComment(appointment.id, comment.id)}
+                                  disabled={deleteLoading === comment.id}
+                                  className="text-red-400 hover:text-red-600 text-xs p-1 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                                  title="Delete comment"
+                                >
+                                  {deleteLoading === comment.id ? '...' : '×'}
+                                </button>
+                              )}
                             </div>
                             <p className="text-charcoal text-sm pl-5 line-clamp-2" style={{
                               display: '-webkit-box',
