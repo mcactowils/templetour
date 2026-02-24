@@ -73,7 +73,20 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
   if (temple.schedules && temple.schedules.length > 0) {
     const schedule = temple.schedules[0]
     const date = new Date(schedule.scheduledDate)
-    const isPastDate = date < new Date()
+    const now = new Date()
+    // For debugging - let's be more explicit about past detection
+    const isPastDate = date.getTime() < now.getTime()
+
+    // Debug logging for today's appointments
+    if (date.toDateString() === now.toDateString()) {
+      console.log('Temple same-day appointment:', {
+        temple: temple.name,
+        scheduledDate: schedule.scheduledDate,
+        appointmentTime: date.toLocaleString('en-US', { timeZone: 'America/Denver' }),
+        currentTime: now.toLocaleString('en-US', { timeZone: 'America/Denver' }),
+        isPastDate
+      })
+    }
     // Use same logic as dashboard to detect month-only appointments
     const isMonthOnly = date.getDate() === 1 &&
                        date.getHours() === 12 &&
@@ -84,7 +97,8 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
     if (isPastDate && !isMonthOnly) {
       // Past appointment - mark as completed
       const monthDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-      return { text: `Visited ${monthDate}`, color: 'text-medium-gray', href, isCompleted: true }
+      const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/Denver' })
+      return { text: `Visited ${monthDate} at ${time}`, color: 'text-medium-gray', href, isCompleted: true }
     } else if (isMonthOnly) {
       const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       return { text: `Visit planned for ${monthYear}`, color: 'text-warm-coral', href }

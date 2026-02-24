@@ -144,7 +144,11 @@ export default function DashboardPage() {
     }
   }
 
-  const isUpcoming = (date: string) => new Date(date) >= new Date()
+  const isUpcoming = (date: string) => {
+    const appointmentDate = new Date(date)
+    const now = new Date()
+    return appointmentDate.getTime() >= now.getTime()
+  }
 
   const isMonthOnlyAppointment = (date: string, title: string) => {
     const appointmentDate = new Date(date)

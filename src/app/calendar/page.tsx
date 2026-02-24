@@ -67,7 +67,21 @@ function isMonthOnlyAppointment(date: string, title: string) {
 }
 
 function isPastAppointment(scheduledDate: string) {
-  return new Date(scheduledDate) < new Date()
+  const appointmentDate = new Date(scheduledDate)
+  const now = new Date()
+  const isPast = appointmentDate.getTime() < now.getTime()
+
+  // Debug logging - remove this later
+  if (appointmentDate.toDateString() === now.toDateString()) {
+    console.log('Same day appointment:', {
+      scheduledDate,
+      appointmentTime: appointmentDate.toLocaleString('en-US', { timeZone: 'America/Denver' }),
+      currentTime: now.toLocaleString('en-US', { timeZone: 'America/Denver' }),
+      isPast
+    })
+  }
+
+  return isPast
 }
 
 function getFirstDayOfMonth(year: number, month: number) {
