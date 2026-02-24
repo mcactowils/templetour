@@ -239,7 +239,7 @@ export default function CalendarPage() {
                             className="block group"
                           >
                             <div className="flex flex-col items-center text-center mt-0.5">
-                              <TempleIconSmall className="w-4 h-4 sm:w-5 sm:h-5 text-temple-tan group-hover:text-warm-coral transition-colors" />
+                              <TempleIconSmall className="w-6 h-6 sm:w-7 sm:h-7 text-temple-tan group-hover:text-warm-coral transition-colors drop-shadow-sm" />
                               <span className="text-[8px] sm:text-[10px] text-charcoal leading-tight mt-0.5 group-hover:text-warm-coral transition-colors">
                                 {shortName}
                               </span>
