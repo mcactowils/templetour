@@ -235,7 +235,7 @@ export default function CalendarPage() {
                         return (
                           <Link
                             key={schedule.id}
-                            href={`/schedules/${schedule.id}`}
+                            href={`/schedules/${schedule.id}?from=calendar`}
                             className="block group"
                           >
                             <div className="flex flex-col items-center text-center mt-0.5">

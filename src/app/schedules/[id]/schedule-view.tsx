@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
 interface User {
@@ -52,6 +52,7 @@ export default function ScheduleDetailPage({
 }) {
   const { id } = use(params)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session } = useSession()
   const [schedule, setSchedule] = useState<Schedule | null>(null)
   const [loading, setLoading] = useState(true)
@@ -191,6 +192,20 @@ export default function ScheduleDetailPage({
   const isAttending = schedule?.attendees.some(a => a.user.id === (session?.user as any)?.id) || false
   const isCreator = schedule?.createdBy.id === (session?.user as any)?.id
 
+  // Determine back navigation
+  const from = searchParams.get('from')
+  const getBackInfo = () => {
+    switch (from) {
+      case 'calendar':
+        return { path: '/calendar', text: '← Back to Calendar' }
+      case 'temples':
+        return { path: '/temples', text: '← Back to Temples' }
+      default:
+        return { path: '/schedules', text: '← Back to Schedules' }
+    }
+  }
+  const { path: backPath, text: backText } = getBackInfo()
+
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -235,10 +250,10 @@ export default function ScheduleDetailPage({
         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
           <div className="flex-1">
             <Link
-              href="/schedules"
+              href={backPath}
               className="text-warm-coral hover:text-warm-coral-hover text-sm font-medium mb-2 inline-flex items-center"
             >
-              ← Back to Schedules
+              {backText}
             </Link>
             <h1 className="text-2xl sm:text-3xl font-bold text-charcoal mb-1">
               {schedule.title}

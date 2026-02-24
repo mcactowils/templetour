@@ -86,7 +86,7 @@ function getActionButton(temple: Temple): { label: string; href: string } {
     const isMonthOnly = date.getHours() === 0 && date.getMinutes() === 0
 
     if (!isMonthOnly) {
-      return { label: 'RSVP', href: `/schedules/${schedule.id}` }
+      return { label: 'RSVP', href: `/schedules/${schedule.id}?from=temples` }
     }
     // Month-only = planned but not finalized
     return { label: 'Schedule', href: `/schedules/${schedule.id}/edit` }
