@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -61,6 +61,14 @@ function ChatBubbleIcon({ className }: { className?: string }) {
   )
 }
 
+function UsersIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  )
+}
+
 function SectionHeader({ title, subLabel }: { title: string; subLabel: string }) {
   return (
     <div className="mb-3 mt-8 first:mt-4">
@@ -82,6 +90,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null)
+  const [showAttendees, setShowAttendees] = useState<string | null>(null)
+  const [showComments, setShowComments] = useState<string | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -91,6 +102,21 @@ export default function DashboardPage() {
     }
     fetchAppointments()
   }, [status, router])
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowAttendees(null)
+        setShowComments(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const fetchAppointments = async () => {
     try {
@@ -169,6 +195,24 @@ export default function DashboardPage() {
     }
   }
 
+  const formatCommentDate = (date: string) =>
+    new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+
+  const toggleAttendees = (appointmentId: string) => {
+    setShowAttendees(showAttendees === appointmentId ? null : appointmentId)
+    if (showComments === appointmentId) setShowComments(null)
+  }
+
+  const toggleComments = (appointmentId: string) => {
+    setShowComments(showComments === appointmentId ? null : appointmentId)
+    if (showAttendees === appointmentId) setShowAttendees(null)
+  }
+
   // Split appointments into scheduled vs unscheduled
   const upcomingAppointments = appointments.filter(a => isUpcoming(a.scheduledDate))
   const scheduledAppointments = upcomingAppointments
@@ -230,7 +274,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="pb-8">
+    <div className="pb-8" ref={dropdownRef}>
       {/* Scheduled Appointments */}
       {scheduledAppointments.length > 0 && (
         <div>
@@ -267,14 +311,37 @@ export default function DashboardPage() {
                     Arrive by {getArriveByTime(appointment.scheduledDate)}
                   </p>
 
-                  {/* Bottom row: chat icon + RSVP button */}
+                  {/* Bottom row: icons + RSVP button */}
                   <div className="flex items-center justify-end gap-3 mt-3">
-                    <Link
-                      href={`/schedules/${appointment.id}`}
-                      className="text-medium-gray hover:text-charcoal transition-colors"
-                    >
-                      <ChatBubbleIcon className="w-5 h-5" />
-                    </Link>
+                    {/* Attendees icon */}
+                    {appointment._count.attendees > 0 && (
+                      <button
+                        onClick={() => toggleAttendees(appointment.id)}
+                        className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                      >
+                        <UsersIcon className="w-4 h-4" />
+                        <span className="text-xs font-medium">{appointment._count.attendees}</span>
+                      </button>
+                    )}
+
+                    {/* Comments icon */}
+                    {appointment._count.comments > 0 ? (
+                      <button
+                        onClick={() => toggleComments(appointment.id)}
+                        className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                      >
+                        <ChatBubbleIcon className="w-4 h-4" />
+                        <span className="text-xs font-medium">{appointment._count.comments}</span>
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/schedules/${appointment.id}`}
+                        className="text-medium-gray hover:text-charcoal transition-colors"
+                      >
+                        <ChatBubbleIcon className="w-4 h-4" />
+                      </Link>
+                    )}
+
                     <button
                       onClick={() => handleRSVP(appointment.id)}
                       disabled={rsvpLoading === appointment.id}
@@ -289,6 +356,68 @@ export default function DashboardPage() {
                       {rsvpLoading === appointment.id ? '...' : isAttending ? 'RSVP\'d' : 'RSVP'}
                     </button>
                   </div>
+
+                  {/* Attendees dropdown */}
+                  {showAttendees === appointment.id && (
+                    <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
+                      <h4 className="text-xs font-semibold text-charcoal mb-2 uppercase tracking-wider">
+                        Attending ({appointment._count.attendees})
+                      </h4>
+                      <div className="space-y-1">
+                        {appointment.attendees.map((attendee) => (
+                          <div key={attendee.id} className="flex items-center gap-2 text-sm">
+                            <div className="w-5 h-5 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
+                              {attendee.user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="text-charcoal">{attendee.user.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Comments dropdown */}
+                  {showComments === appointment.id && (
+                    <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-xs font-semibold text-charcoal uppercase tracking-wider">
+                          Discussion ({appointment._count.comments})
+                        </h4>
+                        <Link
+                          href={`/schedules/${appointment.id}`}
+                          className="text-xs text-warm-coral hover:text-warm-coral-hover font-medium"
+                        >
+                          View all →
+                        </Link>
+                      </div>
+                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                        {appointment.comments.slice(0, 3).map((comment) => (
+                          <div key={comment.id} className="text-sm">
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
+                                {comment.user.name.charAt(0).toUpperCase()}
+                              </div>
+                              <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
+                              <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
+                            </div>
+                            <p className="text-charcoal text-sm pl-5 line-clamp-2" style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden'
+                            }}>
+                              {comment.content}
+                            </p>
+                          </div>
+                        ))}
+                        {appointment.comments.length > 3 && (
+                          <p className="text-xs text-medium-gray pl-5">
+                            +{appointment.comments.length - 3} more comments
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -322,14 +451,37 @@ export default function DashboardPage() {
                   {formatMonthYear(appointment.scheduledDate)}
                 </p>
 
-                {/* Bottom row: chat icon + Schedule button */}
+                {/* Bottom row: icons + Schedule button */}
                 <div className="flex items-center justify-end gap-3 mt-3">
-                  <Link
-                    href={`/schedules/${appointment.id}`}
-                    className="text-medium-gray hover:text-charcoal transition-colors"
-                  >
-                    <ChatBubbleIcon className="w-5 h-5" />
-                  </Link>
+                  {/* Attendees icon */}
+                  {appointment._count.attendees > 0 && (
+                    <button
+                      onClick={() => toggleAttendees(appointment.id)}
+                      className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                    >
+                      <UsersIcon className="w-4 h-4" />
+                      <span className="text-xs font-medium">{appointment._count.attendees}</span>
+                    </button>
+                  )}
+
+                  {/* Comments icon */}
+                  {appointment._count.comments > 0 ? (
+                    <button
+                      onClick={() => toggleComments(appointment.id)}
+                      className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                    >
+                      <ChatBubbleIcon className="w-4 h-4" />
+                      <span className="text-xs font-medium">{appointment._count.comments}</span>
+                    </button>
+                  ) : (
+                    <Link
+                      href={`/schedules/${appointment.id}`}
+                      className="text-medium-gray hover:text-charcoal transition-colors"
+                    >
+                      <ChatBubbleIcon className="w-4 h-4" />
+                    </Link>
+                  )}
+
                   <Link
                     href={`/schedules/${appointment.id}/edit`}
                     className="px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider bg-warm-coral text-white hover:bg-warm-coral-hover transition-colors"
@@ -337,6 +489,63 @@ export default function DashboardPage() {
                     Schedule
                   </Link>
                 </div>
+
+                {/* Attendees dropdown */}
+                {showAttendees === appointment.id && (
+                  <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
+                    <h4 className="text-xs font-semibold text-charcoal mb-2 uppercase tracking-wider">
+                      Attending ({appointment._count.attendees})
+                    </h4>
+                    <div className="space-y-1">
+                      {appointment.attendees.map((attendee) => (
+                        <div key={attendee.id} className="flex items-center gap-2 text-sm">
+                          <div className="w-5 h-5 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
+                            {attendee.user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-charcoal">{attendee.user.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comments dropdown */}
+                {showComments === appointment.id && (
+                  <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-xs font-semibold text-charcoal uppercase tracking-wider">
+                        Discussion ({appointment._count.comments})
+                      </h4>
+                      <Link
+                        href={`/schedules/${appointment.id}`}
+                        className="text-xs text-warm-coral hover:text-warm-coral-hover font-medium"
+                      >
+                        View all →
+                      </Link>
+                    </div>
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {appointment.comments.slice(0, 3).map((comment) => (
+                        <div key={comment.id} className="text-sm">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
+                              {comment.user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
+                            <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
+                          </div>
+                          <p className="text-charcoal text-sm pl-5 line-clamp-2">
+                            {comment.content}
+                          </p>
+                        </div>
+                      ))}
+                      {appointment.comments.length > 3 && (
+                        <p className="text-xs text-medium-gray pl-5">
+                          +{appointment.comments.length - 3} more comments
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
