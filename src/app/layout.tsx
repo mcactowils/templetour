@@ -15,8 +15,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Temple Tours",
+  title: "Utah Temple Tour",
   description: "Plan and organize temple visits with friends and family",
+  manifest: '/manifest.json',
+  icons: {
+    apple: '/apple-touch-icon.png',
+    icon: '/temple-silhouette.png',
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Utah Temple Tour",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
