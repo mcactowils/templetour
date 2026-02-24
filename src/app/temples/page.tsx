@@ -78,7 +78,12 @@ function getVisitStatusText(temple: Temple): { text: string; color: string } | n
   return null
 }
 
-function getActionButton(temple: Temple): { label: string; href: string } {
+function getActionButton(temple: Temple): { label: string; href: string } | null {
+  // Only show buttons for dedicated/operating temples
+  if (temple.status !== TempleStatus.DEDICATED) {
+    return null
+  }
+
   // If there's an upcoming scheduled visit with a specific time, show RSVP
   if (temple.schedules && temple.schedules.length > 0) {
     const schedule = temple.schedules[0]
@@ -140,12 +145,14 @@ function TempleCard({ temple }: { temple: Temple }) {
             </span>
           )}
         </div>
-        <a
-          href={action.href}
-          className="bg-white text-[#B77D63] text-xs font-medium px-4 py-1.5 rounded border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors"
-        >
-          {action.label}
-        </a>
+        {action && (
+          <a
+            href={action.href}
+            className="bg-white text-[#B77D63] text-xs font-medium px-4 py-1.5 rounded border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors"
+          >
+            {action.label}
+          </a>
+        )}
       </div>
     </div>
   )
