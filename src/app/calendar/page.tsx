@@ -19,6 +19,15 @@ interface Schedule {
   }
 }
 
+function TempleIconSmall({ className }: { className?: string }) {
+  return (
+    <img
+      src="/salt lake temple.svg"
+      alt="Salt Lake Temple"
+      className={className}
+    />
+  )
+}
 function ChevronLeftIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -230,13 +239,7 @@ export default function CalendarPage() {
                             className="block group"
                           >
                             <div className="flex flex-col items-center text-center mt-0.5">
-                              <Image
-                                src="/temple-silhouette.png"
-                                alt="Temple"
-                                width={12}
-                                height={21}
-                                className="w-3 h-auto sm:w-4 opacity-80 group-hover:opacity-100 transition-opacity"
-                              />
+                              <TempleIconSmall className="w-4 h-4 sm:w-5 sm:h-5 text-temple-tan group-hover:text-warm-coral transition-colors" />
                               <span className="text-[8px] sm:text-[10px] text-charcoal leading-tight mt-0.5 group-hover:text-warm-coral transition-colors">
                                 {shortName}
                               </span>

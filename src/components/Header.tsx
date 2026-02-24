@@ -6,6 +6,15 @@ import { useSession, signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
+function TempleIcon({ className }: { className?: string }) {
+  return (
+    <img
+      src="/salt lake temple.svg"
+      alt="Salt Lake Temple"
+      className={className}
+    />
+  )
+}
 function UserIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -49,13 +58,7 @@ export default function Header() {
         {/* Top bar */}
         <div className="flex justify-between items-center h-14">
           <Link href="/schedules" className="flex items-center gap-2.5">
-            <Image
-              src="/temple-silhouette.png"
-              alt="Temple"
-              width={20}
-              height={35}
-              className="h-8 w-auto"
-            />
+            <TempleIcon className="w-7 h-7 text-temple-tan" />
             <span className="text-sm font-medium text-charcoal tracking-[0.2em] uppercase">
               Utah Temple Tour
             </span>
