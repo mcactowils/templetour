@@ -65,7 +65,11 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
   if (temple.schedules && temple.schedules.length > 0) {
     const schedule = temple.schedules[0]
     const date = new Date(schedule.scheduledDate)
-    const isMonthOnly = date.getHours() === 0 && date.getMinutes() === 0
+    // Use same logic as dashboard to detect month-only appointments
+    const isMonthOnly = date.getDate() === 1 &&
+                       date.getHours() === 12 &&
+                       date.getMinutes() === 0 &&
+                       schedule.title.includes('(')
     const href = `/schedules/${schedule.id}?from=temples`
 
     if (isMonthOnly) {
@@ -91,7 +95,11 @@ function getActionButton(temple: Temple): { label: string; href: string } | null
   if (temple.schedules && temple.schedules.length > 0) {
     const schedule = temple.schedules[0]
     const date = new Date(schedule.scheduledDate)
-    const isMonthOnly = date.getHours() === 0 && date.getMinutes() === 0
+    // Use same logic as dashboard to detect month-only appointments
+    const isMonthOnly = date.getDate() === 1 &&
+                       date.getHours() === 12 &&
+                       date.getMinutes() === 0 &&
+                       schedule.title.includes('(')
 
     if (!isMonthOnly) {
       // Specific date/time appointment
