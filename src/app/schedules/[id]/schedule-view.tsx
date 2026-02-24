@@ -65,6 +65,7 @@ export default function ScheduleDetailPage({
 
   // Delete state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteCommentLoading, setDeleteCommentLoading] = useState<string | null>(null)
 
   useEffect(() => {
     fetchSchedule().finally(() => setLoading(false))
@@ -140,6 +141,26 @@ export default function ScheduleDetailPage({
       router.push('/schedules')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete appointment')
+    }
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!session?.user) return
+
+    try {
+      setDeleteCommentLoading(commentId)
+      const response = await fetch(`/api/schedules/${id}/comments/${commentId}`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to delete comment')
+      }
+      await fetchSchedule()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete comment')
+    } finally {
+      setDeleteCommentLoading(null)
     }
   }
 
@@ -225,13 +246,6 @@ export default function ScheduleDetailPage({
             <p className="text-sm text-medium-gray">
               Created by {schedule.createdBy.name}
             </p>
-            {/* Debug info */}
-            <div className="text-xs text-gray-400 mt-1 p-2 bg-gray-50 rounded">
-              Session user ID: {(session?.user as any)?.id || 'Not logged in'}<br/>
-              Creator ID: {schedule.createdBy.id}<br/>
-              Is Creator: {isCreator ? 'YES' : 'NO'}<br/>
-              Session exists: {session ? 'YES' : 'NO'}
-            </div>
           </div>
           {isCreator && (
             <div className="flex gap-2">
@@ -402,18 +416,31 @@ export default function ScheduleDetailPage({
                 key={comment.id}
                 className="border-b border-light-gray pb-4 last:border-0"
               >
-                <div className="flex items-center space-x-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-warm-coral/20 text-warm-coral flex items-center justify-center text-sm font-semibold">
-                    {comment.user.name.charAt(0).toUpperCase()}
+                <div className="flex items-center space-x-3 mb-2 justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 rounded-full bg-warm-coral/20 text-warm-coral flex items-center justify-center text-sm font-semibold">
+                      {comment.user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <span className="text-sm font-semibold text-charcoal">
+                        {comment.user.name}
+                      </span>
+                      <span className="text-xs text-medium-gray ml-2">
+                        {formatCommentDate(comment.createdAt)}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-sm font-semibold text-charcoal">
-                      {comment.user.name}
-                    </span>
-                    <span className="text-xs text-medium-gray ml-2">
-                      {formatCommentDate(comment.createdAt)}
-                    </span>
-                  </div>
+                  {/* Delete button for own comments */}
+                  {session?.user && comment.user.id === (session.user as any).id && (
+                    <button
+                      onClick={() => handleDeleteComment(comment.id)}
+                      disabled={deleteCommentLoading === comment.id}
+                      className="text-red-400 hover:text-red-600 text-xs p-1 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                      title="Delete comment"
+                    >
+                      {deleteCommentLoading === comment.id ? '...' : '×'}
+                    </button>
+                  )}
                 </div>
                 <p className="text-charcoal text-sm ml-11 whitespace-pre-wrap">
                   {comment.content}
