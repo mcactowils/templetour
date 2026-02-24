@@ -50,7 +50,7 @@ function SectionHeader({ title }: { title: string }) {
   )
 }
 
-function getVisitStatusText(temple: Temple): { text: string; color: string } | null {
+function getVisitStatusText(temple: Temple): { text: string; color: string; href?: string } | null {
   // For renovating temples
   if (temple.status === TempleStatus.RENOVATING) {
     return { text: 'Being Renovated', color: 'text-warm-coral' }
@@ -66,12 +66,15 @@ function getVisitStatusText(temple: Temple): { text: string; color: string } | n
     const schedule = temple.schedules[0]
     const date = new Date(schedule.scheduledDate)
     const isMonthOnly = date.getHours() === 0 && date.getMinutes() === 0
-    const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    const href = `/schedules/${schedule.id}?from=temples`
 
     if (isMonthOnly) {
-      return { text: `Visit planned for ${monthYear}`, color: 'text-warm-coral' }
+      const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      return { text: `Visit planned for ${monthYear}`, color: 'text-warm-coral', href }
     } else {
-      return { text: `Visit scheduled for ${monthYear}`, color: 'text-warm-coral' }
+      const monthDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
+      const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+      return { text: `Visit scheduled for ${monthDate} at ${time}`, color: 'text-warm-coral', href }
     }
   }
 
@@ -84,17 +87,18 @@ function getActionButton(temple: Temple): { label: string; href: string } | null
     return null
   }
 
-  // If there's an upcoming scheduled visit with a specific time, show RSVP
+  // If there's an upcoming scheduled visit
   if (temple.schedules && temple.schedules.length > 0) {
     const schedule = temple.schedules[0]
     const date = new Date(schedule.scheduledDate)
     const isMonthOnly = date.getHours() === 0 && date.getMinutes() === 0
 
     if (!isMonthOnly) {
+      // Specific date/time appointment
       return { label: 'RSVP', href: `/schedules/${schedule.id}?from=temples` }
     }
-    // Month-only = planned but not finalized
-    return { label: 'Schedule', href: `/schedules/${schedule.id}/edit` }
+    // Penciled in appointment
+    return { label: 'Scheduled', href: `/schedules/${schedule.id}?from=temples` }
   }
 
   // No visit scheduled - show Schedule to create one
@@ -140,9 +144,18 @@ function TempleCard({ temple }: { temple: Temple }) {
       <div className="flex items-center justify-between">
         <div>
           {visitStatus && (
-            <span className={`text-sm font-medium ${visitStatus.color}`}>
-              {visitStatus.text}
-            </span>
+            visitStatus.href ? (
+              <a
+                href={visitStatus.href}
+                className={`text-sm font-medium ${visitStatus.color} hover:underline cursor-pointer`}
+              >
+                {visitStatus.text}
+              </a>
+            ) : (
+              <span className={`text-sm font-medium ${visitStatus.color}`}>
+                {visitStatus.text}
+              </span>
+            )
           )}
         </div>
         {action && (
