@@ -203,6 +203,8 @@ export default function ScheduleDetailPage({
         return { path: '/calendar', text: '← Back to Calendar' }
       case 'temples':
         return { path: '/temples', text: '← Back to Temples' }
+      case 'messages':
+        return { path: '/messages', text: '← Back to Messages' }
       default:
         return { path: '/schedules', text: '← Back to Schedules' }
     }

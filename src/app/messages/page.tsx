@@ -440,7 +440,7 @@ export default function MessagesPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Link
-                          href={`/schedules/${thread.id}`}
+                          href={`/schedules/${thread.id}?from=messages`}
                           className="text-warm-coral hover:text-warm-coral-hover text-xs font-medium px-3 py-1 rounded hover:bg-warm-coral/5 transition-colors"
                           onClick={(e) => e.stopPropagation()}
                         >
