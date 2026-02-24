@@ -4,6 +4,7 @@ import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { isAdminUser } from '../../../lib/admin'
 
 interface User {
   id: string
@@ -191,6 +192,8 @@ export default function ScheduleDetailPage({
   const isUpcoming = (date: string) => new Date(date) >= new Date()
   const isAttending = schedule?.attendees.some(a => a.user.id === (session?.user as any)?.id) || false
   const isCreator = schedule?.createdBy.id === (session?.user as any)?.id
+  const isAdmin = isAdminUser(session?.user)
+  const canEdit = isCreator || isAdmin
 
   // Determine back navigation
   const from = searchParams.get('from')
@@ -262,7 +265,7 @@ export default function ScheduleDetailPage({
               Created by {schedule.createdBy.name}
             </p>
           </div>
-          {isCreator && (
+          {canEdit && (
             <div className="flex gap-2">
               <Link
                 href={`/schedules/${id}/edit`}
@@ -453,7 +456,7 @@ export default function ScheduleDetailPage({
                     </div>
                   </div>
                   {/* Delete button for own comments */}
-                  {session?.user && comment.user.id === (session.user as any).id && (
+                  {session?.user && (comment.user.id === (session.user as any).id || isAdminUser(session.user)) && (
                     <button
                       onClick={() => handleDeleteComment(comment.id)}
                       disabled={deleteCommentLoading === comment.id}

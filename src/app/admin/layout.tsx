@@ -5,12 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-// List of admin user emails - update this with your actual admin emails
-const ADMIN_EMAILS = [
-  // Add your admin email addresses here
-  // Example: 'admin@example.com',
-  // You can find your user emails in the database or by logging in and checking the session
-]
+import { ADMIN_EMAILS } from '../../lib/admin'
 
 export default function AdminLayout({
   children,
@@ -77,7 +72,7 @@ export default function AdminLayout({
                   alt="Salt Lake Temple"
                   className="w-8 h-8 text-temple-tan"
                 />
-                <span className="text-xl font-bold text-charcoal">Temple Admin</span>
+                <span className="text-xl font-bold text-charcoal">Admin</span>
               </Link>
             </div>
 

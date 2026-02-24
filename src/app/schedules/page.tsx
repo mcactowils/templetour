@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { isAdminUser } from '../../lib/admin'
 
 interface Appointment {
   id: string
@@ -518,7 +519,7 @@ export default function DashboardPage() {
                                   <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
                                 </div>
                                 {/* Delete button for own comments */}
-                                {session?.user && comment.user.id === (session.user as any).id && (
+                                {session?.user && (comment.user.id === (session.user as any).id || isAdminUser(session.user)) && (
                                   <button
                                     onClick={() => handleDeleteComment(appointment.id, comment.id)}
                                     disabled={deleteLoading === comment.id}
@@ -693,7 +694,7 @@ export default function DashboardPage() {
                                 <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
                               </div>
                               {/* Delete button for own comments */}
-                              {session?.user && comment.user.id === (session.user as any).id && (
+                              {session?.user && (comment.user.id === (session.user as any).id || isAdminUser(session.user)) && (
                                 <button
                                   onClick={() => handleDeleteComment(appointment.id, comment.id)}
                                   disabled={deleteLoading === comment.id}
