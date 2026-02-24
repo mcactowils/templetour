@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../../lib/prisma'
-import { createCommentNotification } from '../../../../../lib/notifications'
+// import { createCommentNotification } from '../../../../../lib/notifications'
 
 // GET /api/schedules/[id]/comments - List comments for a schedule
 export async function GET(
@@ -65,6 +65,9 @@ export async function POST(
       },
     })
 
+    // Notification system temporarily disabled for stability
+    // TODO: Re-enable notification system after fixing production issues
+    /*
     // Create notifications for schedule participants (non-blocking)
     try {
       const schedule = await prisma.templeSchedule.findUnique({
@@ -87,6 +90,7 @@ export async function POST(
     } catch (error) {
       console.error('Error preparing comment notification:', error)
     }
+    */
 
     return NextResponse.json(comment, { status: 201 })
   } catch (error) {
