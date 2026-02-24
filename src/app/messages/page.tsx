@@ -125,7 +125,10 @@ export default function MessagesPage() {
       const response = await fetch(`/api/schedules/${scheduleId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: replyText.trim() })
+        body: JSON.stringify({
+          content: replyText.trim(),
+          userId: (session?.user as any)?.id
+        })
       })
 
       if (!response.ok) {

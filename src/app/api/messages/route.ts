@@ -94,10 +94,16 @@ export async function GET(request: NextRequest) {
 // POST /api/messages - Create a new standalone message
 export async function POST(request: NextRequest) {
   try {
+    console.log('POST /api/messages - Starting request')
     const user = await requireAuth()
-    const { content, threadId, replyToId } = await request.json()
+    console.log('POST /api/messages - User authenticated:', user.id)
+
+    const body = await request.json()
+    console.log('POST /api/messages - Request body:', body)
+    const { content, threadId, replyToId } = body
 
     if (!content || !content.trim()) {
+      console.log('POST /api/messages - Missing content')
       return NextResponse.json(
         { error: 'Message content is required' },
         { status: 400 }
@@ -126,11 +132,16 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log('POST /api/messages - Message created successfully:', message.id)
     return NextResponse.json(message, { status: 201 })
   } catch (error) {
-    console.error('Error creating message:', error)
+    console.error('POST /api/messages - Error creating message:', error)
+    console.error('POST /api/messages - Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+
+    // Return more detailed error information for debugging
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to create message' },
+      { error: 'Failed to create message', details: errorMessage },
       { status: 500 }
     )
   }
