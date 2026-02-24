@@ -225,6 +225,13 @@ export default function ScheduleDetailPage({
             <p className="text-sm text-medium-gray">
               Created by {schedule.createdBy.name}
             </p>
+            {/* Debug info */}
+            <div className="text-xs text-gray-400 mt-1 p-2 bg-gray-50 rounded">
+              Session user ID: {(session?.user as any)?.id || 'Not logged in'}<br/>
+              Creator ID: {schedule.createdBy.id}<br/>
+              Is Creator: {isCreator ? 'YES' : 'NO'}<br/>
+              Session exists: {session ? 'YES' : 'NO'}
+            </div>
           </div>
           {isCreator && (
             <div className="flex gap-2">
