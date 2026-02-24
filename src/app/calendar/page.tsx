@@ -141,6 +141,7 @@ export default function CalendarPage() {
 
   // Build a map of day -> schedules for the current month
   const schedulesByDay = useMemo(() => {
+    console.log('Calendar: All schedules loaded:', schedules)
     const map: Record<number, Schedule[]> = {}
     schedules.forEach((schedule) => {
       const date = new Date(schedule.scheduledDate)

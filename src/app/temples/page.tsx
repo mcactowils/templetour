@@ -59,6 +59,11 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 function getVisitStatusText(temple: Temple): { text: string; color: string; href?: string; isCompleted?: boolean } | null {
+  // Debug: Log all temples with schedules
+  if (temple.schedules && temple.schedules.length > 0) {
+    console.log('Temple with schedule:', temple.name, temple.schedules[0])
+  }
+
   // For renovating temples
   if (temple.status === TempleStatus.RENOVATING) {
     return { text: 'Being Renovated', color: 'text-warm-coral' }
