@@ -268,7 +268,7 @@ export default function CalendarPage() {
                               <div className="relative">
                                 <TempleIconSmall className="w-6 h-6 sm:w-7 sm:h-7 text-temple-tan group-hover:text-warm-coral transition-colors drop-shadow-sm" />
                                 {isPast && (
-                                  <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-600 rounded-full flex items-center justify-center">
+                                  <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-[#949494] rounded-full flex items-center justify-center">
                                     <CheckMarkIcon className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" />
                                   </div>
                                 )}
