@@ -57,8 +57,6 @@ model User {
   messages           Message[]
   sessions           Session[]
   createdSchedules   TempleSchedule[]
-  notifications      Notification[]
-  pushSubscription   String?            // JSON string for browser push notifications
 
   @@map("users")
 }
@@ -158,40 +156,10 @@ model Message {
   @@map("messages")
 }
 
-model Notification {
-  id        String            @id @default(cuid())
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  userId    String            @map("user_id")
-  type      NotificationType
-  title     String
-  message   String
-  isRead    Boolean           @default(false)
-  actionUrl String?           @map("action_url")
-  // References to related entities for debugging
-  scheduleId String?          @map("schedule_id")
-  commentId  String?          @map("comment_id")
-  messageId  String?          @map("message_id")
-  // Metadata for error tracking
-  metadata  Json?             // Store additional data as JSON
-  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, isRead])
-  @@index([createdAt])
-  @@map("notifications")
-}
-
 enum TempleStatus {
   ANNOUNCED
   UNDER_CONSTRUCTION
   DEDICATED
   RENOVATING
   CLOSED
-}
-
-enum NotificationType {
-  COMMENT_ON_SCHEDULE
-  REPLY_TO_MESSAGE
-  SCHEDULE_UPDATE
-  GENERAL
 }
