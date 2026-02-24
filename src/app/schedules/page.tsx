@@ -216,6 +216,48 @@ export default function DashboardPage() {
     if (showAttendees === appointmentId) setShowAttendees(null)
   }
 
+  const openMaps = (appointment: Appointment) => {
+    const { temple } = appointment
+    let address = ''
+
+    // Build the address string from available temple data
+    if (temple.address) {
+      address = temple.address
+    } else {
+      // Fallback to building address from city, state, country
+      address = `${temple.city}`
+      if (temple.state) address += `, ${temple.state}`
+      address += `, ${temple.country}`
+    }
+
+    // Add temple name for better search results
+    const searchQuery = `${temple.name}, ${address}`
+
+    // Encode the address for URL
+    const encodedAddress = encodeURIComponent(searchQuery)
+
+    // Try to detect the platform and use the most appropriate map service
+    const userAgent = navigator.userAgent.toLowerCase()
+    const isIOS = /iphone|ipad|ipod/.test(userAgent)
+    const isAndroid = /android/.test(userAgent)
+
+    let mapUrl = ''
+
+    if (isIOS) {
+      // Use Apple Maps on iOS devices
+      mapUrl = `maps://maps.apple.com/?q=${encodedAddress}`
+    } else if (isAndroid) {
+      // Use Google Maps on Android devices
+      mapUrl = `geo:0,0?q=${encodedAddress}`
+    } else {
+      // Use Google Maps web for desktop/other platforms
+      mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`
+    }
+
+    // Open the map URL
+    window.open(mapUrl, '_blank')
+  }
+
   const handleComment = async (appointmentId: string) => {
     if (!session?.user || !commentText[appointmentId]?.trim()) return
 
@@ -354,7 +396,13 @@ export default function DashboardPage() {
                     >
                       {appointment.temple.name}
                     </Link>
-                    <LocationPinIcon className="w-3.5 h-3.5 text-medium-gray shrink-0" />
+                    <button
+                      onClick={() => openMaps(appointment)}
+                      className="text-medium-gray hover:text-warm-coral transition-colors p-1 hover:bg-warm-coral/10 rounded"
+                      title={`Open ${appointment.temple.name} in maps`}
+                    >
+                      <LocationPinIcon className="w-5 h-5 shrink-0" />
+                    </button>
                   </div>
 
                   {/* Date + time */}
@@ -373,21 +421,21 @@ export default function DashboardPage() {
                     {appointment._count.attendees > 0 && (
                       <button
                         onClick={() => toggleAttendees(appointment.id)}
-                        className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                        className="flex items-center gap-1.5 text-medium-gray hover:text-charcoal transition-colors p-1 hover:bg-warm-gray-light rounded"
                       >
-                        <UsersIcon className="w-4 h-4" />
-                        <span className="text-xs font-medium">{appointment._count.attendees}</span>
+                        <UsersIcon className="w-5 h-5" />
+                        <span className="text-sm font-medium">{appointment._count.attendees}</span>
                       </button>
                     )}
 
                     {/* Comments icon */}
                     <button
                       onClick={() => toggleComments(appointment.id)}
-                      className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                      className="flex items-center gap-1.5 text-medium-gray hover:text-charcoal transition-colors p-1 hover:bg-warm-gray-light rounded"
                     >
-                      <ChatBubbleIcon className="w-4 h-4" />
+                      <ChatBubbleIcon className="w-5 h-5" />
                       {appointment._count.comments > 0 && (
-                        <span className="text-xs font-medium">{appointment._count.comments}</span>
+                        <span className="text-sm font-medium">{appointment._count.comments}</span>
                       )}
                     </button>
 
@@ -535,7 +583,13 @@ export default function DashboardPage() {
                   >
                     {appointment.temple.name}
                   </Link>
-                  <LocationPinIcon className="w-3.5 h-3.5 text-medium-gray shrink-0" />
+                  <button
+                    onClick={() => openMaps(appointment)}
+                    className="text-medium-gray hover:text-warm-coral transition-colors p-1 hover:bg-warm-coral/10 rounded"
+                    title={`Open ${appointment.temple.name} in maps`}
+                  >
+                    <LocationPinIcon className="w-5 h-5 shrink-0" />
+                  </button>
                 </div>
 
                 {/* Month/year */}
@@ -549,21 +603,21 @@ export default function DashboardPage() {
                   {appointment._count.attendees > 0 && (
                     <button
                       onClick={() => toggleAttendees(appointment.id)}
-                      className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                      className="flex items-center gap-1.5 text-medium-gray hover:text-charcoal transition-colors p-1 hover:bg-warm-gray-light rounded"
                     >
-                      <UsersIcon className="w-4 h-4" />
-                      <span className="text-xs font-medium">{appointment._count.attendees}</span>
+                      <UsersIcon className="w-5 h-5" />
+                      <span className="text-sm font-medium">{appointment._count.attendees}</span>
                     </button>
                   )}
 
                   {/* Comments icon */}
                   <button
                     onClick={() => toggleComments(appointment.id)}
-                    className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                    className="flex items-center gap-1.5 text-medium-gray hover:text-charcoal transition-colors p-1 hover:bg-warm-gray-light rounded"
                   >
-                    <ChatBubbleIcon className="w-4 h-4" />
+                    <ChatBubbleIcon className="w-5 h-5" />
                     {appointment._count.comments > 0 && (
-                      <span className="text-xs font-medium">{appointment._count.comments}</span>
+                      <span className="text-sm font-medium">{appointment._count.comments}</span>
                     )}
                   </button>
 
