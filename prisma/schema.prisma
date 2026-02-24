@@ -54,6 +54,7 @@ model User {
   accounts           Account[]
   attendingSchedules ScheduleAttendee[]
   comments           ScheduleComment[]
+  messages           Message[]
   sessions           Session[]
   createdSchedules   TempleSchedule[]
 
@@ -138,6 +139,21 @@ model ScheduleComment {
   user       User           @relation(fields: [userId], references: [id])
 
   @@map("schedule_comments")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  content   String
+  threadId  String?  // Optional - for threading messages together
+  replyToId String?  // Optional - for replying to specific messages
+  user      User     @relation(fields: [userId], references: [id])
+  replies   Message[] @relation("MessageReplies")
+  replyTo   Message? @relation("MessageReplies", fields: [replyToId], references: [id])
+
+  @@map("messages")
 }
 
 enum TempleStatus {

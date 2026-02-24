@@ -35,7 +35,7 @@ const tabs = [
   { label: 'Dashboard', href: '/schedules' },
   { label: 'Temples', href: '/temples' },
   { label: 'Calendar', href: '/calendar' },
-  { label: 'Messages', href: '#' },
+  { label: 'Messages', href: '/messages' },
 ]
 
 export default function Header() {
@@ -47,6 +47,7 @@ export default function Header() {
     if (pathname === '/schedules' || pathname === '/') return '/schedules'
     if (pathname.startsWith('/temples')) return '/temples'
     if (pathname.startsWith('/calendar')) return '/calendar'
+    if (pathname.startsWith('/messages')) return '/messages'
     return '/schedules'
   }
 
