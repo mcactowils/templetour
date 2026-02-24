@@ -291,7 +291,14 @@ export default function ScheduleDetailPage({
 
           {schedule.temple.address && (
             <div className="flex items-center text-medium-gray ml-7">
-              <span className="text-sm">{schedule.temple.address}</span>
+              <a
+                href={`https://maps.google.com/?q=${encodeURIComponent(schedule.temple.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm hover:text-warm-coral underline cursor-pointer"
+              >
+                {schedule.temple.address}
+              </a>
             </div>
           )}
 
@@ -450,7 +457,7 @@ export default function ScheduleDetailPage({
                     <button
                       onClick={() => handleDeleteComment(comment.id)}
                       disabled={deleteCommentLoading === comment.id}
-                      className="text-red-400 hover:text-red-600 text-xs p-1 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                      className="text-red-400 hover:text-red-600 text-sm p-2 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
                       title="Delete comment"
                     >
                       {deleteCommentLoading === comment.id ? '...' : '×'}

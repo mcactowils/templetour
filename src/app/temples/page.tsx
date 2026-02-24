@@ -108,8 +108,23 @@ function TempleCard({ temple }: { temple: Temple }) {
         <p>{temple.city}, {temple.state || 'Utah'}</p>
         {temple.address && (
           <p className="flex items-start gap-0.5">
-            <span className="flex-1">{temple.address}</span>
-            <LocationPinIcon className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-medium-gray" />
+            <a
+              href={`https://maps.google.com/?q=${encodeURIComponent(temple.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 hover:text-warm-coral underline cursor-pointer"
+            >
+              {temple.address}
+            </a>
+            <a
+              href={`https://maps.google.com/?q=${encodeURIComponent(temple.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-warm-coral cursor-pointer"
+              title="Open in maps"
+            >
+              <LocationPinIcon className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+            </a>
           </p>
         )}
         {temple.dedicationDate && (
