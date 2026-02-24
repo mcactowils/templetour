@@ -97,8 +97,8 @@ function getActionButton(temple: Temple): { label: string; href: string } | null
       // Specific date/time appointment
       return { label: 'RSVP', href: `/schedules/${schedule.id}?from=temples` }
     }
-    // Penciled in appointment
-    return { label: 'Scheduled', href: `/schedules/${schedule.id}?from=temples` }
+    // Penciled in appointment - link to edit page
+    return { label: 'Schedule', href: `/schedules/${schedule.id}/edit` }
   }
 
   // No visit scheduled - show Schedule to create one
