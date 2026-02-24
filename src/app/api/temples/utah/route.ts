@@ -12,10 +12,7 @@ export async function GET() {
       },
       include: {
         schedules: {
-          where: {
-            scheduledDate: { gte: new Date() }
-          },
-          orderBy: { scheduledDate: 'asc' },
+          orderBy: { scheduledDate: 'desc' },
           take: 1,
           select: {
             id: true,

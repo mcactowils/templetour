@@ -59,10 +59,6 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 function getVisitStatusText(temple: Temple): { text: string; color: string; href?: string; isCompleted?: boolean } | null {
-  // Debug: Log all temples with schedules
-  if (temple.schedules && temple.schedules.length > 0) {
-    console.log('Temple with schedule:', temple.name, temple.schedules[0])
-  }
 
   // For renovating temples
   if (temple.status === TempleStatus.RENOVATING) {
@@ -82,16 +78,6 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
     // For debugging - let's be more explicit about past detection
     const isPastDate = date.getTime() < now.getTime()
 
-    // Debug logging for today's appointments
-    if (date.toDateString() === now.toDateString()) {
-      console.log('Temple same-day appointment:', {
-        temple: temple.name,
-        scheduledDate: schedule.scheduledDate,
-        appointmentTime: date.toLocaleString('en-US', { timeZone: 'America/Denver' }),
-        currentTime: now.toLocaleString('en-US', { timeZone: 'America/Denver' }),
-        isPastDate
-      })
-    }
     // Use same logic as dashboard to detect month-only appointments
     const isMonthOnly = date.getDate() === 1 &&
                        date.getHours() === 12 &&

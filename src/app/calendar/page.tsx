@@ -71,15 +71,6 @@ function isPastAppointment(scheduledDate: string) {
   const now = new Date()
   const isPast = appointmentDate.getTime() < now.getTime()
 
-  // Debug logging - remove this later
-  if (appointmentDate.toDateString() === now.toDateString()) {
-    console.log('Same day appointment:', {
-      scheduledDate,
-      appointmentTime: appointmentDate.toLocaleString('en-US', { timeZone: 'America/Denver' }),
-      currentTime: now.toLocaleString('en-US', { timeZone: 'America/Denver' }),
-      isPast
-    })
-  }
 
   return isPast
 }
@@ -110,7 +101,7 @@ export default function CalendarPage() {
   const fetchSchedules = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/schedules?upcoming=true&limit=100')
+      const response = await fetch('/api/schedules?limit=100')
       if (!response.ok) throw new Error('Failed to fetch schedules')
       const data = await response.json()
       setSchedules(data.schedules || [])
@@ -141,7 +132,6 @@ export default function CalendarPage() {
 
   // Build a map of day -> schedules for the current month
   const schedulesByDay = useMemo(() => {
-    console.log('Calendar: All schedules loaded:', schedules)
     const map: Record<number, Schedule[]> = {}
     schedules.forEach((schedule) => {
       const date = new Date(schedule.scheduledDate)
