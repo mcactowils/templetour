@@ -55,13 +55,19 @@ interface PushNotificationData {
 
 async function sendPushNotification(subscription: string, data: PushNotificationData) {
   try {
+    // Only attempt push notifications if we have the required environment variables
+    if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+      console.log('Push notification skipped: Missing VAPID keys')
+      return
+    }
+
     const webpush = await import('web-push')
 
     // Configure web-push with your VAPID keys
     webpush.setVapidDetails(
       'mailto:notifications@templetour.app',
-      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
-      process.env.VAPID_PRIVATE_KEY || ''
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+      process.env.VAPID_PRIVATE_KEY
     )
 
     const payload = JSON.stringify({
