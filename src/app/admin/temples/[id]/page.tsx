@@ -180,7 +180,7 @@ export default function EditTemplePage() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <Link
           href="/admin"
-          className="mt-4 inline-block bg-warm-coral text-white px-6 py-2.5 text-sm font-medium rounded-lg hover:bg-warm-coral-hover transition-colors"
+          className="mt-4 inline-block bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 text-sm font-medium rounded-lg transition-colors"
         >
           Back to Dashboard
         </Link>
@@ -581,7 +581,7 @@ export default function EditTemplePage() {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 sm:flex-none px-6 py-2.5 bg-warm-coral text-white text-sm font-medium rounded-lg hover:bg-warm-coral-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 sm:flex-none px-6 py-2.5 bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>

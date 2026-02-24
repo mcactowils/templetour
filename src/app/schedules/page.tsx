@@ -336,7 +336,7 @@ export default function DashboardPage() {
         <div className="text-red-600 text-base">Error: {error}</div>
         <button
           onClick={fetchAppointments}
-          className="mt-4 bg-warm-coral text-white px-6 py-2 rounded-full hover:bg-warm-coral-hover transition-colors text-sm font-medium"
+          className="mt-4 bg-white text-[#B77D63] px-6 py-2 rounded-full border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium"
         >
           Try Again
         </button>
@@ -358,7 +358,7 @@ export default function DashboardPage() {
         </p>
         <Link
           href="/schedules/new"
-          className="inline-flex items-center bg-warm-coral text-white px-6 py-2 rounded-full hover:bg-warm-coral-hover transition-colors text-sm font-medium"
+          className="inline-flex items-center bg-white text-[#B77D63] px-6 py-2 rounded-full border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium"
         >
           Create Appointment
         </Link>
@@ -372,7 +372,7 @@ export default function DashboardPage() {
       {scheduledAppointments.length > 0 && (
         <div>
           <SectionHeader title="Upcoming Appointments" subLabel="Scheduled" />
-          <div className="bg-white">
+          <div className="bg-[#F4F4F4]">
             {scheduledAppointments.map((appointment) => {
               const isAttending = appointment.attendees?.some(
                 a => a.user.id === (session?.user as any)?.id
@@ -497,7 +497,7 @@ export default function DashboardPage() {
                             <button
                               onClick={() => handleComment(appointment.id)}
                               disabled={commentLoading === appointment.id || !commentText[appointment.id]?.trim()}
-                              className="bg-warm-coral text-white px-2 py-1 rounded text-xs font-medium hover:bg-warm-coral-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-2 py-1 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {commentLoading === appointment.id ? 'Posting...' : 'Post'}
                             </button>
@@ -564,7 +564,7 @@ export default function DashboardPage() {
       {unscheduledAppointments.length > 0 && (
         <div>
           <SectionHeader title="Upcoming Appointments" subLabel="unscheduled" />
-          <div className="bg-white">
+          <div className="bg-[#F4F4F4]">
             {unscheduledAppointments.map((appointment) => (
               <div
                 key={appointment.id}
@@ -618,7 +618,7 @@ export default function DashboardPage() {
 
                   <Link
                     href={`/schedules/${appointment.id}/edit`}
-                    className="px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider bg-warm-coral text-white hover:bg-warm-coral-hover transition-colors"
+                    className="px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors"
                   >
                     Schedule
                   </Link>
@@ -672,7 +672,7 @@ export default function DashboardPage() {
                           <button
                             onClick={() => handleComment(appointment.id)}
                             disabled={commentLoading === appointment.id || !commentText[appointment.id]?.trim()}
-                            className="bg-warm-coral text-white px-2 py-1 rounded text-xs font-medium hover:bg-warm-coral-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-2 py-1 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {commentLoading === appointment.id ? 'Posting...' : 'Post'}
                           </button>

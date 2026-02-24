@@ -96,7 +96,7 @@ export default function AdminDashboard() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <button
           onClick={fetchTemples}
-          className="mt-4 bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium"
+          className="mt-4 bg-white text-[#B77D63] px-6 py-2.5 rounded-lg border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium"
         >
           Try Again
         </button>

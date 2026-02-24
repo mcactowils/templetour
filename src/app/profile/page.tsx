@@ -162,7 +162,7 @@ export default function Profile() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-warm-coral text-white py-3 px-4 rounded-lg hover:bg-warm-coral-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-warm-coral disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="w-full bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#B77D63] disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               {isLoading ? 'Updating...' : 'Update Profile'}
             </button>

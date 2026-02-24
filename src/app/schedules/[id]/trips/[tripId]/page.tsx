@@ -358,7 +358,7 @@ export default function TripDetailPage({
                   className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
                     isAttending(selectedUserId)
                       ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                      : 'bg-warm-coral text-white hover:bg-warm-coral-hover'
+                      : 'bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white'
                   }`}
                 >
                   {rsvpLoading
@@ -435,7 +435,7 @@ export default function TripDetailPage({
                 <button
                   type="submit"
                   disabled={commentLoading || !commentUserId || !commentText.trim()}
-                  className="bg-warm-coral text-white px-4 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50"
+                  className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-4 py-2.5 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
                 >
                   {commentLoading ? 'Posting...' : 'Post Comment'}
                 </button>

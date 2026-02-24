@@ -142,7 +142,7 @@ function TempleCard({ temple }: { temple: Temple }) {
         </div>
         <a
           href={action.href}
-          className="bg-warm-coral text-white text-xs font-medium px-4 py-1.5 rounded hover:bg-warm-coral-hover transition-colors"
+          className="bg-white text-[#B77D63] text-xs font-medium px-4 py-1.5 rounded border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors"
         >
           {action.label}
         </a>
@@ -202,7 +202,7 @@ export default function TemplesPage() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <button
           onClick={fetchUtahTemples}
-          className="mt-4 bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium"
+          className="mt-4 bg-white text-[#B77D63] px-6 py-2.5 rounded-lg border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium"
         >
           Try Again
         </button>
@@ -221,7 +221,7 @@ export default function TemplesPage() {
       {sections.map((section) => (
         <div key={section.label}>
           <SectionHeader title={section.label} />
-          <div className="bg-white rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
+          <div className="bg-[#F4F4F4] rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
             {section.temples.map((temple) => (
               <TempleCard key={temple.id} temple={temple} />
             ))}

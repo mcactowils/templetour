@@ -62,10 +62,11 @@ export default function Header() {
   const activeTab = getActiveTab()
 
   return (
-    <header className="bg-white border-b border-light-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top bar */}
-        <div className="flex justify-between items-center h-14">
+    <header className="border-b border-light-gray">
+      {/* Top bar with background */}
+      <div className="bg-[#F4F4F4]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-14">
           <Link href="/schedules" className="flex items-center gap-3">
             <TempleIcon className="w-10 h-10 text-temple-tan" />
             <span className="text-sm font-medium text-charcoal tracking-[0.2em] uppercase">
@@ -143,33 +144,37 @@ export default function Header() {
             ) : (
               <Link
                 href="/auth/signin"
-                className="bg-warm-coral text-white px-4 py-1.5 rounded-full text-xs font-medium hover:bg-warm-coral-hover transition-colors"
+                className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-4 py-1.5 rounded-full text-xs font-medium transition-colors"
               >
                 Sign In
               </Link>
             )}
           </div>
         </div>
-
-        {/* Tab navigation */}
-        {session?.user && (
-          <nav className="flex gap-1 pb-2 -mx-1">
-            {tabs.map((tab) => (
-              <Link
-                key={tab.href}
-                href={tab.href}
-                className={`flex-1 text-center py-1.5 px-3 text-xs font-medium rounded-full transition-colors ${
-                  activeTab === tab.href
-                    ? 'bg-charcoal-dark text-white'
-                    : 'text-medium-gray hover:text-charcoal'
-                }`}
-              >
-                {tab.label}
-              </Link>
-            ))}
-          </nav>
-        )}
       </div>
+
+      {/* Tab navigation with white background */}
+      {session?.user && (
+        <div className="bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav className="flex gap-1 pb-2 -mx-1">
+              {tabs.map((tab) => (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  className={`flex-1 text-center py-1.5 px-3 text-xs font-medium transition-colors ${
+                    activeTab === tab.href
+                      ? 'bg-[#969696] text-white rounded-md'
+                      : 'text-medium-gray hover:text-charcoal rounded-full'
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   )
 }

@@ -353,7 +353,7 @@ export default function NewAppointmentPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50"
+            className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
           >
             {submitting ? 'Creating...' : 'Create Appointment'}
           </button>

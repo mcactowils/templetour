@@ -207,7 +207,7 @@ export default function EditAppointmentPage() {
         <div className="text-red-600 text-xl mb-4">Error: {error}</div>
         <button
           onClick={() => router.push('/schedules')}
-          className="bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium"
+          className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"
         >
           Back to Appointments
         </button>
@@ -221,7 +221,7 @@ export default function EditAppointmentPage() {
         <div className="text-red-600 text-xl mb-4">You can only edit appointments you created</div>
         <button
           onClick={() => router.push('/schedules')}
-          className="bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium"
+          className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"
         >
           Back to Appointments
         </button>
@@ -444,7 +444,7 @@ export default function EditAppointmentPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="bg-warm-coral text-white px-6 py-2.5 rounded-lg hover:bg-warm-coral-hover transition-colors text-sm font-medium disabled:opacity-50"
+            className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
           >
             {submitting ? 'Updating...' : 'Update Appointment'}
           </button>
