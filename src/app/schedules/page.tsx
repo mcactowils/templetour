@@ -762,7 +762,6 @@ export default function DashboardPage() {
               >
                 {/* Temple name + pin */}
                 <div className="flex items-center gap-1.5 mb-1">
-                  <CheckMarkIcon className="w-4 h-4 text-green-600" />
                   <Link
                     href={`/schedules/${appointment.id}`}
                     className="font-bold text-charcoal text-base hover:text-charcoal-dark transition-colors"
@@ -779,7 +778,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Visited date */}
-                <p className="text-sm text-green-600 font-medium">
+                <p className="text-sm text-medium-gray">
                   Visited {formatFullDate(appointment.scheduledDate)}
                 </p>
               </div>

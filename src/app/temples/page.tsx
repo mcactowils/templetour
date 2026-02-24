@@ -84,7 +84,7 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
     if (isPastDate && !isMonthOnly) {
       // Past appointment - mark as completed
       const monthDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-      return { text: `Visited ${monthDate}`, color: 'text-green-600', href, isCompleted: true }
+      return { text: `Visited ${monthDate}`, color: 'text-medium-gray', href, isCompleted: true }
     } else if (isMonthOnly) {
       const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       return { text: `Visit planned for ${monthYear}`, color: 'text-warm-coral', href }
@@ -169,25 +169,20 @@ function TempleCard({ temple }: { temple: Temple }) {
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div>
           {visitStatus && (
-            <>
-              {visitStatus.isCompleted && (
-                <CheckMarkIcon className="w-4 h-4 text-green-600" />
-              )}
-              {visitStatus.href ? (
-                <a
-                  href={visitStatus.href}
-                  className={`text-sm font-medium ${visitStatus.color} hover:underline cursor-pointer`}
-                >
-                  {visitStatus.text}
-                </a>
-              ) : (
-                <span className={`text-sm font-medium ${visitStatus.color}`}>
-                  {visitStatus.text}
-                </span>
-              )}
-            </>
+            visitStatus.href ? (
+              <a
+                href={visitStatus.href}
+                className={`text-sm font-medium ${visitStatus.color} hover:underline cursor-pointer`}
+              >
+                {visitStatus.text}
+              </a>
+            ) : (
+              <span className={`text-sm font-medium ${visitStatus.color}`}>
+                {visitStatus.text}
+              </span>
+            )
           )}
         </div>
         {action && (

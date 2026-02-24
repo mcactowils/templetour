@@ -44,10 +44,30 @@ function ChevronRightIcon({ className }: { className?: string }) {
   )
 }
 
+function CheckMarkIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+    </svg>
+  )
+}
+
 const DAY_LABELS = ['SUN', 'MON', 'TUES', 'WED', 'THURS', 'FRI', 'SAT']
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate()
+}
+
+function isMonthOnlyAppointment(date: string, title: string) {
+  const appointmentDate = new Date(date)
+  return appointmentDate.getDate() === 1 &&
+         appointmentDate.getHours() === 12 &&
+         appointmentDate.getMinutes() === 0 &&
+         title.includes('(')
+}
+
+function isPastAppointment(scheduledDate: string) {
+  return new Date(scheduledDate) < new Date()
 }
 
 function getFirstDayOfMonth(year: number, month: number) {
@@ -219,7 +239,8 @@ export default function CalendarPage() {
                       </div>
                       {daySchedules.map((schedule) => {
                         const time = new Date(schedule.scheduledDate)
-                        const isMonthOnly = time.getHours() === 0 && time.getMinutes() === 0
+                        const isMonthOnly = isMonthOnlyAppointment(schedule.scheduledDate, schedule.title)
+                        const isPast = isPastAppointment(schedule.scheduledDate) && !isMonthOnly
                         const timeStr = isMonthOnly
                           ? ''
                           : time.toLocaleTimeString('en-US', {
@@ -238,8 +259,15 @@ export default function CalendarPage() {
                             href={`/schedules/${schedule.id}?from=calendar`}
                             className="block group"
                           >
-                            <div className="flex flex-col items-center text-center mt-0.5">
-                              <TempleIconSmall className="w-6 h-6 sm:w-7 sm:h-7 text-temple-tan group-hover:text-warm-coral transition-colors drop-shadow-sm" />
+                            <div className="relative flex flex-col items-center text-center mt-0.5">
+                              <div className="relative">
+                                <TempleIconSmall className="w-6 h-6 sm:w-7 sm:h-7 text-temple-tan group-hover:text-warm-coral transition-colors drop-shadow-sm" />
+                                {isPast && (
+                                  <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-600 rounded-full flex items-center justify-center">
+                                    <CheckMarkIcon className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" />
+                                  </div>
+                                )}
+                              </div>
                               <span className="text-[8px] sm:text-[10px] text-charcoal leading-tight mt-0.5 group-hover:text-warm-coral transition-colors">
                                 {shortName}
                               </span>
