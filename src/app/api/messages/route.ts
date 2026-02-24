@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getCurrentUser, requireAuth } from '../../../lib/session'
-import { createMessageReplyNotification } from '../../../lib/notifications'
 
 // GET /api/messages - List messages and schedule comments for messaging view
 export async function GET(request: NextRequest) {
@@ -134,22 +133,6 @@ export async function POST(request: NextRequest) {
     })
 
     console.log('POST /api/messages - Message created successfully:', message.id)
-
-    // Create notification if this is a reply
-    if (replyToId) {
-      try {
-        await createMessageReplyNotification(
-          user.id,
-          replyToId,
-          message.id,
-          message.user.name || message.user.email || 'Someone'
-        )
-      } catch (notificationError) {
-        console.error('Error creating message reply notification:', notificationError)
-        // Don't fail the message creation if notification fails
-      }
-    }
-
     return NextResponse.json(message, { status: 201 })
   } catch (error) {
     console.error('POST /api/messages - Error creating message:', error)
