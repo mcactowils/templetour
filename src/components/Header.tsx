@@ -68,10 +68,11 @@ export default function Header() {
   // Fetch notifications on mount and when user is available
   useEffect(() => {
     if (session?.user) {
-      fetchNotifications()
+      // Temporarily disabled to debug page loading issues
+      // fetchNotifications()
       // Poll for new notifications every 30 seconds
-      const interval = setInterval(fetchNotifications, 30000)
-      return () => clearInterval(interval)
+      // const interval = setInterval(fetchNotifications, 30000)
+      // return () => clearInterval(interval)
     }
   }, [session])
 
