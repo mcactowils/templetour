@@ -83,8 +83,8 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
 
     if (isPastDate && !isMonthOnly) {
       // Past appointment - mark as completed
-      const monthDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
-      return { text: `Visited`, color: 'text-green-600', href, isCompleted: true }
+      const monthDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+      return { text: `Visited ${monthDate}`, color: 'text-green-600', href, isCompleted: true }
     } else if (isMonthOnly) {
       const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       return { text: `Visit planned for ${monthYear}`, color: 'text-warm-coral', href }

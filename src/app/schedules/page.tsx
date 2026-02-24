@@ -54,6 +54,14 @@ function LocationPinIcon({ className }: { className?: string }) {
   )
 }
 
+function CheckMarkIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+    </svg>
+  )
+}
+
 function ChatBubbleIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="currentColor" viewBox="0 0 20 20">
@@ -306,14 +314,22 @@ export default function DashboardPage() {
     }
   }
 
-  // Split appointments into scheduled vs unscheduled
+  // Split appointments into upcoming and past
   const upcomingAppointments = appointments.filter(a => isUpcoming(a.scheduledDate))
+  const pastAppointments = appointments.filter(a => !isUpcoming(a.scheduledDate))
+
+  // Split upcoming into scheduled vs unscheduled
   const scheduledAppointments = upcomingAppointments
     .filter(a => !isMonthOnlyAppointment(a.scheduledDate, a.title))
     .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
   const unscheduledAppointments = upcomingAppointments
     .filter(a => isMonthOnlyAppointment(a.scheduledDate, a.title))
     .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
+
+  // Past completed appointments (only specific date/time, not penciled)
+  const completedAppointments = pastAppointments
+    .filter(a => !isMonthOnlyAppointment(a.scheduledDate, a.title))
+    .sort((a, b) => new Date(b.scheduledDate).getTime() - new Date(a.scheduledDate).getTime()) // Most recent first
 
   if (status === 'loading' || loading) {
     return (
@@ -728,6 +744,44 @@ export default function DashboardPage() {
                     )}
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Visited/Completed Appointments */}
+      {completedAppointments.length > 0 && (
+        <div>
+          <SectionHeader title="Visited Temples" subLabel="completed" />
+          <div className="bg-[#F4F4F4]">
+            {completedAppointments.map((appointment) => (
+              <div
+                key={appointment.id}
+                className="py-4 border-b border-light-gray last:border-b-0 pl-3 border-l-2 border-l-green-600"
+              >
+                {/* Temple name + pin */}
+                <div className="flex items-center gap-1.5 mb-1">
+                  <CheckMarkIcon className="w-4 h-4 text-green-600" />
+                  <Link
+                    href={`/schedules/${appointment.id}`}
+                    className="font-bold text-charcoal text-base hover:text-charcoal-dark transition-colors"
+                  >
+                    {appointment.temple.name}
+                  </Link>
+                  <button
+                    onClick={() => openMaps(appointment)}
+                    className="text-medium-gray hover:text-warm-coral transition-colors p-1 hover:bg-warm-coral/10 rounded"
+                    title={`Open ${appointment.temple.name} in maps`}
+                  >
+                    <LocationPinIcon className="w-5 h-5 shrink-0" />
+                  </button>
+                </div>
+
+                {/* Visited date */}
+                <p className="text-sm text-green-600 font-medium">
+                  Visited {formatFullDate(appointment.scheduledDate)}
+                </p>
               </div>
             ))}
           </div>
