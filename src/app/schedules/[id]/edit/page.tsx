@@ -215,10 +215,14 @@ export default function EditAppointmentPage() {
     )
   }
 
-  if (appointment && appointment.createdBy.id !== (session?.user as any)?.id) {
+  const isCreator = appointment?.createdBy.id === (session?.user as any)?.id
+  const isAdmin = isAdminUser(session?.user)
+  const canEdit = isCreator || isAdmin
+
+  if (appointment && !canEdit) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 text-xl mb-4">You can only edit appointments you created</div>
+        <div className="text-red-600 text-xl mb-4">You don't have permission to edit this appointment</div>
         <button
           onClick={() => router.push('/schedules')}
           className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"
