@@ -92,6 +92,8 @@ export default function DashboardPage() {
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null)
   const [showAttendees, setShowAttendees] = useState<string | null>(null)
   const [showComments, setShowComments] = useState<string | null>(null)
+  const [commentText, setCommentText] = useState<{[key: string]: string}>({})
+  const [commentLoading, setCommentLoading] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -213,6 +215,35 @@ export default function DashboardPage() {
     if (showAttendees === appointmentId) setShowAttendees(null)
   }
 
+  const handleComment = async (appointmentId: string) => {
+    if (!session?.user || !commentText[appointmentId]?.trim()) return
+
+    try {
+      setCommentLoading(appointmentId)
+
+      const response = await fetch(`/api/schedules/${appointmentId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: (session.user as any).id,
+          content: commentText[appointmentId].trim(),
+        }),
+      })
+
+      if (!response.ok) throw new Error('Failed to post comment')
+
+      // Clear the comment text for this appointment
+      setCommentText(prev => ({ ...prev, [appointmentId]: '' }))
+
+      // Refresh appointments to show new comment
+      await fetchAppointments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to post comment')
+    } finally {
+      setCommentLoading(null)
+    }
+  }
+
   // Split appointments into scheduled vs unscheduled
   const upcomingAppointments = appointments.filter(a => isUpcoming(a.scheduledDate))
   const scheduledAppointments = upcomingAppointments
@@ -325,22 +356,15 @@ export default function DashboardPage() {
                     )}
 
                     {/* Comments icon */}
-                    {appointment._count.comments > 0 ? (
-                      <button
-                        onClick={() => toggleComments(appointment.id)}
-                        className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
-                      >
-                        <ChatBubbleIcon className="w-4 h-4" />
+                    <button
+                      onClick={() => toggleComments(appointment.id)}
+                      className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                    >
+                      <ChatBubbleIcon className="w-4 h-4" />
+                      {appointment._count.comments > 0 && (
                         <span className="text-xs font-medium">{appointment._count.comments}</span>
-                      </button>
-                    ) : (
-                      <Link
-                        href={`/schedules/${appointment.id}`}
-                        className="text-medium-gray hover:text-charcoal transition-colors"
-                      >
-                        <ChatBubbleIcon className="w-4 h-4" />
-                      </Link>
-                    )}
+                      )}
+                    </button>
 
                     <button
                       onClick={() => handleRSVP(appointment.id)}
@@ -379,7 +403,7 @@ export default function DashboardPage() {
                   {/* Comments dropdown */}
                   {showComments === appointment.id && (
                     <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-3">
                         <h4 className="text-xs font-semibold text-charcoal uppercase tracking-wider">
                           Discussion ({appointment._count.comments})
                         </h4>
@@ -390,32 +414,62 @@ export default function DashboardPage() {
                           View all →
                         </Link>
                       </div>
-                      <div className="space-y-2 max-h-32 overflow-y-auto">
-                        {appointment.comments.slice(0, 3).map((comment) => (
-                          <div key={comment.id} className="text-sm">
-                            <div className="flex items-center gap-1.5 mb-1">
-                              <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
-                                {comment.user.name.charAt(0).toUpperCase()}
-                              </div>
-                              <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
-                              <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
-                            </div>
-                            <p className="text-charcoal text-sm pl-5 line-clamp-2" style={{
-                              display: '-webkit-box',
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden'
-                            }}>
-                              {comment.content}
-                            </p>
+
+                      {/* Add comment form */}
+                      {session?.user && (
+                        <div className="mb-3">
+                          <textarea
+                            value={commentText[appointment.id] || ''}
+                            onChange={(e) => setCommentText(prev => ({ ...prev, [appointment.id]: e.target.value }))}
+                            placeholder="Add a comment..."
+                            rows={2}
+                            className="w-full px-2 py-1.5 border border-light-gray rounded text-sm focus:outline-none focus:ring-1 focus:ring-warm-coral focus:border-warm-coral resize-none"
+                          />
+                          <div className="flex justify-end mt-1">
+                            <button
+                              onClick={() => handleComment(appointment.id)}
+                              disabled={commentLoading === appointment.id || !commentText[appointment.id]?.trim()}
+                              className="bg-warm-coral text-white px-2 py-1 rounded text-xs font-medium hover:bg-warm-coral-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {commentLoading === appointment.id ? 'Posting...' : 'Post'}
+                            </button>
                           </div>
-                        ))}
-                        {appointment.comments.length > 3 && (
-                          <p className="text-xs text-medium-gray pl-5">
-                            +{appointment.comments.length - 3} more comments
-                          </p>
-                        )}
-                      </div>
+                        </div>
+                      )}
+
+                      {/* Comments list */}
+                      {appointment.comments.length > 0 ? (
+                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                          {appointment.comments.slice(0, 3).map((comment) => (
+                            <div key={comment.id} className="text-sm">
+                              <div className="flex items-center gap-1.5 mb-1">
+                                <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
+                                  {comment.user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
+                                <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
+                              </div>
+                              <p className="text-charcoal text-sm pl-5 line-clamp-2" style={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden'
+                              }}>
+                                {comment.content}
+                              </p>
+                            </div>
+                          ))}
+                          {appointment.comments.length > 3 && (
+                            <p className="text-xs text-medium-gray pl-5">
+                              +{appointment.comments.length - 3} more comments
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-medium-gray text-center py-2">
+                          No comments yet. Be the first to comment!
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -465,22 +519,15 @@ export default function DashboardPage() {
                   )}
 
                   {/* Comments icon */}
-                  {appointment._count.comments > 0 ? (
-                    <button
-                      onClick={() => toggleComments(appointment.id)}
-                      className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
-                    >
-                      <ChatBubbleIcon className="w-4 h-4" />
+                  <button
+                    onClick={() => toggleComments(appointment.id)}
+                    className="flex items-center gap-1 text-medium-gray hover:text-charcoal transition-colors"
+                  >
+                    <ChatBubbleIcon className="w-4 h-4" />
+                    {appointment._count.comments > 0 && (
                       <span className="text-xs font-medium">{appointment._count.comments}</span>
-                    </button>
-                  ) : (
-                    <Link
-                      href={`/schedules/${appointment.id}`}
-                      className="text-medium-gray hover:text-charcoal transition-colors"
-                    >
-                      <ChatBubbleIcon className="w-4 h-4" />
-                    </Link>
-                  )}
+                    )}
+                  </button>
 
                   <Link
                     href={`/schedules/${appointment.id}/edit`}
@@ -512,7 +559,7 @@ export default function DashboardPage() {
                 {/* Comments dropdown */}
                 {showComments === appointment.id && (
                   <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-3">
                       <h4 className="text-xs font-semibold text-charcoal uppercase tracking-wider">
                         Discussion ({appointment._count.comments})
                       </h4>
@@ -523,27 +570,62 @@ export default function DashboardPage() {
                         View all →
                       </Link>
                     </div>
-                    <div className="space-y-2 max-h-32 overflow-y-auto">
-                      {appointment.comments.slice(0, 3).map((comment) => (
-                        <div key={comment.id} className="text-sm">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
-                              {comment.user.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
-                            <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
-                          </div>
-                          <p className="text-charcoal text-sm pl-5 line-clamp-2">
-                            {comment.content}
-                          </p>
+
+                    {/* Add comment form */}
+                    {session?.user && (
+                      <div className="mb-3">
+                        <textarea
+                          value={commentText[appointment.id] || ''}
+                          onChange={(e) => setCommentText(prev => ({ ...prev, [appointment.id]: e.target.value }))}
+                          placeholder="Add a comment..."
+                          rows={2}
+                          className="w-full px-2 py-1.5 border border-light-gray rounded text-sm focus:outline-none focus:ring-1 focus:ring-warm-coral focus:border-warm-coral resize-none"
+                        />
+                        <div className="flex justify-end mt-1">
+                          <button
+                            onClick={() => handleComment(appointment.id)}
+                            disabled={commentLoading === appointment.id || !commentText[appointment.id]?.trim()}
+                            className="bg-warm-coral text-white px-2 py-1 rounded text-xs font-medium hover:bg-warm-coral-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {commentLoading === appointment.id ? 'Posting...' : 'Post'}
+                          </button>
                         </div>
-                      ))}
-                      {appointment.comments.length > 3 && (
-                        <p className="text-xs text-medium-gray pl-5">
-                          +{appointment.comments.length - 3} more comments
-                        </p>
-                      )}
-                    </div>
+                      </div>
+                    )}
+
+                    {/* Comments list */}
+                    {appointment.comments.length > 0 ? (
+                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                        {appointment.comments.slice(0, 3).map((comment) => (
+                          <div key={comment.id} className="text-sm">
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <div className="w-4 h-4 bg-warm-coral/20 text-warm-coral rounded-full flex items-center justify-center text-xs font-medium">
+                                {comment.user.name.charAt(0).toUpperCase()}
+                              </div>
+                              <span className="font-medium text-charcoal text-xs">{comment.user.name}</span>
+                              <span className="text-medium-gray text-xs">{formatCommentDate(comment.createdAt)}</span>
+                            </div>
+                            <p className="text-charcoal text-sm pl-5 line-clamp-2" style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden'
+                            }}>
+                              {comment.content}
+                            </p>
+                          </div>
+                        ))}
+                        {appointment.comments.length > 3 && (
+                          <p className="text-xs text-medium-gray pl-5">
+                            +{appointment.comments.length - 3} more comments
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-medium-gray text-center py-2">
+                        No comments yet. Be the first to comment!
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
