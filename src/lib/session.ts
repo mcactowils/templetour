@@ -35,7 +35,8 @@ export async function getCurrentUserWithAdminCheck() {
     return { user: null, isAdmin: false }
   }
 
-  const isAdmin = ADMIN_EMAILS.includes(user.email)
+  // Check database isAdmin field first, fallback to email list
+  const isAdmin = user.isAdmin || ADMIN_EMAILS.includes(user.email)
 
   return { user, isAdmin }
 }
@@ -52,4 +53,10 @@ export async function requireAdmin() {
   }
 
   return user
+}
+
+// Server-side admin check for API routes
+export async function isUserAdmin(user: { email: string; isAdmin?: boolean }): Promise<boolean> {
+  // Check database isAdmin field first, fallback to email list
+  return user.isAdmin || ADMIN_EMAILS.includes(user.email)
 }

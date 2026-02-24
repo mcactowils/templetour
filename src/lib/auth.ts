@@ -107,6 +107,21 @@ export const authOptions: NextAuthOptions = {
     session: async ({ session, token }) => {
       if (session?.user) {
         (session.user as any).id = token.sub
+
+        // Fetch fresh user data including isAdmin
+        if (token.sub) {
+          try {
+            const user = await prisma.user.findUnique({
+              where: { id: token.sub },
+              select: { isAdmin: true }
+            })
+            if (user) {
+              (session.user as any).isAdmin = user.isAdmin
+            }
+          } catch (error) {
+            console.error('Failed to fetch user admin status:', error)
+          }
+        }
       }
       return session
     },

@@ -24,8 +24,8 @@ export default function AdminLayout({
       return
     }
 
-    const userEmail = session.user?.email
-    if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
+    const user = session.user as any
+    if (!user || (!user.isAdmin && !ADMIN_EMAILS.includes(user.email))) {
       router.push('/')
       return
     }
@@ -82,6 +82,12 @@ export default function AdminLayout({
                 className="text-charcoal hover:text-charcoal px-3 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 Dashboard
+              </Link>
+              <Link
+                href="/admin/users"
+                className="text-charcoal hover:text-charcoal px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Users
               </Link>
               <Link
                 href="/"

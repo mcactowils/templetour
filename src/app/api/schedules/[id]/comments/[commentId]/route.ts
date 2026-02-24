@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../../../lib/prisma'
-import { getCurrentUser } from '../../../../../../lib/session'
-import { isAdminEmail } from '../../../../../../lib/admin'
+import { getCurrentUser, isUserAdmin } from '../../../../../../lib/session'
 
 export async function DELETE(
   request: NextRequest,
@@ -24,7 +23,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 })
     }
 
-    const isAdmin = isAdminEmail(user.email)
+    const isAdmin = await isUserAdmin(user)
     if (comment.userId !== user.id && !isAdmin) {
       return NextResponse.json({ error: 'You can only delete your own comments' }, { status: 403 })
     }

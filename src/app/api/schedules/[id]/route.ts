@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
-import { getCurrentUser } from '../../../../lib/session'
-import { isAdminEmail } from '../../../../lib/admin'
+import { getCurrentUser, isUserAdmin } from '../../../../lib/session'
 
 // GET /api/schedules/[id] - Get a specific schedule with attendees and comments
 export async function GET(
@@ -102,7 +101,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
     }
 
-    const isAdmin = isAdminEmail(user.email)
+    const isAdmin = await isUserAdmin(user)
     if (existingSchedule.createdById !== user.id && !isAdmin) {
       return NextResponse.json({ error: 'You can only edit appointments you created' }, { status: 403 })
     }
@@ -188,7 +187,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
     }
 
-    const isAdmin = isAdminEmail(user.email)
+    const isAdmin = await isUserAdmin(user)
     if (appointment.createdById !== user.id && !isAdmin) {
       return NextResponse.json({ error: 'You can only delete appointments you created' }, { status: 403 })
     }

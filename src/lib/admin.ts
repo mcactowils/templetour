@@ -1,19 +1,28 @@
 // Client-side admin helper functions
-// This file contains admin email lists and helper functions for client-side admin checks
+// This file contains admin helper functions for client-side admin checks
 
-// List of admin user emails - update this with your actual admin emails
+// Legacy email list for fallback (in case database isn't available)
+// Updated: Admin system now uses database-first approach
 export const ADMIN_EMAILS = [
-  // Add your admin email addresses here
-  // Example: 'admin@example.com',
-  // You can find your user emails in the database or by logging in and checking the session
+  'wilsonmatthew@yahoo.com',
+  'wilsoncari@yahoo.com',
+  // Add more admin email addresses here as fallback
 ]
 
 export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false
-  return ADMIN_EMAILS.includes(wilsonmatthew@yahoo.com, wilsoncari@yahoo.com)
+  return ADMIN_EMAILS.includes(email)
 }
 
-export function isAdminUser(user: { email?: string | null } | null | undefined): boolean {
-  if (!user?.email) return false
+// Client-side admin check using user object
+export function isAdminUser(user: { email?: string | null; isAdmin?: boolean } | null | undefined): boolean {
+  if (!user) return false
+
+  // Use database isAdmin field if available
+  if (typeof user.isAdmin === 'boolean') {
+    return user.isAdmin
+  }
+
+  // Fallback to email check for legacy compatibility
   return isAdminEmail(user.email)
 }
