@@ -57,6 +57,8 @@ model User {
   messages           Message[]
   sessions           Session[]
   createdSchedules   TempleSchedule[]
+  notifications      Notification[]
+  pushSubscription   String?            // For browser push notifications
 
   @@map("users")
 }
@@ -156,10 +158,35 @@ model Message {
   @@map("messages")
 }
 
+model Notification {
+  id        String            @id @default(cuid())
+  createdAt DateTime          @default(now())
+  userId    String            @map("user_id")
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean           @default(false)
+  actionUrl String?           @map("action_url")
+  // References to related entities
+  scheduleId String?          @map("schedule_id")
+  commentId  String?          @map("comment_id")
+  messageId  String?          @map("message_id")
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
 enum TempleStatus {
   ANNOUNCED
   UNDER_CONSTRUCTION
   DEDICATED
   RENOVATING
   CLOSED
+}
+
+enum NotificationType {
+  COMMENT_ON_SCHEDULE
+  REPLY_TO_MESSAGE
+  SCHEDULE_UPDATE
+  GENERAL
 }

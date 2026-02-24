@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../../lib/prisma'
+import { createCommentNotification } from '../../../../../lib/notifications'
 
 // GET /api/schedules/[id]/comments - List comments for a schedule
 export async function GET(
@@ -63,6 +64,20 @@ export async function POST(
         },
       },
     })
+
+    // Create notifications for relevant users
+    try {
+      await createCommentNotification(
+        data.userId,
+        id,
+        comment.id,
+        comment.user.name || 'Someone',
+        'appointment' // We'll get the actual schedule title in the notification function
+      )
+    } catch (notificationError) {
+      console.error('Error creating comment notification:', notificationError)
+      // Don't fail the comment creation if notification fails
+    }
 
     return NextResponse.json(comment, { status: 201 })
   } catch (error) {
