@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../../lib/prisma'
+import { createCommentNotification } from '../../../../../lib/notifications'
 
 // GET /api/schedules/[id]/comments - List comments for a schedule
 export async function GET(
@@ -63,6 +64,29 @@ export async function POST(
         },
       },
     })
+
+    // Create notifications for schedule participants (non-blocking)
+    try {
+      const schedule = await prisma.templeSchedule.findUnique({
+        where: { id },
+        select: { title: true }
+      })
+
+      if (schedule && comment.user.name) {
+        // Fire and forget - don't block response
+        createCommentNotification(
+          data.userId,
+          id,
+          comment.id,
+          comment.user.name,
+          schedule.title
+        ).catch(error => {
+          console.error('Failed to create comment notification:', error)
+        })
+      }
+    } catch (error) {
+      console.error('Error preparing comment notification:', error)
+    }
 
     return NextResponse.json(comment, { status: 201 })
   } catch (error) {
