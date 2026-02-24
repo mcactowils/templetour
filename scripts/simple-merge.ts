@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import { prisma } from '../src/lib/prisma'
+import { TempleStatus } from '@prisma/client'
 
 // Simple script to update production temples with staging data
 // Note: Run this with production DATABASE_URL environment variable
@@ -11,7 +12,7 @@ const templesData = [
     address: "250 S Main Street",
     groundbreakingDate: new Date("2010-07-31"),
     dedicationDate: new Date("2012-09-23"),
-    status: "DEDICATED"
+    status: TempleStatus.DEDICATED
   },
   {
     slug: "deseret-peak-utah-temple",
@@ -19,17 +20,17 @@ const templesData = [
     address: "2401 N 400 W Tooele, UT 84074",
     groundbreakingDate: new Date("2021-05-15"),
     dedicationDate: new Date("2024-11-10"),
-    status: "DEDICATED"
+    status: TempleStatus.DEDICATED
   },
   {
     slug: "ephraim-utah-temple",
     groundbreakingDate: new Date("2022-08-27"),
-    status: "UNDER_CONSTRUCTION"
+    status: TempleStatus.UNDER_CONSTRUCTION
   },
   {
     slug: "heber-valley-utah-temple",
     groundbreakingDate: new Date("2022-10-08"),
-    status: "UNDER_CONSTRUCTION"
+    status: TempleStatus.UNDER_CONSTRUCTION
   },
   {
     slug: "lindon-utah-temple",
@@ -37,17 +38,17 @@ const templesData = [
     telephone: "8017013680",
     groundbreakingDate: new Date("2022-04-23"),
     dedicationDate: new Date("2026-05-03"),
-    status: "DEDICATED"
+    status: TempleStatus.DEDICATED
   },
   {
     slug: "orem-utah-temple",
     dedicationDate: new Date("2024-01-21"),
-    status: "DEDICATED"
+    status: TempleStatus.DEDICATED
   },
   {
     slug: "red-cliffs-utah-temple",
     dedicationDate: new Date("2024-03-24"),
-    status: "DEDICATED"
+    status: TempleStatus.DEDICATED
   },
   {
     slug: "salt-lake-temple",
@@ -56,12 +57,12 @@ const templesData = [
   {
     slug: "syracuse-utah-temple",
     dedicationDate: new Date("2025-06-08"),
-    status: "DEDICATED"
+    status: TempleStatus.DEDICATED
   },
   {
     slug: "taylorsville-utah-temple",
     dedicationDate: new Date("2024-06-02"),
-    status: "DEDICATED"
+    status: TempleStatus.DEDICATED
   }
 ]
 

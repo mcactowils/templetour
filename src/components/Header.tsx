@@ -57,8 +57,8 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top bar */}
         <div className="flex justify-between items-center h-14">
-          <Link href="/schedules" className="flex items-center gap-2.5">
-            <TempleIcon className="w-7 h-7 text-temple-tan" />
+          <Link href="/schedules" className="flex items-center gap-3">
+            <TempleIcon className="w-10 h-10 text-temple-tan" />
             <span className="text-sm font-medium text-charcoal tracking-[0.2em] uppercase">
               Utah Temple Tour
             </span>

@@ -218,17 +218,11 @@ export default function DashboardPage() {
 
   const openMaps = (appointment: Appointment) => {
     const { temple } = appointment
-    let address = ''
 
-    // Build the address string from available temple data
-    if (temple.address) {
-      address = temple.address
-    } else {
-      // Fallback to building address from city, state, country
-      address = `${temple.city}`
-      if (temple.state) address += `, ${temple.state}`
-      address += `, ${temple.country}`
-    }
+    // Build the address string from available temple data (city, state, country)
+    let address = `${temple.city}`
+    if (temple.state) address += `, ${temple.state}`
+    address += `, ${temple.country}`
 
     // Add temple name for better search results
     const searchQuery = `${temple.name}, ${address}`
