@@ -67,14 +67,14 @@ export default function Header() {
       <div className="bg-[#F4F4F4]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14">
-          <Link href="/schedules" className="flex items-center gap-3">
-            <TempleIcon className="w-10 h-10 text-temple-tan" />
-            <span className="text-sm font-medium text-charcoal tracking-[0.2em] uppercase">
-              Utah Temple Tour
-            </span>
-          </Link>
+            <Link href="/schedules" className="flex items-center gap-3">
+              <TempleIcon className="w-10 h-10 text-temple-tan" />
+              <span className="text-sm font-medium text-charcoal tracking-[0.2em] uppercase">
+                Utah Temple Tour
+              </span>
+            </Link>
 
-          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
             {session?.user && (
               <>
                 <Link
@@ -149,6 +149,7 @@ export default function Header() {
                 Sign In
               </Link>
             )}
+            </div>
           </div>
         </div>
       </div>
