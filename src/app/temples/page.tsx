@@ -39,6 +39,14 @@ function LocationPinIcon({ className }: { className?: string }) {
   )
 }
 
+function CheckMarkIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+    </svg>
+  )
+}
+
 function SectionHeader({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-3 mb-4">
@@ -50,7 +58,7 @@ function SectionHeader({ title }: { title: string }) {
   )
 }
 
-function getVisitStatusText(temple: Temple): { text: string; color: string; href?: string } | null {
+function getVisitStatusText(temple: Temple): { text: string; color: string; href?: string; isCompleted?: boolean } | null {
   // For renovating temples
   if (temple.status === TempleStatus.RENOVATING) {
     return { text: 'Being Renovated', color: 'text-warm-coral' }
@@ -65,6 +73,7 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
   if (temple.schedules && temple.schedules.length > 0) {
     const schedule = temple.schedules[0]
     const date = new Date(schedule.scheduledDate)
+    const isPastDate = date < new Date()
     // Use same logic as dashboard to detect month-only appointments
     const isMonthOnly = date.getDate() === 1 &&
                        date.getHours() === 12 &&
@@ -72,7 +81,11 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
                        schedule.title.includes('(')
     const href = `/schedules/${schedule.id}?from=temples`
 
-    if (isMonthOnly) {
+    if (isPastDate && !isMonthOnly) {
+      // Past appointment - mark as completed
+      const monthDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
+      return { text: `Visited`, color: 'text-green-600', href, isCompleted: true }
+    } else if (isMonthOnly) {
       const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       return { text: `Visit planned for ${monthYear}`, color: 'text-warm-coral', href }
     } else {
@@ -95,11 +108,17 @@ function getActionButton(temple: Temple): { label: string; href: string } | null
   if (temple.schedules && temple.schedules.length > 0) {
     const schedule = temple.schedules[0]
     const date = new Date(schedule.scheduledDate)
+    const isPastDate = date < new Date()
     // Use same logic as dashboard to detect month-only appointments
     const isMonthOnly = date.getDate() === 1 &&
                        date.getHours() === 12 &&
                        date.getMinutes() === 0 &&
                        schedule.title.includes('(')
+
+    // No button for past completed appointments
+    if (isPastDate && !isMonthOnly) {
+      return null
+    }
 
     if (!isMonthOnly) {
       // Specific date/time appointment
@@ -150,20 +169,25 @@ function TempleCard({ temple }: { temple: Temple }) {
       </div>
 
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex items-center gap-2">
           {visitStatus && (
-            visitStatus.href ? (
-              <a
-                href={visitStatus.href}
-                className={`text-sm font-medium ${visitStatus.color} hover:underline cursor-pointer`}
-              >
-                {visitStatus.text}
-              </a>
-            ) : (
-              <span className={`text-sm font-medium ${visitStatus.color}`}>
-                {visitStatus.text}
-              </span>
-            )
+            <>
+              {visitStatus.isCompleted && (
+                <CheckMarkIcon className="w-4 h-4 text-green-600" />
+              )}
+              {visitStatus.href ? (
+                <a
+                  href={visitStatus.href}
+                  className={`text-sm font-medium ${visitStatus.color} hover:underline cursor-pointer`}
+                >
+                  {visitStatus.text}
+                </a>
+              ) : (
+                <span className={`text-sm font-medium ${visitStatus.color}`}>
+                  {visitStatus.text}
+                </span>
+              )}
+            </>
           )}
         </div>
         {action && (
