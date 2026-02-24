@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,83 +7,54 @@ datasource db {
 }
 
 model Temple {
-  id                String   @id @default(cuid())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Basic Information
-  name              String   @unique
-  slug              String   @unique
-  country           String
-  state             String?
-  city              String
-  address           String?
-  telephone         String?
-
-  // Important Dates
-  announcementDate  DateTime?
+  id                 String           @id @default(cuid())
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  name               String           @unique
+  slug               String           @unique
+  country            String
+  state              String?
+  city               String
+  address            String?
+  telephone          String?
+  announcementDate   DateTime?
   groundbreakingDate DateTime?
-  dedicationDate    DateTime?
-
-  // Physical Details
-  siteSize          String?
-  exteriorFinish    String?
-  totalFloorArea    String?
-  elevation         String?
-
-  // Features
-  instructionRooms  Int?
-  sealingRooms      Int?
-  baptistry         Boolean  @default(false)
-  spires            Int?
-  angelMoroni       Boolean  @default(false)
-
-  // Services
-  visitorsCenter    Boolean  @default(false)
-  arrivalCenter     Boolean  @default(false)
-  patronHousing     Boolean  @default(false)
-  distributionCenter Boolean @default(false)
-
-  // Location
-  latitude          Float?
-  longitude         Float?
-
-  // Status
-  status            TempleStatus @default(ANNOUNCED)
-
-  // Relations
-  schedules         TempleSchedule[]
+  dedicationDate     DateTime?
+  siteSize           String?
+  exteriorFinish     String?
+  totalFloorArea     String?
+  elevation          String?
+  instructionRooms   Int?
+  sealingRooms       Int?
+  baptistry          Boolean          @default(false)
+  spires             Int?
+  angelMoroni        Boolean          @default(false)
+  visitorsCenter     Boolean          @default(false)
+  arrivalCenter      Boolean          @default(false)
+  patronHousing      Boolean          @default(false)
+  distributionCenter Boolean          @default(false)
+  latitude           Float?
+  longitude          Float?
+  status             TempleStatus     @default(ANNOUNCED)
+  schedules          TempleSchedule[]
 
   @@map("temples")
 }
 
-enum TempleStatus {
-  ANNOUNCED
-  UNDER_CONSTRUCTION
-  DEDICATED
-  RENOVATING
-  CLOSED
-}
-
-
 model User {
-  id            String    @id @default(cuid())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  name          String?
-  email         String    @unique
-  password      String?
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-
-  // Relations
-  createdSchedules   TempleSchedule[]
+  id                 String             @id @default(cuid())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  name               String?
+  email              String             @unique
+  emailVerified      DateTime?          @map("email_verified")
+  image              String?
+  password           String?
+  accounts           Account[]
   attendingSchedules ScheduleAttendee[]
   comments           ScheduleComment[]
-
-  accounts Account[]
-  sessions Session[]
+  sessions           Session[]
+  createdSchedules   TempleSchedule[]
 
   @@map("users")
 }
@@ -100,15 +65,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -134,53 +98,51 @@ model VerificationToken {
 }
 
 model TempleSchedule {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  templeId    String
-  temple      Temple   @relation(fields: [templeId], references: [id])
-
-  createdById String   @map("created_by_id")
-  createdBy   User     @relation(fields: [createdById], references: [id])
-
+  id            String             @id @default(cuid())
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  templeId      String
+  createdById   String             @map("created_by_id")
   scheduledDate DateTime
   title         String
   description   String?
-
-  // Relations
-  attendees   ScheduleAttendee[]
-  comments    ScheduleComment[]
+  attendees     ScheduleAttendee[]
+  comments      ScheduleComment[]
+  createdBy     User               @relation(fields: [createdById], references: [id])
+  temple        Temple             @relation(fields: [templeId], references: [id])
 
   @@map("temple_schedules")
 }
 
 model ScheduleAttendee {
-  id         String   @id @default(cuid())
-  createdAt  DateTime @default(now())
-
+  id         String         @id @default(cuid())
+  createdAt  DateTime       @default(now())
   scheduleId String
-  schedule   TempleSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
+  schedule   TempleSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id])
 
   @@unique([scheduleId, userId])
   @@map("schedule_attendees")
 }
 
 model ScheduleComment {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id         String         @id @default(cuid())
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
   scheduleId String
+  userId     String
+  content    String
   schedule   TempleSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
-  content   String
+  user       User           @relation(fields: [userId], references: [id])
 
   @@map("schedule_comments")
+}
+
+enum TempleStatus {
+  ANNOUNCED
+  UNDER_CONSTRUCTION
+  DEDICATED
+  RENOVATING
+  CLOSED
 }
