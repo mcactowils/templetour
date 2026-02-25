@@ -82,13 +82,12 @@ function SectionHeader({ title, subLabel }: { title: string; subLabel: string })
   return (
     <div className="mb-3 mt-8 first:mt-4">
       <div className="flex items-center gap-3">
-        <div className="flex-1 border-b border-section-rule" />
         <div className="shrink-0">
           <h2 className="text-xl font-light text-charcoal tracking-wide">{title}</h2>
-          <span className="text-xs text-medium-gray tracking-widest">{subLabel}</span>
         </div>
         <div className="flex-1 border-b border-section-rule" />
       </div>
+      <span className="text-xs text-medium-gray tracking-widest">{subLabel}</span>
     </div>
   )
 }
