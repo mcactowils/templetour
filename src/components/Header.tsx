@@ -84,13 +84,6 @@ export default function Header() {
                   <PlusIcon className="w-5 h-5" />
                 </Link>
 
-                {/* Simple notification bell - progressive enhancement */}
-                <Link
-                  href="/messages"
-                  className="w-8 h-8 flex items-center justify-center text-medium-gray hover:text-charcoal transition-colors"
-                >
-                  <BellIcon className="w-5 h-5" />
-                </Link>
               </>
             )}
 
