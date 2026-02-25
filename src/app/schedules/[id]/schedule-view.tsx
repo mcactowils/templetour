@@ -6,6 +6,14 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { isAdminUser } from '../../../lib/admin'
 
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  )
+}
+
 interface User {
   id: string
   name: string
@@ -197,19 +205,19 @@ export default function ScheduleDetailPage({
 
   // Determine back navigation
   const from = searchParams.get('from')
-  const getBackInfo = () => {
+  const getBackPath = () => {
     switch (from) {
       case 'calendar':
-        return { path: '/calendar', text: '← Back to Calendar' }
+        return '/calendar'
       case 'temples':
-        return { path: '/temples', text: '← Back to Temples' }
+        return '/temples'
       case 'messages':
-        return { path: '/messages', text: '← Back to Messages' }
+        return '/messages'
       default:
-        return { path: '/schedules', text: '← Back to Schedules' }
+        return '/schedules'
     }
   }
-  const { path: backPath, text: backText } = getBackInfo()
+  const backPath = getBackPath()
 
   if (loading) {
     return (
@@ -256,9 +264,10 @@ export default function ScheduleDetailPage({
           <div className="flex-1">
             <Link
               href={backPath}
-              className="text-warm-coral hover:text-warm-coral-hover text-sm font-medium mb-2 inline-flex items-center"
+              className="text-warm-coral hover:text-warm-coral-hover mb-2 inline-flex items-center w-8 h-8 justify-center rounded-full hover:bg-warm-coral/10 transition-colors"
+              title="Close"
             >
-              {backText}
+              <XIcon className="w-5 h-5" />
             </Link>
             <h1 className="text-2xl sm:text-3xl font-bold text-charcoal mb-1">
               {schedule.title}

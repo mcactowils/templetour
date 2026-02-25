@@ -441,7 +441,7 @@ export default function EditAppointmentPage() {
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
           <button
             type="button"
-            onClick={() => router.push('/schedules')}
+            onClick={() => router.push(`/schedules/${params.id}`)}
             className="px-6 py-2.5 border border-light-gray rounded-lg text-charcoal text-sm font-medium hover:bg-warm-gray-light transition-colors"
           >
             Cancel
