@@ -142,7 +142,7 @@ function TempleCard({ temple }: { temple: Temple }) {
   const action = getActionButton(temple)
 
   return (
-    <div className="border-l-4 border-warm-gray py-4 pl-4 pr-2">
+    <div className="py-4 pl-4 pr-2">
       <h3 className="text-base font-bold text-charcoal mb-1.5">{temple.name}</h3>
 
       <div className="space-y-0.5 text-sm text-medium-gray mb-2">

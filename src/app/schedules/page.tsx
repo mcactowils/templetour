@@ -401,7 +401,7 @@ export default function DashboardPage() {
               return (
                 <div
                   key={appointment.id}
-                  className="py-4 pl-3 border-l-2 border-l-warm-gray"
+                  className="py-4 pl-3"
                 >
                   {/* Temple name + pin */}
                   <div className="flex items-center gap-1.5 mb-1">
@@ -588,7 +588,7 @@ export default function DashboardPage() {
             {unscheduledAppointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className="py-4 pl-3 border-l-2 border-l-warm-gray"
+                className="py-4 pl-3"
               >
                 {/* Temple name + pin */}
                 <div className="flex items-center gap-1.5 mb-1">
@@ -762,7 +762,7 @@ export default function DashboardPage() {
             {completedAppointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className="py-4 pl-3 border-l-2 border-l-warm-gray"
+                className="py-4 pl-3"
               >
                 {/* Temple name + pin */}
                 <div className="flex items-center gap-1.5 mb-1">
