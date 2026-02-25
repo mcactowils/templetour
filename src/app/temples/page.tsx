@@ -57,7 +57,7 @@ function SectionHeader({ title }: { title: string }) {
   )
 }
 
-function getVisitStatusText(temple: Temple): { text: string; color: string; href?: string; isCompleted?: boolean } | null {
+function getVisitStatusText(temple: Temple): { text: string; dateTime?: string; color: string; href?: string; isCompleted?: boolean } | null {
 
   // For renovating temples
   if (temple.status === TempleStatus.RENOVATING) {
@@ -95,7 +95,7 @@ function getVisitStatusText(temple: Temple): { text: string; color: string; href
     } else {
       const monthDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
       const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-      return { text: `Visit scheduled for ${monthDate} at ${time}`, color: 'text-warm-coral', href }
+      return { text: `Visit scheduled for`, dateTime: `${monthDate} at ${time}`, color: 'text-warm-coral', href }
     }
   }
 
@@ -163,7 +163,7 @@ function TempleCard({ temple }: { temple: Temple }) {
               className="hover:text-warm-coral cursor-pointer"
               title="Open in maps"
             >
-              <LocationPinIcon className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+              <LocationPinIcon className="w-5 h-5 shrink-0" />
             </a>
           </p>
         )}
@@ -180,11 +180,27 @@ function TempleCard({ temple }: { temple: Temple }) {
                 href={visitStatus.href}
                 className={`text-sm font-medium ${visitStatus.color} hover:underline cursor-pointer`}
               >
-                {visitStatus.text}
+                <span className="inline sm:inline">
+                  {visitStatus.text}
+                  {visitStatus.dateTime && (
+                    <>
+                      <span className="hidden sm:inline"> </span>
+                      <span className="block sm:inline">{visitStatus.dateTime}</span>
+                    </>
+                  )}
+                </span>
               </a>
             ) : (
               <span className={`text-sm font-medium ${visitStatus.color}`}>
-                {visitStatus.text}
+                <span className="inline sm:inline">
+                  {visitStatus.text}
+                  {visitStatus.dateTime && (
+                    <>
+                      <span className="hidden sm:inline"> </span>
+                      <span className="block sm:inline">{visitStatus.dateTime}</span>
+                    </>
+                  )}
+                </span>
               </span>
             )
           )}
