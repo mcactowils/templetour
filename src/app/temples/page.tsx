@@ -147,22 +147,15 @@ function TempleCard({ temple }: { temple: Temple }) {
       <div className="space-y-0.5 text-sm text-medium-gray mb-2">
         <p>{temple.city}, {temple.state || 'Utah'}</p>
         {temple.address && (
-          <p className="flex items-start gap-0.5">
+          <p>
             <a
               href={`https://maps.google.com/?q=${encodeURIComponent(temple.address)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 hover:text-warm-coral underline cursor-pointer"
-            >
-              {temple.address}
-            </a>
-            <a
-              href={`https://maps.google.com/?q=${encodeURIComponent(temple.address)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-warm-coral cursor-pointer"
+              className="inline-flex items-center gap-1 hover:text-warm-coral underline cursor-pointer"
               title="Open in maps"
             >
+              {temple.address}
               <LocationPinIcon className="w-5 h-5 shrink-0" />
             </a>
           </p>
