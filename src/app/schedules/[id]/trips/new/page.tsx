@@ -194,7 +194,7 @@ export default function NewTripPage({
           <button
             type="submit"
             disabled={submitting}
-            className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
+            className="bg-white text-[#B77D63] shadow-sm hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
           >
             {submitting ? 'Adding...' : 'Add Trip'}
           </button>

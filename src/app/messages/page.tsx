@@ -289,7 +289,7 @@ export default function MessagesPage() {
             <button
               onClick={submitMessage}
               disabled={!newMessage.trim() || submitting}
-              className="px-6 py-3 bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="px-6 py-3 bg-white text-[#B77D63] shadow-sm hover:bg-[#B77D63] hover:text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               {submitting ? 'Sending...' : replyTo ? 'Reply' : 'Send'}
             </button>
@@ -400,7 +400,7 @@ export default function MessagesPage() {
                       <button
                         onClick={() => submitMessageReply(message.id)}
                         disabled={!replyTexts[message.id]?.trim() || submitting}
-                        className="px-4 py-2 bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white rounded-lg transition-colors disabled:opacity-50 text-sm font-medium"
+                        className="px-4 py-2 bg-white text-[#B77D63] shadow-sm hover:bg-[#B77D63] hover:text-white rounded-lg transition-colors disabled:opacity-50 text-sm font-medium"
                       >
                         Reply
                       </button>
@@ -502,7 +502,7 @@ export default function MessagesPage() {
                         <button
                           onClick={() => submitReply(thread.id)}
                           disabled={!replyTexts[thread.id]?.trim() || submitting}
-                          className="px-4 py-2 bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white rounded-lg transition-colors disabled:opacity-50 text-sm font-medium"
+                          className="px-4 py-2 bg-white text-[#B77D63] shadow-sm hover:bg-[#B77D63] hover:text-white rounded-lg transition-colors disabled:opacity-50 text-sm font-medium"
                         >
                           Reply
                         </button>

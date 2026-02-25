@@ -83,7 +83,7 @@ export default function AdminUsersPage() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <button
           onClick={() => { setError(null); fetchUsers(); }}
-          className="mt-4 bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"
+          className="mt-4 bg-white text-[#B77D63] shadow-sm hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"
         >
           Try Again
         </button>

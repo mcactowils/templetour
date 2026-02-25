@@ -52,7 +52,7 @@ export default function AdminLayout({
           <p className="text-medium-gray mb-6">You don't have permission to access the admin panel.</p>
           <Link
             href="/"
-            className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"
+            className="bg-white text-[#B77D63] shadow-sm hover:bg-[#B77D63] hover:text-white px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"
           >
             Return to Home
           </Link>
