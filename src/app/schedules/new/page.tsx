@@ -161,7 +161,7 @@ export default function NewAppointmentPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <h2 className="text-lg font-semibold text-charcoal mb-4">Appointment Details</h2>
 
           <div className="space-y-4">

@@ -114,26 +114,26 @@ export default function AdminDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <div className="text-2xl font-bold text-charcoal">{stats.total}</div>
           <div className="text-sm text-medium-gray">Total Temples</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <div className="text-2xl font-bold text-green-600">{stats.dedicated}</div>
           <div className="text-sm text-medium-gray">Dedicated</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <div className="text-2xl font-bold text-warm-coral">{stats.underConstruction}</div>
           <div className="text-sm text-medium-gray">Under Construction</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <div className="text-2xl font-bold text-yellow-600">{stats.announced}</div>
           <div className="text-sm text-medium-gray">Announced</div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+      <div className="bg-white rounded-xl p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <label htmlFor="search" className="block text-sm font-medium text-charcoal mb-1">
@@ -170,7 +170,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Temples Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-light-gray overflow-hidden">
+      <div className="bg-white rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-light-gray">
           <h2 className="text-xl font-semibold text-charcoal">
             Temples ({filteredTemples.length})

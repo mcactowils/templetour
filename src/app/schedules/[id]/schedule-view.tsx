@@ -259,7 +259,7 @@ export default function ScheduleDetailPage({
       )}
 
       {/* Schedule Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-light-gray p-6 mb-6">
+      <div className="bg-white rounded-xl p-6 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
           <div className="flex-1">
             <Link
@@ -351,7 +351,7 @@ export default function ScheduleDetailPage({
       </div>
 
       {/* Actions and Attendees */}
-      <div className="bg-white rounded-xl shadow-sm border border-light-gray p-6 mb-6">
+      <div className="bg-white rounded-xl p-6 mb-6">
         <div className="flex flex-wrap items-center gap-4 mb-4">
           {session?.user && (
             <button
@@ -410,7 +410,7 @@ export default function ScheduleDetailPage({
       </div>
 
       {/* Comments Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-light-gray p-6">
+      <div className="bg-white rounded-xl p-6">
         <h2 className="text-lg font-semibold text-charcoal mb-4">
           Discussion ({schedule._count.comments})
         </h2>

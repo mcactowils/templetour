@@ -392,7 +392,7 @@ export default function DashboardPage() {
       {scheduledAppointments.length > 0 && (
         <div>
           <SectionHeader title="Upcoming Appointments" subLabel="Scheduled" />
-          <div className="bg-[#F4F4F4] rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
+          <div className="bg-[#F4F4F4] rounded-xl divide-y divide-light-gray overflow-hidden">
             {scheduledAppointments.map((appointment) => {
               const isAttending = appointment.attendees?.some(
                 a => a.user.id === (session?.user as any)?.id
@@ -584,7 +584,7 @@ export default function DashboardPage() {
       {unscheduledAppointments.length > 0 && (
         <div>
           <SectionHeader title="Upcoming Appointments" subLabel="unscheduled" />
-          <div className="bg-[#F4F4F4] rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
+          <div className="bg-[#F4F4F4] rounded-xl divide-y divide-light-gray overflow-hidden">
             {unscheduledAppointments.map((appointment) => (
               <div
                 key={appointment.id}
@@ -758,7 +758,7 @@ export default function DashboardPage() {
       {completedAppointments.length > 0 && (
         <div>
           <SectionHeader title="Visited Temples" subLabel="completed" />
-          <div className="bg-[#F4F4F4] rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
+          <div className="bg-[#F4F4F4] rounded-xl divide-y divide-light-gray overflow-hidden">
             {completedAppointments.map((appointment) => (
               <div
                 key={appointment.id}

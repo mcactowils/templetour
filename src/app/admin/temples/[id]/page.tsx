@@ -223,7 +223,7 @@ export default function EditTemplePage() {
       {/* Edit Form */}
       <form onSubmit={handleSubmit} className="admin-form space-y-8">
         {/* Basic Information */}
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-charcoal mb-6">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -343,7 +343,7 @@ export default function EditTemplePage() {
         </div>
 
         {/* Important Dates */}
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-charcoal mb-6">Important Dates</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
@@ -388,7 +388,7 @@ export default function EditTemplePage() {
         </div>
 
         {/* Physical Details */}
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-charcoal mb-6">Physical Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -450,7 +450,7 @@ export default function EditTemplePage() {
         </div>
 
         {/* Temple Features */}
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-charcoal mb-6">Temple Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
@@ -526,7 +526,7 @@ export default function EditTemplePage() {
         </div>
 
         {/* Location Coordinates */}
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-charcoal mb-6">Geographic Coordinates</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>

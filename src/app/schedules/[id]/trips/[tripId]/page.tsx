@@ -240,7 +240,7 @@ export default function TripDetailPage({
       )}
 
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-8 mb-6">
+      <div className="bg-white rounded-xl p-4 sm:p-8 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-6">
           <div>
             <Link
@@ -329,7 +329,7 @@ export default function TripDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Attendees section */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <div className="bg-white rounded-xl p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-charcoal mb-4">
               Attending ({schedule._count.attendees})
             </h2>
@@ -397,7 +397,7 @@ export default function TripDetailPage({
 
         {/* Comments section */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+          <div className="bg-white rounded-xl p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-charcoal mb-4">
               Trip Discussion ({schedule._count.comments})
             </h2>

@@ -273,7 +273,7 @@ export default function TemplesPage() {
       {sections.map((section) => (
         <div key={section.label}>
           <SectionHeader title={section.label} />
-          <div className="bg-[#F4F4F4] rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
+          <div className="bg-[#F4F4F4] rounded-xl divide-y divide-light-gray overflow-hidden">
             {section.temples.map((temple) => (
               <TempleCard key={temple.id} temple={temple} />
             ))}

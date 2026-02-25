@@ -273,7 +273,7 @@ export default function MessagesPage() {
       )}
 
       {/* New Message */}
-      <div className="bg-white rounded-xl shadow-sm border border-light-gray p-6 mb-8">
+      <div className="bg-white rounded-xl p-6 mb-8">
         <h2 className="text-xl font-semibold text-charcoal mb-4">
           {replyTo ? `Reply to ${replyTo.userName}` : 'New Message'}
         </h2>
@@ -311,13 +311,13 @@ export default function MessagesPage() {
           <h2 className="text-xl font-semibold text-charcoal">General Messages</h2>
 
           {standaloneMessages.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm border border-light-gray p-8 text-center">
+            <div className="bg-white rounded-xl p-8 text-center">
               <p className="text-medium-gray">No messages yet. Start the conversation!</p>
             </div>
           ) : (
             <div className="space-y-4">
               {standaloneMessages.map((message) => (
-                <div key={message.id} className="bg-white rounded-xl shadow-sm border border-light-gray p-6">
+                <div key={message.id} className="bg-white rounded-xl p-6">
                   {/* Message Header */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center">
@@ -417,13 +417,13 @@ export default function MessagesPage() {
           <h2 className="text-xl font-semibold text-charcoal">Appointment Discussions</h2>
 
           {scheduleThreads.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm border border-light-gray p-8 text-center">
+            <div className="bg-white rounded-xl p-8 text-center">
               <p className="text-medium-gray">No appointment discussions yet.</p>
             </div>
           ) : (
             <div className="space-y-4">
               {scheduleThreads.map((thread) => (
-                <div key={thread.id} className="bg-white rounded-xl shadow-sm border border-light-gray">
+                <div key={thread.id} className="bg-white rounded-xl">
                   {/* Thread Header */}
                   <div
                     className="p-4 border-b border-light-gray cursor-pointer hover:bg-warm-gray-light transition-colors"

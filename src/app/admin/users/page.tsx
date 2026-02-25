@@ -101,22 +101,22 @@ export default function AdminUsersPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <div className="text-2xl font-bold text-charcoal">{users.length}</div>
           <div className="text-sm text-medium-gray">Total Users</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <div className="text-2xl font-bold text-warm-coral">{users.filter(u => u.isAdmin).length}</div>
           <div className="text-sm text-medium-gray">Admins</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-light-gray p-4 sm:p-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6">
           <div className="text-2xl font-bold text-green-600">{users.filter(u => !u.isAdmin).length}</div>
           <div className="text-sm text-medium-gray">Regular Users</div>
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-light-gray overflow-hidden">
+      <div className="bg-white rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-light-gray">
           <h2 className="text-xl font-semibold text-charcoal">
             All Users ({users.length})
