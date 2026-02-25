@@ -457,12 +457,12 @@ export default function DashboardPage() {
                     <button
                       onClick={() => handleRSVP(appointment.id)}
                       disabled={rsvpLoading === appointment.id}
-                      className={`px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider border transition-colors ${
+                      className={`px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm ${
                         rsvpLoading === appointment.id ? 'opacity-50 cursor-not-allowed' : ''
                       } ${
                         isAttending
-                          ? 'bg-warm-coral/20 text-warm-coral border-warm-coral hover:bg-warm-coral/30'
-                          : 'bg-white text-[#B77D63] border-[#B77D63] hover:bg-[#B77D63] hover:text-white'
+                          ? 'bg-warm-coral/20 text-warm-coral hover:bg-warm-coral/30'
+                          : 'bg-white text-[#B77D63] hover:bg-[#B77D63] hover:text-white'
                       }`}
                     >
                       {rsvpLoading === appointment.id ? '...' : isAttending ? 'RSVP\'d' : 'RSVP'}
