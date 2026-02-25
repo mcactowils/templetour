@@ -356,7 +356,7 @@ export default function DashboardPage() {
         <div className="text-red-600 text-base">Error: {error}</div>
         <button
           onClick={fetchAppointments}
-          className="mt-4 bg-white text-[#B77D63] px-6 py-2 rounded-full border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium"
+          className="mt-4 bg-white text-[#B77D63] px-6 py-2 rounded-full hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium shadow-sm"
         >
           Try Again
         </button>
@@ -378,7 +378,7 @@ export default function DashboardPage() {
         </p>
         <Link
           href="/schedules/new"
-          className="inline-flex items-center bg-white text-[#B77D63] px-6 py-2 rounded-full border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium"
+          className="inline-flex items-center bg-white text-[#B77D63] px-6 py-2 rounded-full hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium shadow-sm"
         >
           Create Appointment
         </Link>
@@ -392,7 +392,7 @@ export default function DashboardPage() {
       {scheduledAppointments.length > 0 && (
         <div>
           <SectionHeader title="Upcoming Appointments" subLabel="Scheduled" />
-          <div className="bg-[#F4F4F4]">
+          <div className="bg-[#F4F4F4] rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
             {scheduledAppointments.map((appointment) => {
               const isAttending = appointment.attendees?.some(
                 a => a.user.id === (session?.user as any)?.id
@@ -401,7 +401,7 @@ export default function DashboardPage() {
               return (
                 <div
                   key={appointment.id}
-                  className="py-4 border-b border-light-gray last:border-b-0 pl-3 border-l-2 border-l-warm-gray"
+                  className="py-4 pl-3 border-l-2 border-l-warm-gray"
                 >
                   {/* Temple name + pin */}
                   <div className="flex items-center gap-1.5 mb-1">
@@ -517,7 +517,7 @@ export default function DashboardPage() {
                             <button
                               onClick={() => handleComment(appointment.id)}
                               disabled={commentLoading === appointment.id || !commentText[appointment.id]?.trim()}
-                              className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-2 py-1 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="bg-white text-[#B77D63] hover:bg-[#B77D63] hover:text-white shadow-sm px-2 py-1 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {commentLoading === appointment.id ? 'Posting...' : 'Post'}
                             </button>
@@ -584,11 +584,11 @@ export default function DashboardPage() {
       {unscheduledAppointments.length > 0 && (
         <div>
           <SectionHeader title="Upcoming Appointments" subLabel="unscheduled" />
-          <div className="bg-[#F4F4F4]">
+          <div className="bg-[#F4F4F4] rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
             {unscheduledAppointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className="py-4 border-b border-light-gray last:border-b-0 pl-3 border-l-2 border-l-warm-gray"
+                className="py-4 pl-3 border-l-2 border-l-warm-gray"
               >
                 {/* Temple name + pin */}
                 <div className="flex items-center gap-1.5 mb-1">
@@ -638,7 +638,7 @@ export default function DashboardPage() {
 
                   <Link
                     href={`/schedules/${appointment.id}/edit`}
-                    className="px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors"
+                    className="px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider bg-white text-[#B77D63] hover:bg-[#B77D63] hover:text-white shadow-sm transition-colors"
                   >
                     Schedule
                   </Link>
@@ -692,7 +692,7 @@ export default function DashboardPage() {
                           <button
                             onClick={() => handleComment(appointment.id)}
                             disabled={commentLoading === appointment.id || !commentText[appointment.id]?.trim()}
-                            className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-2 py-1 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="bg-white text-[#B77D63] hover:bg-[#B77D63] hover:text-white shadow-sm px-2 py-1 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {commentLoading === appointment.id ? 'Posting...' : 'Post'}
                           </button>
@@ -758,11 +758,11 @@ export default function DashboardPage() {
       {completedAppointments.length > 0 && (
         <div>
           <SectionHeader title="Visited Temples" subLabel="completed" />
-          <div className="bg-[#F4F4F4]">
+          <div className="bg-[#F4F4F4] rounded-xl shadow-sm border border-light-gray divide-y divide-light-gray overflow-hidden">
             {completedAppointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className="py-4 border-b border-light-gray last:border-b-0 pl-3 border-l-2 border-l-warm-gray"
+                className="py-4 pl-3 border-l-2 border-l-warm-gray"
               >
                 {/* Temple name + pin */}
                 <div className="flex items-center gap-1.5 mb-1">

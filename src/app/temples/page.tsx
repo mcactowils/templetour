@@ -193,7 +193,7 @@ function TempleCard({ temple }: { temple: Temple }) {
         {action && (
           <a
             href={action.href}
-            className="bg-white text-[#B77D63] text-xs font-medium px-4 py-1.5 rounded border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors"
+            className="bg-white text-[#B77D63] text-xs font-medium px-4 py-1.5 rounded hover:bg-[#B77D63] hover:text-white transition-colors shadow-sm"
           >
             {action.label}
           </a>
@@ -254,7 +254,7 @@ export default function TemplesPage() {
         <div className="text-red-600 text-xl">Error: {error}</div>
         <button
           onClick={fetchUtahTemples}
-          className="mt-4 bg-white text-[#B77D63] px-6 py-2.5 rounded-lg border border-[#B77D63] hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium"
+          className="mt-4 bg-white text-[#B77D63] px-6 py-2.5 rounded-lg hover:bg-[#B77D63] hover:text-white transition-colors text-sm font-medium shadow-sm"
         >
           Try Again
         </button>

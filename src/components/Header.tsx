@@ -144,7 +144,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/auth/signin"
-                className="bg-white text-[#B77D63] border border-[#B77D63] hover:bg-[#B77D63] hover:text-white px-4 py-1.5 rounded-full text-xs font-medium transition-colors"
+                className="bg-white text-[#B77D63] hover:bg-[#B77D63] hover:text-white px-4 py-1.5 rounded-full text-xs font-medium transition-colors shadow-sm"
               >
                 Sign In
               </Link>
@@ -158,7 +158,7 @@ export default function Header() {
       {session?.user && (
         <div className="bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex gap-1 pb-2 -mx-1">
+            <nav className="flex gap-1 pt-3 pb-2 -mx-1">
               {tabs.map((tab) => (
                 <Link
                   key={tab.href}
