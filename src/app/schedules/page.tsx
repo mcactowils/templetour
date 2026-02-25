@@ -471,7 +471,7 @@ export default function DashboardPage() {
 
                   {/* Attendees dropdown */}
                   {showAttendees === appointment.id && (
-                    <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
+                    <div className="mt-3 p-3 bg-white rounded-lg border border-light-gray">
                       <h4 className="text-xs font-semibold text-charcoal mb-2 uppercase tracking-wider">
                         Attending ({appointment._count.attendees})
                       </h4>
@@ -490,7 +490,7 @@ export default function DashboardPage() {
 
                   {/* Comments dropdown */}
                   {showComments === appointment.id && (
-                    <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
+                    <div className="mt-3 p-3 bg-white rounded-lg border border-light-gray">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="text-xs font-semibold text-charcoal uppercase tracking-wider">
                           Discussion ({appointment._count.comments})
@@ -646,7 +646,7 @@ export default function DashboardPage() {
 
                 {/* Attendees dropdown */}
                 {showAttendees === appointment.id && (
-                  <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
+                  <div className="mt-3 p-3 bg-white rounded-lg border border-light-gray">
                     <h4 className="text-xs font-semibold text-charcoal mb-2 uppercase tracking-wider">
                       Attending ({appointment._count.attendees})
                     </h4>
@@ -665,7 +665,7 @@ export default function DashboardPage() {
 
                 {/* Comments dropdown */}
                 {showComments === appointment.id && (
-                  <div className="mt-3 p-3 bg-warm-gray-light rounded-lg border border-light-gray">
+                  <div className="mt-3 p-3 bg-white rounded-lg border border-light-gray">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-xs font-semibold text-charcoal uppercase tracking-wider">
                         Discussion ({appointment._count.comments})
